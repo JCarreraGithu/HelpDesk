@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nuevo Reporte</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <img src="logo.png" alt="Logo">
+    <h1>Help Desk</h1>
+  </header>
+
+  <nav>
+    <a href="index.html">Casos</a>
+    <a href="nuevo.html">Nuevo Reporte</a>
+    <a href="cierre.html">Cerrar Caso</a>
+    <a href="detalle.html">Detalle Caso</a>
+  </nav>
+
+  <div class="content-wrapper">
+    <main>
+      <h2>Registrar Nuevo Reporte</h2>
+      <form>
+        <label for="titulo">Título del caso:</label>
+        <input type="text" id="titulo" name="titulo">
+
+        <label for="descripcion">Descripción:</label>
+        <textarea id="descripcion" name="descripcion"></textarea>
+
+        <label for="prioridad">Prioridad:</label>
+        <select id="prioridad" name="prioridad">
+          <option>Alta</option>
+          <option>Media</option>
+          <option>Baja</option>
+        </select>
+
+        <button type="submit">Guardar</button>
+      </form>
+    </main>
+
+    <aside>
+      <h3>Opciones</h3>
+      <p>Aquí puedes añadir accesos rápidos relacionados con la creación de casos.</p>
+    </aside>
+  </div>
+
+  <footer>
+    © 2025 Help Desk | <a href="#">Soporte</a>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,173 @@
+/* ================================
+   ESTRUCTURA GENERAL
+================================= */
+html, body {
+  height: 100%;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  font-family: Arial, sans-serif;
+  background-color: #f4f9ff;
+  color: #333;
+}
+
+/* Encabezado */
+header {
+  display: flex;
+  align-items: center;
+  background-color: #004d80; /* Azul */
+  padding: 10px 20px;
+  color: white;
+  height: 70px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+header img {
+  height: 50px;
+  margin-right: 15px;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 22px;
+}
+
+/* Barra de navegación */
+nav {
+  background-color: #008c7a; /* Verde */
+  display: flex;
+  justify-content: center;
+  padding: 10px 0;
+}
+
+nav a {
+  color: white;
+  text-decoration: none;
+  margin: 0 15px;
+  font-weight: bold;
+}
+
+nav a:hover {
+  text-decoration: underline;
+}
+
+/* ================================
+   LAYOUT PRINCIPAL
+================================= */
+.content-wrapper {
+  flex: 1; /* para que empuje el footer abajo */
+  display: flex;
+  margin: 20px;
+  gap: 20px;
+}
+
+main {
+  flex: 3; /* área principal más grande */
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+aside {
+  flex: 1; /* barra lateral derecha */
+  background: #e6f7f4;
+  padding: 20px;
+  border-radius: 8px;
+  border-left: 5px solid #008c7a;
+  min-width: 200px;
+}
+
+aside h3 {
+  margin-top: 0;
+  color: #004d80;
+}
+
+/* ================================
+   TABLAS
+================================= */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+table th, table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: left;
+}
+
+table th {
+  background-color: #008c7a;
+  color: white;
+}
+
+table tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+table tr:hover {
+  background-color: #d0f0e0;
+}
+
+/* ================================
+   FORMULARIOS
+================================= */
+form {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  max-width: 600px;
+  margin: auto;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+form label {
+  display: block;
+  margin-top: 10px;
+  font-weight: bold;
+  color: #004d80;
+}
+
+form input, form select, form textarea, form button {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+form button {
+  background: #008c7a;
+  color: white;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+  margin-top: 15px;
+}
+
+form button:hover {
+  background: #004d80;
+}
+
+/* ================================
+   FOOTER
+================================= */
+footer {
+  background-color: #004d80; /* Azul oscuro */
+  color: white;
+  text-align: center;
+  padding: 15px;
+  font-size: 14px;
+}
+
+footer a {
+  color: #7ee6c5; /* Verde clarito */
+  text-decoration: none;
+  font-weight: bold;
+}
+
+footer a:hover {
+  text-decoration: underline;
+}
