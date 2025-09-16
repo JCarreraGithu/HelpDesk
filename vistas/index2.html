@@ -3,47 +3,252 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Nuevo Reporte</title>
-  <link rel="stylesheet" href="style.css">
+  <title>Nuevo Reporte | Help Desk</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Inter', Arial, sans-serif;
+      background-color: #eef5f4;
+      color: #2d2d2d;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      font-size: 1.2rem;
+      line-height: 1.7;
+    }
+
+    /* HEADER */
+    header {
+      background-color: #4a7c59;
+      color: white;
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+    }
+
+    header img {
+      height: 48px;
+    }
+
+    header h1 {
+      font-size: 2.3rem;
+      margin: 0;
+      font-weight: 600;
+    }
+
+    /* NAV */
+    nav {
+      background-color: #d9ebe3;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      padding: 12px 0;
+      border-bottom: 2px solid #c7ded3;
+    }
+
+    nav a {
+      color: #2f4f4f;
+      text-decoration: none;
+      margin: 0 18px;
+      font-weight: 600;
+      font-size: 1.3rem;
+      transition: color 0.3s, transform 0.2s;
+    }
+
+    nav a:hover,
+    nav a.active {
+      color: #1c2e2e;
+      transform: scale(1.05);
+    }
+
+    /* CONTENEDOR */
+    .content-wrapper {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 2rem;
+    }
+
+    main {
+      width: 100%;
+      max-width: 750px;
+      background: #ffffff;
+      padding: 3rem;
+      border-radius: 16px;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+    }
+
+    main h2 {
+      text-align: center;
+      color: #4a7c59;
+      font-size: 2.2rem;
+      margin-bottom: 2rem;
+      font-weight: 700;
+    }
+
+    /* FORMULARIO */
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.8rem;
+    }
+
+    form label {
+      font-weight: 600;
+      font-size: 1.3rem;
+      color: #2f4f4f;
+      margin-bottom: 0.5rem;
+      display: block;
+    }
+
+    form input,
+    form textarea,
+    form select {
+      width: 100%;
+      padding: 18px;
+      border-radius: 12px;
+      border: 1px solid #c7ded3;
+      font-size: 1.2rem;
+      background-color: #f9fdfb;
+      transition: border 0.2s, box-shadow 0.2s;
+      box-sizing: border-box;
+    }
+
+    form input:focus,
+    form textarea:focus,
+    form select:focus {
+      border-color: #4a7c59;
+      outline: none;
+      box-shadow: 0 0 8px rgba(74,124,89,0.3);
+    }
+
+    form textarea {
+      resize: vertical;
+      min-height: 150px;
+    }
+
+    /* BOTÓN DIFERENTE */
+    form button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      background: #3a7bd5; /* azul elegante */
+      color: white;
+      font-weight: bold;
+      border: none;
+      padding: 18px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 1.4rem;
+      transition: background 0.3s, transform 0.2s;
+      width: 100%;
+    }
+
+    form button:hover {
+      background: #2a5fa0;
+      transform: scale(1.02);
+    }
+
+    form button svg {
+      width: 22px;
+      height: 22px;
+      fill: white;
+    }
+
+    /* FOOTER */
+    footer {
+      background-color: #4a7c59;
+      color: white;
+      text-align: center;
+      padding: 1.5rem;
+      font-size: 1.1rem;
+      margin-top: auto;
+    }
+
+    footer a {
+      color: #d9ebe3;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      nav {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      nav a {
+        margin: 10px 0;
+      }
+
+      header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+
+      main {
+        padding: 2rem;
+      }
+    }
+  </style>
 </head>
 <body>
   <header>
-    <img src="logo.png" alt="Logo">
+    <img src="logo.png" alt="Logo de Help Desk">
     <h1>Help Desk</h1>
   </header>
 
   <nav>
-    <a href="index.html">Casos</a>
-    <a href="nuevo.html">Nuevo Reporte</a>
-    <a href="cierre.html">Cerrar Caso</a>
-    <a href="detalle.html">Detalle Caso</a>
+    <a href="index1.html">Casos</a>
+    <a href="index2.html" class="active">Nuevo Reporte</a>
+    <a href="index3.html">Cerrar Caso</a>
+    <a href="index4.html">Detalle Caso</a>
   </nav>
 
   <div class="content-wrapper">
     <main>
       <h2>Registrar Nuevo Reporte</h2>
-      <form>
-        <label for="titulo">Título del caso:</label>
-        <input type="text" id="titulo" name="titulo">
+      <form action="#" method="post">
+        <div>
+          <label for="titulo">Título del caso:</label>
+          <input type="text" id="titulo" name="titulo" placeholder="Ej. Error al iniciar sesión" required>
+        </div>
 
-        <label for="descripcion">Descripción:</label>
-        <textarea id="descripcion" name="descripcion"></textarea>
+        <div>
+          <label for="descripcion">Descripción detallada:</label>
+          <textarea id="descripcion" name="descripcion" placeholder="Describe el problema con claridad..." required></textarea>
+        </div>
 
-        <label for="prioridad">Prioridad:</label>
-        <select id="prioridad" name="prioridad">
-          <option>Alta</option>
-          <option>Media</option>
-          <option>Baja</option>
-        </select>
+        <div>
+          <label for="prioridad">Nivel de prioridad:</label>
+          <select id="prioridad" name="prioridad" required>
+            <option value="" disabled selected>Selecciona una opción</option>
+            <option value="alta">Alta - Impacto crítico</option>
+            <option value="media">Media - Impacto moderado</option>
+            <option value="baja">Baja - Impacto menor</option>
+          </select>
+        </div>
 
-        <button type="submit">Guardar</button>
+        <button type="submit">
+          <!-- Ícono SVG disquete minimalista -->
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M17 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7l-4-4zM12 19a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm1-10H6V5h7v4z"/>
+          </svg>
+          Guardar Reporte
+        </button>
       </form>
     </main>
-
-    <aside>
-      <h3>Opciones</h3>
-      <p> accesos rápidos relacionados con la creación de casos.</p>
-    </aside>
   </div>
 
   <footer>

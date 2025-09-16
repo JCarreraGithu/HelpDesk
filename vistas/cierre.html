@@ -1,0 +1,21 @@
+<form id="formCierre">
+  <label for="comentario">Comentario de cierre</label>
+  <textarea id="comentario" required></textarea>
+  <button type="submit">Cerrar Caso</button>
+</form>
+
+<script>
+  const id = localStorage.getItem("casoCerrar");
+  const casos = JSON.parse(localStorage.getItem("casos"));
+
+  document.getElementById("formCierre").addEventListener("submit", e => {
+    e.preventDefault();
+    const comentario = document.getElementById("comentario").value;
+    const caso = casos.find(c => c.id == id);
+    caso.estado = "Cerrado";
+    caso.comentario = comentario;
+    localStorage.setItem("casos", JSON.stringify(casos));
+    alert("Caso cerrado correctamente");
+    window.location.href = "index.html";
+  });
+</script>

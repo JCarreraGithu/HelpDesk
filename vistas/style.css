@@ -1,86 +1,114 @@
 /* ================================
-   ESTRUCTURA GENERAL
+   ESTILOS GLOBALES
 ================================= */
 html, body {
   height: 100%;
   margin: 0;
   display: flex;
   flex-direction: column;
-  font-family: Arial, sans-serif;
-  background-color: #f4f9ff;
-  color: #333;
+  font-family: 'Inter', Arial, sans-serif;
+  background-color: #f5faf9;
+  color: #2d2d2d;
+  font-size: 1.1rem;
+  line-height: 1.7;
 }
 
 /* Encabezado */
 header {
   display: flex;
   align-items: center;
-  background-color: #004d80; /* Azul */
-  padding: 10px 20px;
+  gap: 1rem;
+  background-color: #006d77;
+  padding: 15px 30px;
   color: white;
-  height: 70px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
 header img {
-  height: 50px;
-  margin-right: 15px;
+  height: 48px;
 }
 
 header h1 {
-  margin: 0;
-  font-size: 22px;
+  font-size: 2rem;
+  font-weight: 600;
 }
 
 /* Barra de navegación */
 nav {
-  background-color: #008c7a; /* Verde */
+  background-color: #83c5be;
   display: flex;
   justify-content: center;
-  padding: 10px 0;
+  flex-wrap: wrap;
+  padding: 12px 0;
 }
 
 nav a {
-  color: white;
+  color: #073b4c;
   text-decoration: none;
-  margin: 0 15px;
-  font-weight: bold;
+  margin: 0 20px;
+  font-weight: 600;
+  font-size: 1.2rem;
+  transition: color 0.3s, transform 0.2s;
 }
 
-nav a:hover {
-  text-decoration: underline;
+nav a:hover,
+nav a.active {
+  color: #000;
+  transform: scale(1.05);
 }
 
 /* ================================
    LAYOUT PRINCIPAL
 ================================= */
 .content-wrapper {
-  flex: 1; /* para que empuje el footer abajo */
+  flex: 1;
   display: flex;
-  margin: 20px;
-  gap: 20px;
+  flex-wrap: wrap;
+  padding: 30px;
+  gap: 30px;
 }
 
 main {
-  flex: 3; /* área principal más grande */
+  flex: 2;
+  min-width: 300px;
   background: white;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
 }
 
+main h2 {
+  color: #006d77;
+  margin-bottom: 20px;
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+
+/* Aside */
 aside {
-  flex: 1; /* barra lateral derecha */
-  background: #e6f7f4;
-  padding: 20px;
-  border-radius: 8px;
-  border-left: 5px solid #008c7a;
-  min-width: 200px;
+  flex: 1;
+  min-width: 250px;
+  background: #edf6f9;
+  padding: 25px;
+  border-radius: 10px;
+  border-left: 6px solid #83c5be;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
 }
 
 aside h3 {
-  margin-top: 0;
-  color: #004d80;
+  color: #006d77;
+  margin-bottom: 15px;
+  font-size: 1.4rem;
+}
+
+aside a {
+  color: #006d77;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+aside a:hover {
+  text-decoration: underline;
 }
 
 /* ================================
@@ -89,18 +117,19 @@ aside h3 {
 table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 20px;
+  margin-top: 10px;
 }
 
 table th, table td {
-  border: 1px solid #ddd;
-  padding: 10px;
+  padding: 12px;
   text-align: left;
+  border-bottom: 1px solid #ddd;
 }
 
 table th {
-  background-color: #008c7a;
+  background-color: #118ab2;
   color: white;
+  font-weight: 600;
 }
 
 table tr:nth-child(even) {
@@ -108,7 +137,7 @@ table tr:nth-child(even) {
 }
 
 table tr:hover {
-  background-color: #d0f0e0;
+  background-color: #caf0f8;
 }
 
 /* ================================
@@ -116,58 +145,104 @@ table tr:hover {
 ================================= */
 form {
   background: white;
-  padding: 20px;
-  border-radius: 8px;
-  max-width: 600px;
+  padding: 25px;
+  border-radius: 10px;
+  max-width: 650px;
   margin: auto;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
 }
 
 form label {
   display: block;
-  margin-top: 10px;
-  font-weight: bold;
-  color: #004d80;
+  margin-top: 15px;
+  font-weight: 600;
+  color: #006d77;
 }
 
-form input, form select, form textarea, form button {
+form input, form select, form textarea {
   width: 100%;
-  padding: 10px;
-  margin-top: 5px;
-  border-radius: 5px;
+  padding: 14px;
+  margin-top: 8px;
+  border-radius: 8px;
   border: 1px solid #ccc;
+  font-size: 1.1rem;
+}
+
+form textarea {
+  resize: vertical;
+  min-height: 120px;
 }
 
 form button {
-  background: #008c7a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: #118ab2;
   color: white;
   font-weight: bold;
   border: none;
+  padding: 14px;
+  margin-top: 20px;
+  border-radius: 10px;
   cursor: pointer;
-  margin-top: 15px;
+  font-size: 1.2rem;
+  transition: background 0.3s, transform 0.2s;
 }
 
 form button:hover {
-  background: #004d80;
+  background: #0a6e8c;
+  transform: scale(1.02);
+}
+
+form button svg {
+  width: 22px;
+  height: 22px;
+  fill: white;
 }
 
 /* ================================
    FOOTER
 ================================= */
 footer {
-  background-color: #004d80; /* Azul oscuro */
+  background-color: #006d77;
   color: white;
   text-align: center;
-  padding: 15px;
-  font-size: 14px;
+  padding: 20px;
+  font-size: 1rem;
 }
 
 footer a {
-  color: #7ee6c5; /* Verde clarito */
+  color: #83c5be;
   text-decoration: none;
   font-weight: bold;
 }
 
 footer a:hover {
   text-decoration: underline;
+}
+
+/* ================================
+   RESPONSIVE
+================================= */
+@media (max-width: 768px) {
+  .content-wrapper {
+    flex-direction: column;
+    padding: 20px;
+  }
+
+  nav {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  nav a {
+    margin: 10px 0;
+  }
+
+  header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
 }

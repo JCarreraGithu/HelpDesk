@@ -3,43 +3,67 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cerrar Caso</title>
-  <link rel="stylesheet" href="style.css">
+  <title>Cerrar Caso | Help Desk</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    /* mismo estilo base de index2 */
+    body { margin: 0; font-family: 'Inter', Arial, sans-serif; background: #eef5f4; color:#2d2d2d;
+      display:flex; flex-direction:column; min-height:100vh; font-size:1.2rem; line-height:1.7; }
+    header { background:#4a7c59; color:#fff; padding:1rem 2rem; display:flex; gap:1rem; align-items:center; box-shadow:0 3px 6px rgba(0,0,0,0.1);}
+    header img{height:48px;} header h1{font-size:2.3rem; margin:0;}
+    nav{background:#d9ebe3; display:flex; justify-content:center; flex-wrap:wrap; padding:12px 0; border-bottom:2px solid #c7ded3;}
+    nav a{color:#2f4f4f; text-decoration:none; margin:0 18px; font-weight:600; font-size:1.3rem; transition:0.3s;}
+    nav a:hover, nav a.active{color:#1c2e2e; transform:scale(1.05);}
+    .content-wrapper{flex:1; display:flex; justify-content:center; align-items:flex-start; padding:2rem;}
+    main{width:100%; max-width:750px; background:#fff; padding:3rem; border-radius:16px; box-shadow:0 6px 16px rgba(0,0,0,0.08);}
+    main h2{text-align:center; color:#4a7c59; font-size:2.2rem; margin-bottom:2rem;}
+    form{display:flex; flex-direction:column; gap:1.8rem;}
+    label{font-weight:600; font-size:1.3rem; color:#2f4f4f;}
+    input,textarea{width:100%; padding:18px; border-radius:12px; border:1px solid #c7ded3; font-size:1.2rem; background:#f9fdfb;}
+    input:focus,textarea:focus{border-color:#4a7c59; outline:none; box-shadow:0 0 8px rgba(74,124,89,0.3);}
+    textarea{resize:vertical; min-height:120px;}
+    button{display:flex; justify-content:center; align-items:center; gap:12px;
+      background:#e74c3c; color:#fff; border:none; padding:18px; border-radius:12px;
+      font-size:1.4rem; font-weight:bold; cursor:pointer; transition:0.3s;}
+    button:hover{background:#c0392b; transform:scale(1.02);}
+    button svg{width:22px; height:22px; fill:white;}
+    footer{background:#4a7c59; color:#fff; text-align:center; padding:1.5rem; margin-top:auto;}
+  </style>
 </head>
 <body>
   <header>
-    <img src="logo.png" alt="Logo">
+    <img src="logo.png" alt="Logo Help Desk">
     <h1>Help Desk</h1>
   </header>
 
   <nav>
-    <a href="index.html">Casos</a>
-    <a href="nuevo.html">Nuevo Reporte</a>
-    <a href="cierre.html">Cerrar Caso</a>
-    <a href="detalle.html">Detalle Caso</a>
+    <a href="index1.html">Casos</a>
+    <a href="index2.html">Nuevo Reporte</a>
+    <a href="index3.html" class="active">Cerrar Caso</a>
+    <a href="index4.html">Detalle Caso</a>
   </nav>
 
   <div class="content-wrapper">
     <main>
-      <h2>Cerrar Caso</h2>
+      <h2>Cierre de Caso</h2>
       <form>
-        <label for="id_caso">ID del caso:</label>
-        <input type="number" id="id_caso" name="id_caso">
-
-        <label for="comentario">Comentario de cierre:</label>
-        <textarea id="comentario" name="comentario"></textarea>
-
-        <button type="submit">Cerrar Caso</button>
+        <div>
+          <label for="id_caso">ID del caso:</label>
+          <input type="number" id="id_caso" placeholder="Ej. 105" required>
+        </div>
+        <div>
+          <label for="comentario">Comentario de cierre:</label>
+          <textarea id="comentario" placeholder="Describe brevemente la solución aplicada..." required></textarea>
+        </div>
+        <button type="submit">
+          <!-- icono candado -->
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M12 17a2 2 0 0 0 2-2V9a2 2 0 1 0-4 0v6a2 2 0 0 0 2 2zm6-6V9a6 6 0 0 0-12 0v2a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2z"/>
+          </svg>
+          Cerrar Caso
+        </button>
       </form>
     </main>
-
-    <aside>
-      <h3>Opciones</h3>
-      <ul>
-        <li><a href="#">Ver historial</a></li>
-        <li><a href="#">Casos cerrados</a></li>
-      </ul>
-    </aside>
   </div>
 
   <footer>

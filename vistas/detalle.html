@@ -1,0 +1,24 @@
+<main id="detalleCaso"></main>
+
+<script>
+  const id = localStorage.getItem("casoSeleccionado");
+  const casos = JSON.parse(localStorage.getItem("casos"));
+  const caso = casos.find(c => c.id == id);
+
+  if (caso) {
+    document.getElementById("detalleCaso").innerHTML = `
+      <h2>Detalle del Caso</h2>
+      <p><strong>ID:</strong> ${caso.id}</p>
+      <p><strong>Título:</strong> ${caso.titulo}</p>
+      <p><strong>Descripción:</strong> ${caso.descripcion}</p>
+      <p><strong>Prioridad:</strong> ${caso.prioridad}</p>
+      <p><strong>Estado:</strong> ${caso.estado}</p>
+      <button onclick="cerrar(${caso.id})">Cerrar Caso</button>
+    `;
+  }
+
+  function cerrar(id) {
+    localStorage.setItem("casoCerrar", id);
+    window.location.href = "cierre.html";
+  }
+</script>

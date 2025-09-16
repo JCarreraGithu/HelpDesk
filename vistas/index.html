@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Casos | Help Desk</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <img src="logo.png" alt="Logo Help Desk">
+    <h1>Help Desk</h1>
+  </header>
+
+  <nav>
+    <a href="index.html" class="active">Casos</a>
+    <a href="nuevo.html">Nuevo Reporte</a>
+    <a href="cierre.html">Cerrar Caso</a>
+    <a href="detalle.html">Detalle Caso</a>
+  </nav>
+
+  <div class="content-wrapper">
+    <main>
+      <h2>Historial de Casos</h2>
+      <table id="tablaCasos">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Título</th>
+            <th>Prioridad</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Casos dinámicos -->
+        </tbody>
+      </table>
+    </main>
+  </div>
+
+  <footer>
+    © 2025 Help Desk | <a href="#">Soporte</a>
+  </footer>
+
+  <script>
+    // Inicializar data quemada si no existe
+    if (!localStorage.getItem("casos")) {
+      const casosIniciales = [
+        {id: 1, titulo: "Error al iniciar sesión", descripcion: "El sistema se bloquea.", prioridad: "Alta", estado: "Abierto"},
+        {id: 2, titulo: "Problema con impresora", descripcion: "No imprime documentos.", prioridad: "Media", estado: "Abierto"},
+        {id: 3, titulo: "Falla en red", descripcion: "Sin conexión a internet.", prioridad: "Alta", estado: "Cerrado"}
+      ];
+      localStorage.setItem("casos", JSON.stringify(casosIniciales));
+    }
+
+    const tabla = document.querySelector("#tablaCasos tbody");
+    const casos = JSON.parse(localStorage.getItem("casos"));
+
+    function renderCasos() {
+      tabla.innerHTML = "";
+      casos.forEach(caso => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${caso.id}</td>
+          <td>${caso.titulo}</td>
+          <td>${caso.prioridad}</td>
+          <td>${caso.estado}</td>
+          <td><button onclick="verDetalle(${caso.id})">Ver detalle</button></td>
+        `;
+        tabla.appendChild(tr);
+      });
+    }
+
+    function verDetalle(id) {
+      localStorage.setItem("casoSeleccionado", id);
+      window.location.href = "detalle.html";
+    }
+
+    renderCasos();
+  </script>
+</body>
+</html>

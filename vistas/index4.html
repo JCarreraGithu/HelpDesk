@@ -3,36 +3,217 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Detalle Caso</title>
-  <link rel="stylesheet" href="style.css">
+  <title>Listado de Casos | Help Desk</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Inter', Arial, sans-serif;
+      background: #eef5f4;
+      color: #2d2d2d;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      font-size: 1.15rem;
+    }
+
+    header {
+      background: #4a7c59;
+      color: white;
+      padding: 1rem 2rem;
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+    }
+    header img { height: 48px; }
+    header h1 { margin: 0; font-size: 2.3rem; }
+
+    nav {
+      background: #d9ebe3;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      padding: 12px 0;
+      border-bottom: 2px solid #c7ded3;
+    }
+    nav a {
+      margin: 0 18px;
+      text-decoration: none;
+      color: #2f4f4f;
+      font-weight: 600;
+      font-size: 1.3rem;
+    }
+    nav a:hover, nav a.active { color: #1c2e2e; transform: scale(1.05); }
+
+    .content-wrapper {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+
+    main {
+      width: 100%;
+      max-width: 1400px;
+    }
+
+    /* LISTADO COMPACTO */
+    .list-header, .list-row {
+      display: grid;
+      grid-template-columns: 70px 220px 380px 140px 120px;
+      align-items: center;
+      padding: 8px 10px;
+      border-bottom: 1px solid #c7ded3;
+      font-size: 1.05rem;
+    }
+
+    .list-header {
+      background: #d9ebe3;
+      font-weight: 700;
+      color: #2f4f4f;
+    }
+
+    .list-row:nth-child(even) {
+      background: #f9fdfb;
+    }
+
+    .list-row button {
+      padding: 5px 10px;
+      background: #3a7bd5;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      font-weight: 600;
+      transition: background 0.3s;
+    }
+    .list-row button:hover { background: #2a5fa0; }
+
+    /* MODAL */
+    .modal {
+      display: none;
+      position: fixed;
+      top:0; left:0; width:100%; height:100%;
+      background: rgba(0,0,0,0.5);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .modal-content {
+      background: #fff;
+      border-radius: 16px;
+      max-width: 650px;
+      width: 90%;
+      padding: 2rem;
+      position: relative;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+      font-size: 1.1rem;
+    }
+
+    .modal-content h2 { color: #4a7c59; margin-top: 0; }
+    .modal-content p { margin: 0.5rem 0; }
+
+    .modal-content button {
+      margin-top: 1rem;
+      padding: 10px 20px;
+      background: #d9534f;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .modal-content button:hover { background: #c12e2a; }
+
+    footer {
+      background: #4a7c59;
+      color: white;
+      text-align: center;
+      padding: 1.5rem;
+      margin-top: auto;
+      font-size: 1rem;
+    }
+    footer a { color: #d9ebe3; text-decoration: none; font-weight: bold; }
+    footer a:hover { text-decoration: underline; }
+
+    @media(max-width: 1024px){
+      .list-header, .list-row { grid-template-columns: 60px 150px 250px 120px 100px; font-size: 1rem; }
+      .list-row button { font-size: 0.9rem; }
+    }
+
+    @media(max-width: 768px){
+      .list-header, .list-row { grid-template-columns: 50px 120px 180px 100px 90px; font-size: 0.9rem; }
+      .list-row button { font-size: 0.85rem; }
+    }
+  </style>
 </head>
 <body>
   <header>
-    <img src="logo.png" alt="Logo">
+    <img src="logo.png" alt="Logo Help Desk">
     <h1>Help Desk</h1>
   </header>
 
   <nav>
-    <a href="index.html">Casos</a>
-    <a href="nuevo.html">Nuevo Reporte</a>
-    <a href="cierre.html">Cerrar Caso</a>
-    <a href="detalle.html">Detalle Caso</a>
+    <a href="index1.html" class="active">Casos</a>
+    <a href="index2.html">Nuevo Reporte</a>
+    <a href="index3.html">Cerrar Caso</a>
+    <a href="index4.html">Detalle Caso</a>
   </nav>
 
   <div class="content-wrapper">
     <main>
-      <h2>Detalle del Caso</h2>
-      <p><strong>ID:</strong> 1</p>
-      <p><strong>Título:</strong> Error en sistema</p>
-      <p><strong>Prioridad:</strong> Alta</p>
-      <p><strong>Descripción:</strong> El sistema se bloquea al iniciar sesión.</p>
-      <p><strong>Estado:</strong> Abierto</p>
-    </main>
+      <div class="list-header">
+        <div>ID</div>
+        <div>Problema</div>
+        <div>Breve Descripción</div>
+        <div>Fecha Creación</div>
+        <div>Acción</div>
+      </div>
 
-    <aside>
-      <h3>Opciones</h3>
-      <p> enlaces a acciones sobre el caso (editar, reasignar, etc).</p>
-    </aside>
+      <script>
+        for(let i=1;i<=20;i++){
+          document.write(`
+            <div class="list-row" data-id="${i}">
+              <div>${100+i}</div>
+              <div>Problema ${i}</div>
+              <div>Breve descripción del problema ${i}</div>
+              <div>2025-09-${i<10?'0'+i:i}</div>
+              <div><button onclick="openModal(${i})">Detalles</button></div>
+            </div>
+          `);
+        }
+
+        function openModal(id){
+          const modal = document.getElementById('modal');
+          modal.style.display = 'flex';
+          document.getElementById('modal-title').innerText = `Detalle del Caso ${100+id}`;
+          document.getElementById('modal-content').innerHTML = `
+            <p><strong>Usuario:</strong> Usuario ${id}</p>
+            <p><strong>Problema:</strong> Problema ${id}</p>
+            <p><strong>Descripción completa:</strong> Este es el detalle completo del problema ${id}. Información importante para soporte.</p>
+            <p><strong>Notas importantes:</strong> Revisar logs, módulos afectados, base de datos y prioridad alta.</p>
+            <button onclick="closeCase(${id})">Cerrar Caso</button>
+          `;
+        }
+
+        function closeModal(){ document.getElementById('modal').style.display = 'none'; }
+        function closeCase(id){
+          const row = document.querySelector(`.list-row[data-id='${id}']`);
+          if(row) row.remove();
+          closeModal();
+        }
+      </script>
+
+      <div class="modal" id="modal" onclick="if(event.target===this)closeModal()">
+        <div class="modal-content">
+          <h2 id="modal-title">Detalle del Caso</h2>
+          <div id="modal-content"></div>
+        </div>
+      </div>
+    </main>
   </div>
 
   <footer>

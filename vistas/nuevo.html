@@ -1,0 +1,36 @@
+<form id="formNuevo">
+  <label for="titulo">Título del caso:</label>
+  <input type="text" id="titulo" required>
+
+  <label for="descripcion">Descripción:</label>
+  <textarea id="descripcion" required></textarea>
+
+  <label for="prioridad">Prioridad:</label>
+  <select id="prioridad" required>
+    <option value="Alta">Alta</option>
+    <option value="Media">Media</option>
+    <option value="Baja">Baja</option>
+  </select>
+
+  <button type="submit">Guardar Reporte</button>
+</form>
+
+<script>
+  const form = document.getElementById("formNuevo");
+
+  form.addEventListener("submit", e => {
+    e.preventDefault();
+    const casos = JSON.parse(localStorage.getItem("casos"));
+    const nuevo = {
+      id: casos.length + 1,
+      titulo: document.getElementById("titulo").value,
+      descripcion: document.getElementById("descripcion").value,
+      prioridad: document.getElementById("prioridad").value,
+      estado: "Abierto"
+    };
+    casos.push(nuevo);
+    localStorage.setItem("casos", JSON.stringify(casos));
+    alert("Caso agregado correctamente");
+    window.location.href = "index.html";
+  });
+</script>
