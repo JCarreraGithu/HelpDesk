@@ -1,173 +1,441 @@
-/* ================================
-   ESTRUCTURA GENERAL
-================================= */
-html, body {
-  height: 100%;
+/* Reset básico */
+* {
   margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
-  font-family: Arial, sans-serif;
-  background-color: #f4f9ff;
-  color: #333;
+  background: #f4f8fa;
 }
 
-/* Encabezado */
+/* Header */
 header {
-  display: flex;
-  align-items: center;
-  background-color: #004d80; /* Azul */
-  padding: 10px 20px;
+  background-color: #004d80;
   color: white;
-  height: 70px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-}
-
-header img {
-  height: 50px;
-  margin-right: 15px;
-}
-
-header h1 {
-  margin: 0;
-  font-size: 22px;
-}
-
-/* Barra de navegación */
-nav {
-  background-color: #008c7a; /* Verde */
+  padding: 10px 20px;
   display: flex;
-  justify-content: center;
-  padding: 10px 0;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Logo */
+header .logo {
+  height: 50px;
+}
+
+/* Nav */
+nav {
+  display: flex;
+  gap: 15px;
 }
 
 nav a {
   color: white;
   text-decoration: none;
-  margin: 0 15px;
   font-weight: bold;
+  transition: color 0.3s;
 }
 
 nav a:hover {
-  text-decoration: underline;
+  color: #7ee6c5;
 }
 
-/* ================================
-   LAYOUT PRINCIPAL
-================================= */
-.content-wrapper {
-  flex: 1; /* para que empuje el footer abajo */
+/* Botón usuario */
+.user-btn img {
+  height: 40px;
+  width: 40px;
+  border-radius: 50%;
+  background: white;
+  padding: 5px;
+  transition: transform 0.2s, background 0.3s;
+}
+
+.user-btn img:hover {
+  transform: scale(1.1);
+  background: #7ee6c5;
+}
+
+/* Layout principal */
+main {
+  flex: 1;
   display: flex;
-  margin: 20px;
+  padding: 20px;
   gap: 20px;
 }
 
-main {
-  flex: 3; /* área principal más grande */
-  background: white;
+/* Contenido principal */
+.content {
+  flex: 3;
+  background: #f9f9f9;
   padding: 20px;
   border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  box-shadow: 0 0 5px rgba(0,0,0,0.1);
 }
 
-aside {
-  flex: 1; /* barra lateral derecha */
-  background: #e6f7f4;
+/* Para el detalle que debe ser más ancho */
+.content.wide {
+  flex: 4;
+}
+
+/* Barra lateral */
+.sidebar {
+  flex: 1;
+  background: #3a3a3a; /* gris oscuro */
   padding: 20px;
   border-radius: 8px;
-  border-left: 5px solid #008c7a;
-  min-width: 200px;
+  color: white;
+  box-shadow: 0 0 5px rgba(0,0,0,0.3);
 }
 
-aside h3 {
-  margin-top: 0;
+/* Título en sidebar */
+.sidebar h2 {
+  margin-bottom: 15px;
+  font-size: 18px;
+  border-bottom: 2px solid #7ee6c5;
+  padding-bottom: 8px;
+}
+
+/* Lista de acciones */
+.sidebar-actions {
+  list-style: none;
+  padding: 0;
+}
+
+.sidebar-actions li {
+  margin-bottom: 12px;
+}
+
+.sidebar-actions a {
+  display: block;
+  background: #4f4f4f;
+  padding: 10px 15px;
+  border-radius: 6px;
+  color: white;
+  font-weight: bold;
+  text-decoration: none;
+  transition: background 0.3s, transform 0.2s;
+}
+
+.sidebar-actions a:hover {
+  background: #7ee6c5;
   color: #004d80;
+  transform: translateX(4px);
 }
 
-/* ================================
-   TABLAS
-================================= */
+/* Tablas */
 table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 20px;
-}
-
-table th, table td {
-  border: 1px solid #ddd;
-  padding: 10px;
-  text-align: left;
-}
-
-table th {
-  background-color: #008c7a;
-  color: white;
-}
-
-table tr:nth-child(even) {
-  background-color: #f2f2f2;
-}
-
-table tr:hover {
-  background-color: #d0f0e0;
-}
-
-/* ================================
-   FORMULARIOS
-================================= */
-form {
-  background: white;
-  padding: 20px;
-  border-radius: 8px;
-  max-width: 600px;
-  margin: auto;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-}
-
-form label {
-  display: block;
-  margin-top: 10px;
-  font-weight: bold;
-  color: #004d80;
-}
-
-form input, form select, form textarea, form button {
-  width: 100%;
-  padding: 10px;
-  margin-top: 5px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-}
-
-form button {
-  background: #008c7a;
-  color: white;
-  font-weight: bold;
-  border: none;
-  cursor: pointer;
   margin-top: 15px;
 }
 
-form button:hover {
-  background: #004d80;
+table, th, td {
+  border: 1px solid #ccc;
+  padding: 10px;
 }
 
-/* ================================
-   FOOTER
-================================= */
+th {
+  background: #004d80;
+  color: white;
+}
+
+/* ===== FORMULARIOS EN TARJETA ===== */
+.form-card {
+  background: #f1f1f1; /* gris claro */
+  padding: 25px;
+  border-radius: 10px;
+  box-shadow: 0px 4px 8px rgba(0,0,0,0.1);
+  max-width: 700px;
+  margin: auto;
+}
+
+.form-card h2 {
+  margin-bottom: 20px;
+  color: #004d80;
+  border-bottom: 2px solid #7ee6c5;
+  padding-bottom: 10px;
+}
+
+/* Labels */
+.form-card label {
+  display: block;
+  font-weight: bold;
+  margin-top: 15px;
+  color: #004d80;
+}
+
+/* Inputs, selects y textarea */
+.form-card input,
+.form-card select,
+.form-card textarea {
+  width: 100%;
+  padding: 10px;
+  margin-top: 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: border 0.3s, box-shadow 0.3s;
+}
+
+.form-card input:focus,
+.form-card select:focus,
+.form-card textarea:focus {
+  border-color: #004d80;
+  box-shadow: 0 0 5px rgba(0,77,128,0.4);
+  outline: none;
+}
+
+/* Botón estilizado */
+.form-card button {
+  margin-top: 20px;
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  font-weight: bold;
+  background: linear-gradient(90deg, #004d80, #00b894);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: transform 0.2s, opacity 0.3s;
+}
+
+.form-card button:hover {
+  transform: scale(1.03);
+  opacity: 0.9;
+}
+
+/* Footer */
 footer {
-  background-color: #004d80; /* Azul oscuro */
+  background-color: #004d80;
   color: white;
   text-align: center;
-  padding: 15px;
-  font-size: 14px;
+  padding: 10px;
+  margin-top: auto;
 }
 
 footer a {
-  color: #7ee6c5; /* Verde clarito */
+  color: #7ee6c5;
   text-decoration: none;
   font-weight: bold;
 }
 
 footer a:hover {
   text-decoration: underline;
+}
+
+
+/* Contenedor de acciones de usuario */
+.user-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+/* Iconos genéricos */
+.icon-btn img {
+  height: 35px;
+  width: 35px;
+  border-radius: 50%;
+  background: white;
+  padding: 5px;
+  transition: transform 0.2s, background 0.3s;
+}
+
+.icon-btn img:hover {
+  transform: scale(1.1);
+  background: #7ee6c5;
+}
+/* Caja de búsqueda */
+.search-box {
+  display: flex;
+  align-items: center;
+  background: white;
+  border-radius: 20px;
+  overflow: hidden;
+  margin-right: 15px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.search-box input {
+  border: none;
+  padding: 8px 12px;
+  outline: none;
+  font-size: 14px;
+  width: 180px;
+}
+
+.search-box button {
+  border: none;
+  background: #004d80;
+  padding: 6px 10px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.search-box button img {
+  height: 18px;
+  width: 18px;
+  filter: invert(1); /* lo pone blanco sobre el fondo azul */
+}
+
+.search-box button:hover {
+  background: #0073e6;
+}
+/* Contenedor de acciones de usuario */
+.user-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+/* Iconos pequeños (notificaciones, config, logout) */
+.icon-btn img {
+  height: 32px;
+  width: 32px;
+  border-radius: 50%;
+  background: white;
+  padding: 6px;
+  transition: transform 0.2s, background 0.3s;
+}
+
+.icon-btn img:hover {
+  transform: scale(1.1);
+  background: #7ee6c5;
+}
+
+
+/* Estilo para input de archivos */
+.form-card input[type="file"] {
+  padding: 6px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background: #fff;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.form-card input[type="file"]:hover {
+  border-color: #004d80;
+}
+
+
+
+
+/* Estados con colores */
+.estado {
+  font-weight: bold;
+  padding: 4px 8px;
+  border-radius: 4px;
+  color: white;
+}
+
+.estado.abierto {
+  background: #e74c3c; /* rojo */
+}
+
+.estado.en-proceso {
+  background: #f39c12; /* naranja */
+}
+
+.estado.cerrado {
+  background: #2ecc71; /* verde */
+}
+
+/* Tabla de lista de casos */
+table thead {
+  background: #004d80;
+  color: white;
+}
+
+table td a {
+  color: #004d80;
+  font-weight: bold;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+table td a:hover {
+  color: #00b894;
+}
+
+
+/* Contenedor para lista de casos (igual a formulario, gris claro) */
+.form-card {
+  background: #f1f1f1;
+  padding: 25px;
+  border-radius: 10px;
+  box-shadow: 0px 4px 8px rgba(0,0,0,0.1);
+  width: 100%;
+  margin: auto;
+}
+
+/* Encabezado con filtros */
+.title-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+
+.filter-btn {
+  background: #004d80;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.filter-btn:hover {
+  background: #0073e6;
+}
+
+.filter-options {
+  display: none;
+  position: absolute;
+  right: 0;
+  margin-top: 5px;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  z-index: 99;
+}
+
+.filter-dropdown {
+  position: relative;
+}
+
+.filter-dropdown:hover .filter-options {
+  display: block;
+}
+
+/* Barras de prioridades */
+.priority-bar {
+  width: 100%;
+  height: 40px;
+  margin: 10px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: bold;
+  border-radius: 8px;
+}
+
+.priority-bar.low { background: #28a745; }
+.priority-bar.medium { background: #ffc107; color: #000; }
+.priority-bar.high { background: #dc3545; }
+
+
+table {
+  width: 100%;
 }

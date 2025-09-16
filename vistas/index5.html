@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mi Cuenta - Help Desk</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <div class="logo-container">
+      <img src="logo.png" alt="Logo Help Desk" class="logo">
+    </div>
+    <nav>
+      <a href="casos.html">Mis Casos</a>
+      <a href="nuevo-caso.html">Reportar un Caso</a>
+      <a href="cerrar-caso.html">Cerrar Casos</a>
+      <a href="usuario.html">Configuración</a>
+    </nav>
+    <a href="usuario.html" class="user-btn">
+      <img src="Log0.png" alt="Usuario">
+    </a>
+  </header>
+
+  <!-- Layout principal -->
+  <main>
+    <!-- Contenido principal -->
+    <section class="content wide">
+      <h2>Mi Cuenta</h2>
+
+      <div class="card">
+        <h3>Información del Usuario</h3>
+        <p><strong>Nombre:</strong> Juan Pérez</p>
+        <p><strong>Correo:</strong> juan.perez@empresa.com</p>
+        <p><strong>Rol:</strong> Empleado</p>
+      </div>
+
+      <div class="card">
+        <h3>Actualizar Datos</h3>
+        <form>
+          <label for="nombre">Nombre:</label>
+          <input type="text" id="nombre" value="Juan Pérez">
+
+          <label for="correo">Correo:</label>
+          <input type="email" id="correo" value="juan.perez@empresa.com">
+
+          <label for="password">Nueva Contraseña:</label>
+          <input type="password" id="password" placeholder="********">
+
+          <button type="submit">Guardar Cambios</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- Barra lateral -->
+    <aside class="sidebar">
+      <h3>Opciones Rápidas</h3>
+      <ul>
+        <li><a href="casos.html">Ver Mis Casos</a></li>
+        <li><a href="nuevo-caso.html">Reportar un Caso</a></li>
+        <li><a href="cerrar-caso.html">Cerrar Casos</a></li>
+        <li><a href="usuario.html">Configuración</a></li>
+      </ul>
+    </aside>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <p>© 2025 Help Desk - Todos los derechos reservados | <a href="#">Política de Privacidad</a></p>
+  </footer>
+</body>
+</html>

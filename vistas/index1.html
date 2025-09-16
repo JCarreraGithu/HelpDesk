@@ -3,42 +3,113 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lista de Casos</title>
+  <title>Lista de Casos - Help Desk</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <!-- Header -->
   <header>
-    <img src="logo.png" alt="Logo">
-    <h1>Help Desk</h1>
+    <img src="logo.png" alt="Help Desk Logo" class="logo">
+
+    <nav>
+      <a href="index.html">Casos</a>
+      <a href="nuevo_reporte.html">Reportar incidencia</a>
+      <a href="cierre_caso.html"></a>
+      <a href="detalle_caso.html">Estadísticas</a>
+    </nav>
+
+    <div class="search-box">
+      <input type="text" placeholder="Buscar caso">
+      <button type="submit">
+        <img src="lupa.png" alt="Buscar">
+      </button>
+    </div>
+
+    <div class="user-actions">
+      <a href="notificaciones.html" class="icon-btn">
+        <img src="notii.png" alt="Notificaciones">
+      </a>
+      <a href="usuario.html" class="user-btn">
+        <img src="Log0.png" alt="Usuario">
+      </a>
+      <a href="configuracion.html" class="icon-btn">
+        <img src="confi.png" alt="Configuración">
+      </a>
+      <a href="logout.html" class="icon-btn">
+        <img src="sesion.png" alt="Cerrar sesión">
+      </a>
+    </div>
   </header>
 
-  <nav>
-    <a href="index.html">Casos</a>
-    <a href="nuevo.html">Nuevo Reporte</a>
-    <a href="cierre.html">Cerrar Caso</a>
-    <a href="detalle.html">Detalle Caso</a>
-  </nav>
+  <!-- Layout principal -->
+  <main>
+    <!-- Contenido principal -->
+    <section class="content">
+      <div class="form-card" style="max-width: 100%;">
+        <div class="title-container">
+          <h2>Lista de Casos</h2>
+          <div class="filter-dropdown">
+            <button class="filter-btn">🔍 Filtros ⬇</button>
+            <div class="filter-options">
+              <label><input type="checkbox"> Abiertos</label>
+              <label><input type="checkbox"> Cerrados</label>
+              <label><input type="checkbox"> Con repuesto</label>
+              <label><input type="checkbox"> Sin repuesto</label>
+            </div>
+          </div>
+        </div>
 
-  <div class="content-wrapper">
-    <main>
-      <h2>Lista de Casos</h2>
-      <table>
-        <tr><th>ID</th><th>Título</th><th>Prioridad</th></tr>
-        <tr><td>1</td><td>Error en sistema</td><td>Alta</td></tr>
-      </table>
-    </main>
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Problema</th>
+              <th>Estado</th>
+              <th>Técnico Asignado</th>
+              <th>Tipo de Problema</th>
+              <th>Repuesto</th>
+              <th>Reportado por</th>
+              <th>Fecha</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>1</td><td>Error en inicio de sesión</td><td><span class="estado abierto">Abierto</span></td><td>Juan Pérez<br><small>juanp@empresa.com</small></td><td>Software</td><td>No</td><td>Ana Gómez<br><small>ana@empresa.com</small></td><td>2025-09-04</td></tr>
+            <tr><td>2</td><td>No funciona el correo</td><td><span class="estado cerrado">Cerrado</span></td><td>María López<br><small>marial@empresa.com</small></td><td>Red</td><td>Sí</td><td>Ana Gómez<br><small>ana@empresa.com</small></td><td>2025-09-01</td></tr>
+            <tr><td>3</td><td>Impresora no imprime</td><td><span class="estado en-proceso">En Proceso</span></td><td>Luis Martínez<br><small>luis@empresa.com</small></td><td>Hardware</td><td>Sí</td><td>Ana Gómez<br><small>ana@empresa.com</small></td><td>2025-09-03</td></tr>
+            <tr><td>4</td><td>Error en ERP</td><td><span class="estado abierto">Abierto</span></td><td>Carmen Díaz<br><small>carmen@empresa.com</small></td><td>Software</td><td>No</td><td>Ana Gómez<br><small>ana@empresa.com</small></td><td>2025-09-02</td></tr>
+            <tr><td>5</td><td>Falla en servidor</td><td><span class="estado cerrado">Cerrado</span></td><td>José Ramírez<br><small>jose@empresa.com</small></td><td>Hardware</td><td>Sí</td><td>Ana Gómez<br><small>ana@empresa.com</small></td><td>2025-09-01</td></tr>
+            <tr><td>6</td><td>Problema con la VPN</td><td><span class="estado en-proceso">En Proceso</span></td><td>Andrea Silva<br><small>andrea@empresa.com</small></td><td>Red</td><td>No</td><td>Ana Gómez<br><small>ana@empresa.com</small></td><td>2025-09-04</td></tr>
+            <tr><td>7</td><td>Correo no sincroniza</td><td><span class="estado abierto">Abierto</span></td><td>Daniela Cruz<br><small>daniela@empresa.com</small></td><td>Software</td><td>No</td><td>Ana Gómez<br><small>ana@empresa.com</small></td><td>2025-09-03</td></tr>
+            <tr><td>8</td><td>Pantalla parpadea</td><td><span class="estado en-proceso">En Proceso</span></td><td>Jorge Castillo<br><small>jorge@empresa.com</small></td><td>Hardware</td><td>No</td><td>Ana Gómez<br><small>ana@empresa.com</small></td><td>2025-09-02</td></tr>
+            <tr><td>9</td><td>Problema con base de datos</td><td><span class="estado abierto">Abierto</span></td><td>Paola Jiménez<br><small>paola@empresa.com</small></td><td>Software</td><td>Sí</td><td>Victor Hernández<br><small>ana@empresa.com</small></td><td>2025-09-01</td></tr>
+            <tr><td>10</td><td>Impresora en rojo</td><td><span class="estado cerrado">Cerrado</span></td><td>Oscar Vargas<br><small>oscar@empresa.com</small></td><td>Hardware</td><td>No</td><td>Gabriela Ruiz<br><small>ana@empresa.com</small></td><td>2025-09-04</td></tr>
+            <tr><td>11</td><td>Errores de login masivo</td><td><span class="estado abierto">Abierto</span></td><td>Rosa Medina<br><small>rosa@empresa.com</small></td><td>Software</td><td>No</td><td>Carlos Paredes<br><small>carlosp@empresa.com</small></td><td>2025-09-04</td></tr>
+            <tr><td>12</td><td>No se conectan equipos</td><td><span class="estado en-proceso">En Proceso</span></td><td>Adrián Soto<br><small>adrian@empresa.com</small></td><td>Red</td><td>Sí</td><td>Paula Fernández<br><small>paula@empresa.com</small></td><td>2025-09-03</td></tr>
+            <tr><td>13</td><td>Problema en ERP módulo ventas</td><td><span class="estado cerrado">Cerrado</span></td><td>Marcos Ruiz<br><small>marcos@empresa.com</small></td><td>Software</td><td>No</td><td>Leticia Torres<br><small>leticia@empresa.com</small></td><td>2025-09-02</td></tr>
+            <tr><td>14</td><td>Reinicio constante de equipo</td><td><span class="estado abierto">Abierto</span></td><td>Karina Flores<br><small>karina@empresa.com</small></td><td>Hardware</td><td>Sí</td><td>Juan Díaz<br><small>juan@empresa.com</small></td><td>2025-09-01</td></tr>
+            <tr><td>15</td><td>Problema con VPN remota</td><td><span class="estado en-proceso">En Proceso</span></td><td>Diego Torres<br><small>diego.t@empresa.com</small></td><td>Red</td><td>No</td><td>Claudia Rivas<br><small>claudia@empresa.com</small></td><td>2025-09-04</td></tr>
+            <tr><td>16</td><td>Correo con retraso</td><td><span class="estado abierto">Abierto</span></td><td>Alejandra Molina<br><small>alejandra@empresa.com</small></td><td>Software</td><td>No</td><td>Ricardo Peña<br><small>ricardo@empresa.com</small></td><td>2025-09-03</td></tr>
+            <tr><td>17</td><td>Falla en escáner</td><td><span class="estado cerrado">Cerrado</span></td><td>Fernando Rojas<br><small>fernando@empresa.com</small></td><td>Hardware</td><td>Sí</td><td>Patricia López<br><small>patricia@empresa.com</small></td><td>2025-09-02</td></tr>
+            <tr><td>18</td><td>Error de permisos</td><td><span class="estado abierto">Abierto</span></td><td>Daniel Torres<br><small>daniel@empresa.com</small></td><td>Software</td><td>No</td><td>Monica Castillo<br><small>monica@empresa.com</small></td><td>2025-09-01</td></tr>
+            <tr><td>19</td><td>Red lenta</td><td><span class="estado en-proceso">En Proceso</span></td><td>Ricardo Soto<br><small>ricardo.s@empresa.com</small></td><td>Red</td><td>No</td><td>Adriana Flores<br><small>adriana@empresa.com</small></td><td>2025-09-04</td></tr>
+            <tr><td>20</td><td>Error al guardar documento</td><td><span class="estado abierto">Abierto</span></td><td>Luis Peña<br><small>luis.p@empresa.com</small></td><td>Software</td><td>Sí</td><td>Carla Ruiz<br><small>carla@empresa.com</small></td><td>2025-09-03</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
 
-    <aside>
-      <h3>Opciones</h3>
-      <ul>
-        <li><a href="#">Filtrar casos</a></li>
-        <li><a href="#">Exportar</a></li>
-      </ul>
+    <!-- Barra lateral -->
+    <aside class="sidebar">
+      <h2>Casos por Prioridad</h2>
+      <div class="priority-bar low">Baja:        5</div>
+      <div class="priority-bar medium">Media:      3</div>
+      <div class="priority-bar high">Alta:     2</div>
     </aside>
-  </div>
+  </main>
 
+  <!-- Footer -->
   <footer>
-    © 2025 Help Desk | <a href="#">Soporte</a>
+    <p>&copy; 2025 Help Desk - Todos los derechos reservados.</p>
   </footer>
 </body>
 </html>

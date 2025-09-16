@@ -3,51 +3,102 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Nuevo Reporte</title>
+  <title>Reportar falla - Help Desk</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <!-- Header -->
   <header>
-    <img src="logo.png" alt="Logo">
-    <h1>Help Desk</h1>
-  </header>
+  <img src="logo.png" alt="Help Desk Logo" class="logo">
 
   <nav>
     <a href="index.html">Casos</a>
-    <a href="nuevo.html">Nuevo Reporte</a>
-    <a href="cierre.html">Cerrar Caso</a>
-    <a href="detalle.html">Detalle Caso</a>
+    <a href="nuevo_reporte.html">Reportar incidencia</a>
+    <a href="cierre_caso.html"></a>
+    <a href="detalle_caso.html">Estadísticas</a>
   </nav>
 
-  <div class="content-wrapper">
-    <main>
-      <h2>Registrar Nuevo Reporte</h2>
-      <form>
-        <label for="titulo">Título del caso:</label>
-        <input type="text" id="titulo" name="titulo">
-
-        <label for="descripcion">Descripción:</label>
-        <textarea id="descripcion" name="descripcion"></textarea>
-
-        <label for="prioridad">Prioridad:</label>
-        <select id="prioridad" name="prioridad">
-          <option>Alta</option>
-          <option>Media</option>
-          <option>Baja</option>
-        </select>
-
-        <button type="submit">Guardar</button>
-      </form>
-    </main>
-
-    <aside>
-      <h3>Opciones</h3>
-      <p> accesos rápidos relacionados con la creación de casos.</p>
-    </aside>
+  <div class="search-box">
+    <input type="text" placeholder="Buscar caso">
+    <button type="submit">
+      <img src="lupa.png" alt="Buscar">
+    </button>
   </div>
 
+  <div class="user-actions">
+    <a href="notificaciones.html" class="icon-btn">
+    <img src="notii.png" alt="Notificaciones">
+  </a>
+    <a href="usuario.html" class="user-btn">
+      <img src="Log0.png" alt="Usuario">
+    </a>
+    <a href="configuracion.html" class="icon-btn">
+      <img src="confi.png" alt="Configuración">
+    </a>
+    <a href="logout.html" class="icon-btn">
+      <img src="sesion.png" alt="Cerrar sesión">
+    </a>
+  </div>
+</header>
+
+
+  <!-- Layout principal -->
+  <main>
+    <!-- Contenido principal -->
+    <section class="content">
+      <div class="form-card">
+        <h2>Reportar una falla o problema</h2>
+        <form>
+          <label for="titulo">Título del Caso:</label>
+          <input type="text" id="titulo" placeholder="Ej: Problema con impresora">
+
+          <label for="afectacion">Afectación:</label>
+          <input type="text" id="afectacion" placeholder="Ej: No se logra imprimir la guía de entrega.">
+
+          <label for="Fecha">Fecha y hora:</label>
+          <input type="datetime-local" id="Fecha">
+
+          <label for="Area">Área:</label>
+          <select id="Area">
+            <option value="">Seleccione...</option>
+            <option value="1">Ventas</option>
+            <option value="2">Administración</option>
+            <option value="3">Contabilidad</option>
+            <option value="4">Mantenimiento</option>
+          </select>
+
+          <label for="prioridad">Prioridad:</label>
+          <select id="prioridad">
+            <option value="">Seleccione...</option>
+            <option value="1">Alta</option>
+            <option value="2">Media</option>
+            <option value="3">Baja</option>
+          </select>
+
+          <label for="descripcion">Descripción:</label>
+          <textarea id="descripcion" rows="4" placeholder="Describe el problema..."></textarea>
+          <label for="adjunto">Adjuntar archivo :</label>
+          <input type="file" id="adjunto" name="adjunto[]" accept="image/*,video/*" multiple>
+          <button type="submit">Reportar</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- Barra lateral -->
+   <aside class="sidebar">
+  <h2></h2>
+  <ul class="sidebar-actions">
+    <li><a href="flujo_caso.html">📊 Ver flujo del caso</a></li>
+    <li><a href="comentarios.html">💬 Agregar comentario</a></li>
+    <li><a href="tel:+50212345678">📞 Llamar a servicio técnico</a></li>
+    <li><a href="mailto:helpdesk@empresa.com">📧 Contactar helpdesk@empresa.com</a></li>
+  </ul>
+</aside>
+  </main>
+
+  <!-- Footer -->
   <footer>
-    © 2025 Help Desk | <a href="#">Soporte</a>
+    <p>&copy; 2025 Help Desk - Todos los derechos reservados.</p>
   </footer>
 </body>
 </html>

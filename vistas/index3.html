@@ -3,47 +3,43 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cerrar Caso</title>
+  <title>Cerrar Caso - Help Desk</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <header>
-    <img src="logo.png" alt="Logo">
-    <h1>Help Desk</h1>
+    <img src="logo.png" alt="Help Desk Logo" class="logo">
+
+    <nav>
+      <a href="index.html">Casos</a>
+      <a href="nuevo_reporte.html">Nuevo Reporte</a>
+      <a href="cierre_caso.html">Cerrar Caso</a>
+      <a href="detalle_caso.html">Detalle Caso</a>
+    </nav>
+
+    <a href="usuario.html" class="user-btn">
+      <img src="Log0.png" alt="Usuario">
+    </a>
   </header>
 
-  <nav>
-    <a href="index.html">Casos</a>
-    <a href="nuevo.html">Nuevo Reporte</a>
-    <a href="cierre.html">Cerrar Caso</a>
-    <a href="detalle.html">Detalle Caso</a>
-  </nav>
-
-  <div class="content-wrapper">
-    <main>
-      <h2>Cerrar Caso</h2>
+  <main>
+    <section class="content">
+      <h1>Cerrar Caso</h1>
       <form>
-        <label for="id_caso">ID del caso:</label>
-        <input type="number" id="id_caso" name="id_caso">
-
-        <label for="comentario">Comentario de cierre:</label>
-        <textarea id="comentario" name="comentario"></textarea>
-
-        <button type="submit">Cerrar Caso</button>
+        <label for="id_caso">ID del Caso:</label>
+        <input type="text" id="id_caso">
+        <br>
+        <button type="submit">Cerrar</button>
       </form>
-    </main>
-
-    <aside>
-      <h3>Opciones</h3>
-      <ul>
-        <li><a href="#">Ver historial</a></li>
-        <li><a href="#">Casos cerrados</a></li>
-      </ul>
+    </section>
+    <aside class="sidebar">
+      <h2>Opciones</h2>
+      <p>Aquí podrás agregar accesos rápidos.</p>
     </aside>
-  </div>
+  </main>
 
   <footer>
-    © 2025 Help Desk | <a href="#">Soporte</a>
+    <p>&copy; 2025 Help Desk - Todos los derechos reservados.</p>
   </footer>
 </body>
 </html>
