@@ -22,6 +22,7 @@ header {
   align-items: center;
   gap: 1rem;
   box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+  position: relative; 
 }
 
 .logo {
@@ -199,4 +200,163 @@ footer a:hover {
 
 .logout-icon:hover {
   transform: scale(1.1);
+}
+
+.navbar-center {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.search-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.search-icon {
+  height: 40px;
+  width: 40px;
+  transition: transform 0.2s;
+}
+
+.search-icon:hover {
+  transform: scale(1.1);
+}
+
+.search-input {
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: none;
+  font-size: 1rem;
+  width: 160px;
+  outline: none;
+}
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.noti-button,
+.logout-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.noti-icon {
+  height: 32px;
+  width: 32px;
+  transition: transform 0.2s;
+}
+
+.noti-icon:hover {
+  transform: scale(1.1);
+}
+
+.logout-icon {
+  height: 32px;
+  width: 32px;
+  transition: transform 0.2s;
+}
+
+.logout-icon:hover {
+  transform: scale(1.1);
+}
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.user-button,
+.noti-button,
+.logout-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.user-icon {
+  height: 32px;
+  width: 32px;
+  transition: transform 0.2s;
+}
+
+.user-icon:hover {
+  transform: scale(1.1);
+}
+
+.noti-icon,
+.logout-icon {
+  height: 32px;
+  width: 32px;
+  transition: transform 0.2s;
+}
+
+.noti-icon:hover,
+.logout-icon:hover {
+  transform: scale(1.1);
+}
+
+.config-button,
+.user-button,
+.noti-button,
+.logout-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.config-icon,
+.user-icon,
+.noti-icon,
+.logout-icon {
+  height: 32px;
+  width: 32px;
+  transition: transform 0.2s;
+}
+
+.config-icon:hover,
+.user-icon:hover,
+.noti-icon:hover,
+.logout-icon:hover {
+  transform: scale(1.1);
+}
+
+.config-panel {
+  position: absolute;
+  top: 100%;
+  right: 2rem;
+  background-color: #ffffff;
+  border: 1px solid #c7ded3;
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  z-index: 100;
+  width: 220px;
+}
+
+.config-panel h4 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  font-size: 1.2rem;
+  color: #4a7c59;
+}
+
+.config-panel label {
+  display: block;
+  margin-bottom: 0.8rem;
+  font-size: 1rem;
+  color: #2f4f4f;
 }
