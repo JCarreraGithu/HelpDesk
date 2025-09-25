@@ -3,6 +3,8 @@ import Navbar from "../components/NavBar";
 import CrearCaso from "./CrearCaso";
 import VerCasos from "./VerCasos";
 import "./Dashboard.css";
+import DetalleCaso from "./DetalleCaso";
+
 
 export default function Dashboard() {
   return (
@@ -29,6 +31,7 @@ export default function Dashboard() {
           <Routes>
             <Route path="ver-casos" element={<VerCasos />} />
             <Route path="crear-caso" element={<CrearCaso />} />
+            <Route path="detalle-caso" element={<DetalleCaso />} />
           </Routes>
         </main>
       </div>

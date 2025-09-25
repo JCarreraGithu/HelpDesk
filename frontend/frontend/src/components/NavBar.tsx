@@ -10,19 +10,56 @@ import { useState } from "react";
 export default function Navbar() {
   const navigate = useNavigate();
   const [searchId, setSearchId] = useState("");
+  const [searchTitle, setSearchTitle] = useState("");
   const [showInput, setShowInput] = useState(false);
   const [showConfig, setShowConfig] = useState(false);
 
-  const handleSearch = () => {
+  const handleSearch = async () => {
+  try {
+    let url = "";
     if (searchId.trim()) {
-      console.log("Buscar caso con ID:", searchId);
+      url = `http://localhost:4000/api/casos/id/${searchId.trim()}`;
+    } else if (searchTitle.trim()) {
+      url = `http://localhost:4000/api/casos/titulo/${encodeURIComponent(
+        searchTitle.trim()
+      )}`;
+    } else return;
+
+    const res = await fetch(url);
+    if (!res.ok) {
+      alert("Caso no encontrado");
+      return;
     }
-  };
+
+    const data = await res.json();
+
+    // Si es búsqueda por título, puede venir un array
+    let casoData;
+    if (Array.isArray(data)) {
+      if (data.length === 0) {
+        alert("Caso no encontrado");
+        return;
+      }
+      casoData = data[0]; // Tomamos el primer resultado
+    } else {
+      casoData = data;
+    }
+
+    // Limpiar inputs
+    setSearchId("");
+    setSearchTitle("");
+
+    // Guardar en localStorage y navegar
+    localStorage.setItem("casoDetalle", JSON.stringify(casoData));
+    navigate("/dashboard/detalle-caso", { state: { caso: casoData } });
+  } catch (err) {
+    console.error(err);
+    alert("Error al buscar el caso");
+  }
+};
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      handleSearch();
-    }
+    if (e.key === "Enter") handleSearch();
   };
 
   return (
@@ -36,28 +73,50 @@ export default function Navbar() {
 
         {/* Centro */}
         <div className="navbar-center">
-          <button onClick={() => setShowInput(!showInput)} className="search-button">
+          <button
+            onClick={() => setShowInput(!showInput)}
+            className="search-button"
+          >
             <img src={lupaIcon} alt="Buscar" className="search-icon" />
           </button>
           {showInput && (
-            <input
-              type="text"
-              placeholder="ID del caso"
-              value={searchId}
-              onChange={(e) => setSearchId(e.target.value)}
-              onKeyDown={handleKeyDown}
-              className="search-input"
-              autoFocus
-            />
+            <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+              <input
+                type="text"
+                placeholder="ID del caso"
+                value={searchId}
+                onChange={(e) => setSearchId(e.target.value)}
+                onKeyDown={handleKeyDown}
+                className="search-input"
+                autoFocus
+              />
+              <input
+                type="text"
+                placeholder="Título del caso"
+                value={searchTitle}
+                onChange={(e) => setSearchTitle(e.target.value)}
+                onKeyDown={handleKeyDown}
+                className="search-input"
+              />
+              <button onClick={handleSearch} style={{ cursor: "pointer" }}>
+                Buscar
+              </button>
+            </div>
           )}
         </div>
 
         {/* Derecha */}
         <div className="navbar-right">
-          <button onClick={() => setShowConfig(!showConfig)} className="config-button">
+          <button
+            onClick={() => setShowConfig(!showConfig)}
+            className="config-button"
+          >
             <img src={confiIcon} alt="Configuración" className="config-icon" />
           </button>
-          <button onClick={() => navigate("/dashboard/usuario")} className="user-button">
+          <button
+            onClick={() => navigate("/dashboard/usuario")}
+            className="user-button"
+          >
             <img src={userIcon} alt="Usuario" className="user-icon" />
           </button>
           <button className="noti-button">
@@ -86,7 +145,9 @@ export default function Navbar() {
       </header>
 
       <nav>
-        <Link to="/dashboard/ver-casos" className="active">Casos</Link>
+        <Link to="/dashboard/ver-casos" className="active">
+          Casos
+        </Link>
         <Link to="/dashboard/crear-caso">Nuevo Reporte</Link>
       </nav>
     </>
