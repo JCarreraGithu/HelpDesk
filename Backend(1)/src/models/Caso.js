@@ -37,10 +37,10 @@ export const Caso = sequelize.define('Caso', {
     defaultValue: DataTypes.NOW,
     field: "FECHA_CREACION"
   },
+  id_estado_actual: { type: DataTypes.NUMBER, field: "ID_ESTADO_ACTUAL" },
+  fecha_cierre: { type: DataTypes.DATE, field: "FECHA_CIERRE" }, // <--- agregado
   id_sla: { type: DataTypes.NUMBER, field: "ID_SLA" }
 }, {
   tableName: 'CASOS',
   timestamps: false
 });
-
-

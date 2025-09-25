@@ -145,3 +145,32 @@ export const updateCaso = async (req, res) => {
     res.status(500).json({ msg: error.message });
   }
 };
+
+
+export const cerrarCaso = async (req, res) => {
+  try {
+    const { id } = req.params; // id del caso a cerrar
+    const caso = await Caso.findByPk(id);
+
+    if (!caso) return res.status(404).json({ msg: "Caso no encontrado" });
+
+    // Actualizar estado actual y fecha de cierre
+    await caso.update({
+      id_estado_actual: 3, // Cerrado
+      fecha_cierre: new Date()
+    });
+
+    // Crear historial
+    await HistorialCaso.create({
+      id_caso: caso.id_caso,
+      comentario: "Caso cerrado",
+      id_estado: 3,
+      id_empleado: req.body.id_empleado // quien lo cierra
+    });
+
+    res.json({ msg: "Caso cerrado exitosamente" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ msg: error.message });
+  }
+};
