@@ -1,0 +1,89 @@
+usuarios:
+
+	CREAR
+	POS http://localhost:4000/api/usuarios
+	
+	
+	{
+  "id_empleado": 1,
+  "username": "nuevoUsuario",
+  "password": "123456",
+  "activo": "S"
+}
+
+
+	ACTUALIZAR http://localhost:4000/api/usuarios/7
+
+{
+  "username": "usuarioEditado",
+  "password": "nuevoPassword",
+  "activo": "N"
+}
+		
+	borrar usuario http://localhost:4000/api/usuarios/7
+
+	ver usuario http://localhost:4000/api/usuarios/7
+
+Login
+
+	post http://localhost:4000/api/auth/login
+
+casos
+
+	ver casos get http://localhost:4000/api/casos
+
+	buscar por id : get http://localhost:4000/api/casos/id/4
+
+	buscar por nombre get http://localhost:4000/api/casos/titulo/Impresora%20bloqueada
+
+	crear caso post http://localhost:4000/api/casos
+	
+	{
+  "id_empleado_solicita": 2,
+  "id_tipo_incidencia": 1,
+  "titulo": "Impresora bloqueada",
+  "descripcion": "La impresora del área de finanzas no imprime",
+  "id_prioridad": 1,
+  "id_sla": 1
+}
+
+	cerrar caso put http://localhost:4000/api/casos/cerrar/3
+
+	{
+  "id_empleado": 2
+}  
+
+ //se debe mandar un usuario que es el que esta logeado en la pagina  y es quien loe sta cerrando para dejar eso en el hjistorial 
+
+
+
+empleados //no lo usaremos por ahora 
+
+
+	ver empleados http://localhost:4000/api/empleados/3
+
+	crear caso post http://localhost:4000/api/empleados
+
+	{
+  "id_departamento": 1,
+  "nombre": "Marlon",
+  "apellido": "Yodani",
+  "correo": "myodani@empresa.com",
+  "telefono": "12345678",
+  "rol": "AGENTE",
+  "activo": "S"
+}
+
+
+	dar de baja un empleado patch http://localhost:4000/api/empleados/activo/3
+
+	{ "activo": "N" }  // para dar de baja
+
+	buscar por nombre get http://localhost:4000/api/empleados/buscar/nombre?nombre=Marlon
+
+
+
+
+	
+	
+	
