@@ -15,48 +15,44 @@ export default function Navbar() {
   const [showConfig, setShowConfig] = useState(false);
 
   const handleSearch = async () => {
-  try {
-    let url = "";
-    if (searchId.trim()) {
-      url = `http://localhost:4000/api/casos/id/${searchId.trim()}`;
-    } else if (searchTitle.trim()) {
-      url = `http://localhost:4000/api/casos/titulo/${encodeURIComponent(
-        searchTitle.trim()
-      )}`;
-    } else return;
+    try {
+      let url = "";
+      if (searchId.trim()) {
+        url = `http://localhost:4000/api/casos/id/${searchId.trim()}`;
+      } else if (searchTitle.trim()) {
+        url = `http://localhost:4000/api/casos/titulo/${encodeURIComponent(
+          searchTitle.trim()
+        )}`;
+      } else return;
 
-    const res = await fetch(url);
-    if (!res.ok) {
-      alert("Caso no encontrado");
-      return;
-    }
-
-    const data = await res.json();
-
-    // Si es búsqueda por título, puede venir un array
-    let casoData;
-    if (Array.isArray(data)) {
-      if (data.length === 0) {
+      const res = await fetch(url);
+      if (!res.ok) {
         alert("Caso no encontrado");
         return;
       }
-      casoData = data[0]; // Tomamos el primer resultado
-    } else {
-      casoData = data;
+
+      const data = await res.json();
+
+      let casoData;
+      if (Array.isArray(data)) {
+        if (data.length === 0) {
+          alert("Caso no encontrado");
+          return;
+        }
+        casoData = data[0];
+      } else {
+        casoData = data;
+      }
+
+      setSearchId("");
+      setSearchTitle("");
+      localStorage.setItem("casoDetalle", JSON.stringify(casoData));
+      navigate("/dashboard/detalle-caso", { state: { caso: casoData } });
+    } catch (err) {
+      console.error(err);
+      alert("Error al buscar el caso");
     }
-
-    // Limpiar inputs
-    setSearchId("");
-    setSearchTitle("");
-
-    // Guardar en localStorage y navegar
-    localStorage.setItem("casoDetalle", JSON.stringify(casoData));
-    navigate("/dashboard/detalle-caso", { state: { caso: casoData } });
-  } catch (err) {
-    console.error(err);
-    alert("Error al buscar el caso");
-  }
-};
+  };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") handleSearch();
@@ -113,15 +109,18 @@ export default function Navbar() {
           >
             <img src={confiIcon} alt="Configuración" className="config-icon" />
           </button>
+
           <button
-            onClick={() => navigate("/dashboard/usuario")}
-            className="user-button"
-          >
-            <img src={userIcon} alt="Usuario" className="user-icon" />
-          </button>
+  onClick={() => navigate("/dashboard/perfil")}
+  className="user-button"
+>
+  <img src={userIcon} alt="Perfil" className="user-icon" />
+</button>
+
           <button className="noti-button">
             <img src={notiIcon} alt="Notificaciones" className="noti-icon" />
           </button>
+
           <button onClick={() => navigate("/")} className="logout-button">
             <img src={sesionIcon} alt="Cerrar sesión" className="logout-icon" />
           </button>
@@ -149,6 +148,8 @@ export default function Navbar() {
           Casos
         </Link>
         <Link to="/dashboard/crear-caso">Nuevo Reporte</Link>
+        {/* Link al dashboard de usuarios */}
+        <Link to="/dashboard/usuarios">Usuarios</Link>
       </nav>
     </>
   );

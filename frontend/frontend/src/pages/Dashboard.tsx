@@ -4,6 +4,9 @@ import CrearCaso from "./CrearCaso";
 import VerCasos from "./VerCasos";
 import "./Dashboard.css";
 import DetalleCaso from "./DetalleCaso";
+import DashboardUsuarios from "./DashboardUsuarios"; 
+import PerfilUsuario from "./PerfilUsuario";
+
 
 
 export default function Dashboard() {
@@ -32,6 +35,8 @@ export default function Dashboard() {
             <Route path="ver-casos" element={<VerCasos />} />
             <Route path="crear-caso" element={<CrearCaso />} />
             <Route path="detalle-caso" element={<DetalleCaso />} />
+            <Route path="usuarios" element={<DashboardUsuarios />} /> 
+            <Route path="perfil" element={<PerfilUsuario />} />
           </Routes>
         </main>
       </div>

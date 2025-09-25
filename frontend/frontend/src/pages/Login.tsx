@@ -5,22 +5,19 @@ import userIcon from "../assets/user.png";
 
 export default function Login() {
   const navigate = useNavigate();
-  const [correo, setCorreo] = useState("");
+  const [username, setUsername] = useState(""); // renombré correo a username
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(""); // limpiar errores previos
+    setError("");
 
     try {
       const response = await fetch("http://localhost:4000/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          username: correo, // en tu BD el campo se llama username
-          password: password,
-        }),
+        body: JSON.stringify({ username, password }),
       });
 
       if (!response.ok) {
@@ -32,8 +29,8 @@ export default function Login() {
       const data = await response.json();
       console.log("Usuario autenticado:", data);
 
-      // Guardar datos en localStorage (ej: para usarlos después)
-      localStorage.setItem("usuario", JSON.stringify(data));
+      // Guardar info del usuario logeado en localStorage
+      localStorage.setItem("usuarioLogeado", JSON.stringify(data));
 
       // Redirigir al dashboard principal
       navigate("/dashboard/ver-casos");
@@ -55,7 +52,7 @@ export default function Login() {
         boxSizing: "border-box",
       }}
     >
-      {/* Mitad izquierda con fondo verde e imagen */}
+      {/* Izquierda con imagen */}
       <div
         style={{
           flex: 1,
@@ -77,7 +74,7 @@ export default function Login() {
         />
       </div>
 
-      {/* Mitad derecha con formulario */}
+      {/* Derecha con formulario */}
       <div
         style={{
           flex: 1,
@@ -96,11 +93,10 @@ export default function Login() {
             padding: "4vw",
             height: "80%",
             borderRadius: "12px",
-            backgroundColor: "#DCDCDC", // gris suave
+            backgroundColor: "#DCDCDC",
             boxShadow: "0 0 20px rgba(0,0,0,0.1)",
           }}
         >
-          {/* Ícono de usuario */}
           <div className="text-center mb-3">
             <img
               src={userIcon}
@@ -114,25 +110,19 @@ export default function Login() {
           {error && <div className="alert alert-danger">{error}</div>}
 
           <form onSubmit={handleLogin}>
-            <div
-              className="mb-3"
-              style={{ maxWidth: "250px", margin: "0 auto" }}
-            >
+            <div className="mb-3" style={{ maxWidth: "250px", margin: "0 auto" }}>
               <label className="form-label">Usuario</label>
               <input
                 type="text"
                 className="form-control"
-                value={correo}
-                onChange={(e) => setCorreo(e.target.value)}
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
                 required
                 placeholder="juan.perez"
               />
             </div>
 
-            <div
-              className="mb-3"
-              style={{ maxWidth: "250px", margin: "0 auto" }}
-            >
+            <div className="mb-3" style={{ maxWidth: "250px", margin: "0 auto" }}>
               <label className="form-label">Contraseña</label>
               <input
                 type="password"
