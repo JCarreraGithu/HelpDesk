@@ -19,12 +19,14 @@ export const login = async (req, res) => {
     // Actualizar ultimo_login opcional
     await usuario.update({ ultimo_login: new Date() });
 
-   res.json({
-  id_empleado: usuario.id_empleado, // viene directo de la tabla USUARIOS
+ res.json({
+  id_empleado: usuario.id_empleado,
   nombre: usuario.Empleado.nombre,
   apellido: usuario.Empleado.apellido,
-  rol: usuario.Empleado.rol
+  rol: usuario.Empleado.rol,
+  username: usuario.username // <-- agregar esto
 });
+
 
   } catch (error) {
     console.error(error);
