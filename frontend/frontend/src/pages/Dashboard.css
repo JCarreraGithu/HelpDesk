@@ -69,16 +69,15 @@ nav a.active,
 .content-wrapper {
   flex: 1;
   display: flex;
-  justify-content: center;
   align-items: flex-start;
   padding: 2rem;
 }
 
 main {
-  width: 100%;
-  max-width: 900px;
+  width: 200%;
+  max-width: 500px;
   background: #ffffff;
-  padding: 3rem;
+  padding: 20rem;
   border-radius: 16px;
   box-shadow: 0 6px 16px rgba(0,0,0,0.08);
 }

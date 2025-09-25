@@ -1,6 +1,6 @@
-// src/pages/DetalleCaso.tsx
 import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import { FaUser, FaIdBadge, FaExclamationCircle, FaClock, FaTasks } from "react-icons/fa";
 
 interface Historial {
   id_historial: number;
@@ -24,6 +24,7 @@ interface CasoDetalle {
 
 export default function DetalleCaso() {
   const location = useLocation();
+  const navigate = useNavigate();
   const casoDesdeState = location.state?.caso;
 
   const [caso, setCaso] = useState<CasoDetalle | null>(
@@ -40,52 +41,120 @@ export default function DetalleCaso() {
   }, [casoDesdeState]);
 
   if (!caso) {
-    return <p>Cargando caso...</p>;
+    return <p style={{ textAlign: "center", marginTop: "2rem" }}>Cargando caso...</p>;
   }
 
-  return (
-    <div style={{ padding: "2rem" }}>
-      <h2>Detalle del Caso #{caso.id_caso}</h2>
-      <div style={{ marginBottom: "1.5rem" }}>
-        <strong>Título:</strong> {caso.titulo} <br />
-        <strong>Descripción:</strong> {caso.descripcion} <br />
-        <strong>Empleado:</strong> {caso.empleado || "N/A"} <br />
-        <strong>Tipo de incidencia:</strong> {caso.tipo_incidencia || "N/A"} <br />
-        <strong>Prioridad:</strong> {caso.prioridad || "N/A"} <br />
-        <strong>Fecha de creación:</strong>{" "}
-        {caso.fecha_creacion
-          ? new Date(caso.fecha_creacion).toLocaleString()
-          : "N/A"}{" "}
-        <br />
-      </div>
+  const campos = [
+    { label: "Título", value: caso.titulo, icon: <FaTasks />, color: "#d1e7dd" },
+    { label: "Descripción", value: caso.descripcion, icon: <FaTasks />, color: "#fff3cd" },
+    { label: "Empleado", value: caso.empleado || "N/A", icon: <FaUser />, color: "#cfe2ff" },
+    { label: "Tipo de incidencia", value: caso.tipo_incidencia || "N/A", icon: <FaExclamationCircle />, color: "#f8d7da" },
+    { label: "Prioridad", value: caso.prioridad || "N/A", icon: <FaClock />, color: "#ffe5b4" },
+    { label: "Fecha creación", value: caso.fecha_creacion ? new Date(caso.fecha_creacion).toLocaleString() : "N/A", icon: <FaClock />, color: "#d1c4e9" },
+  ];
 
-      <h3>Historial</h3>
-      {caso.historial && caso.historial.length > 0 ? (
-        <table style={{ width: "100%", borderCollapse: "collapse" }}>
-          <thead>
-            <tr style={{ backgroundColor: "#f0f0f0" }}>
-              <th>ID</th>
-              <th>Fecha</th>
-              <th>Comentario</th>
-              <th>Estado</th>
-              <th>Empleado</th>
-            </tr>
-          </thead>
-          <tbody>
-            {caso.historial.map((h) => (
-              <tr key={h.id_historial} style={{ borderBottom: "1px solid #ddd" }}>
-                <td>{h.id_historial}</td>
-                <td>{new Date(h.fecha).toLocaleString()}</td>
-                <td>{h.comentario}</td>
-                <td>{h.estado}</td>
-                <td>{h.empleado}</td>
+  return (
+    <div style={{ width: "100%", padding: "1rem", backgroundColor: "#C0C0C0", minHeight: "100vh", boxSizing: "border-box" }}>
+      <div style={{ background: "linear-gradient(160deg, #f9fafc, #e6f0eb)", padding: "2rem", borderRadius: "16px", boxShadow: "0 8px 30px rgba(0,0,0,0.1)", width: "100%", boxSizing: "border-box", fontFamily: "'Inter', Arial, sans-serif" }}>
+        
+        <h2 style={{ marginBottom: "1.5rem", color: "#198754", fontSize: "2rem", borderBottom: "2px solid #198754", paddingBottom: "0.5rem" }}>
+          Detalle del Caso #{caso.id_caso}
+        </h2>
+
+        {/* Tarjetas de campos */}
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1rem", marginBottom: "2rem" }}>
+          {campos.map((campo) => (
+            <div key={campo.label} style={{
+              backgroundColor: campo.color,
+              padding: "1rem",
+              borderRadius: "12px",
+              boxShadow: "0 5px 15px rgba(0,0,0,0.1)",
+              display: "flex",
+              alignItems: "center",
+              gap: "0.8rem",
+              transition: "transform 0.3s, box-shadow 0.3s",
+              cursor: "default"
+            }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.transform = "translateY(-3px)";
+                e.currentTarget.style.boxShadow = "0 10px 25px rgba(0,0,0,0.15)";
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.transform = "translateY(0)";
+                e.currentTarget.style.boxShadow = "0 5px 15px rgba(0,0,0,0.1)";
+              }}
+            >
+              <div style={{ fontSize: "1.8rem", color: "#198754" }}>{campo.icon}</div>
+              <div>
+                <p style={{ margin: 0, fontWeight: 600 }}>{campo.label}:</p>
+                <p style={{ margin: 0, color: "#555" }}>{campo.value}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Historial */}
+        <h3 style={{ color: "#198754", marginBottom: "1rem", borderBottom: "1px solid #198754", paddingBottom: "0.3rem" }}>Historial</h3>
+        {caso.historial && caso.historial.length > 0 ? (
+          <table style={{ width: "100%", borderCollapse: "collapse", boxShadow: "0 5px 15px rgba(0,0,0,0.1)", borderRadius: "12px", overflow: "hidden" }}>
+            <thead style={{ backgroundColor: "#d9ebe3" }}>
+              <tr>
+                <th style={{ padding: "12px 15px", textAlign: "left" }}>ID</th>
+                <th style={{ padding: "12px 15px", textAlign: "left" }}>Fecha</th>
+                <th style={{ padding: "12px 15px", textAlign: "left" }}>Comentario</th>
+                <th style={{ padding: "12px 15px", textAlign: "left" }}>Estado</th>
+                <th style={{ padding: "12px 15px", textAlign: "left" }}>Empleado</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      ) : (
-        <p>No hay historial disponible.</p>
-      )}
+            </thead>
+            <tbody>
+              {caso.historial.map((h) => (
+                <tr key={h.id_historial} style={{ borderBottom: "1px solid #ddd", transition: "background 0.3s" }}
+                  onMouseOver={(e) => (e.currentTarget.style.backgroundColor = "#eef5f4")}
+                  onMouseOut={(e) => (e.currentTarget.style.backgroundColor = "transparent")}
+                >
+                  <td style={{ padding: "10px 15px" }}>{h.id_historial}</td>
+                  <td style={{ padding: "10px 15px" }}>{new Date(h.fecha).toLocaleString()}</td>
+                  <td style={{ padding: "10px 15px" }}>{h.comentario}</td>
+                  <td style={{ padding: "10px 15px" }}>{h.estado}</td>
+                  <td style={{ padding: "10px 15px" }}>{h.empleado}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          <p>No hay historial disponible.</p>
+        )}
+
+        {/* Botón volver */}
+        <div style={{ marginTop: "2rem", textAlign: "center" }}>
+          <button
+            onClick={() => navigate(-1)}
+            style={{
+              backgroundColor: "#198754",
+              color: "#fff",
+              padding: "0.8rem 2rem",
+              borderRadius: "12px",
+              border: "none",
+              cursor: "pointer",
+              fontSize: "1.1rem",
+              boxShadow: "0 5px 15px rgba(0,0,0,0.2)",
+              transition: "all 0.3s ease",
+            }}
+            onMouseOver={(e) => {
+              e.currentTarget.style.backgroundColor = "#157347";
+              e.currentTarget.style.transform = "translateY(-2px)";
+              e.currentTarget.style.boxShadow = "0 8px 20px rgba(0,0,0,0.25)";
+            }}
+            onMouseOut={(e) => {
+              e.currentTarget.style.backgroundColor = "#198754";
+              e.currentTarget.style.transform = "translateY(0)";
+              e.currentTarget.style.boxShadow = "0 5px 15px rgba(0,0,0,0.2)";
+            }}
+          >
+            Volver
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
