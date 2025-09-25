@@ -6,13 +6,13 @@ import historialCasoRoutes from "./src/routes/HistorialCasoRoutes.js";
 import "./src/models/associations.js";
 import cors from "cors";
 import authRoutes from "./src/routes/AuthRoutes.js";
-
+import usuariosRoutes from "./src/routes/UsuariosRoutes.js"; // 🔹 CORREGIDO
 
 const app = express();
 app.use(express.json());
 
 app.use(cors({
-  origin: "http://localhost:5173"  // Aquí pones la URL de tu frontend
+  origin: "http://localhost:5173"  // URL del frontend
 }));
 
 const PORT = process.env.PORT || 4000;
@@ -21,7 +21,7 @@ app.use("/api/empleados", empleadoRoutes);
 app.use("/api/casos", casoRoutes);
 app.use("/historial", historialCasoRoutes);
 app.use("/api/auth", authRoutes);
-
+app.use("/api/usuarios", usuariosRoutes);
 
 app.listen(PORT, async () => {
   console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`);
@@ -31,4 +31,3 @@ app.listen(PORT, async () => {
     console.error("❌ Error al conectar a la DB:", err);
   }
 });
-
