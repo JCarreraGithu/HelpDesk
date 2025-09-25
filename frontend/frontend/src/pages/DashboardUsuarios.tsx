@@ -12,6 +12,13 @@ export default function DashboardUsuarios() {
   const [showForm, setShowForm] = useState(false);
   const [nuevoUsuario, setNuevoUsuario] = useState({ id_empleado: "", username: "", password: "" });
 
+  // Estado para confirmar eliminación
+  const [usuarioAEliminar, setUsuarioAEliminar] = useState<Usuario | null>(null);
+
+  // Estado para modificar usuario
+  const [usuarioEditar, setUsuarioEditar] = useState<Usuario | null>(null);
+  const [datosEditados, setDatosEditados] = useState({ username: "", activo: "" });
+
   const cargarUsuarios = async () => {
     const res = await fetch("http://localhost:4000/api/usuarios");
     const data = await res.json();
@@ -37,9 +44,26 @@ export default function DashboardUsuarios() {
     cargarUsuarios();
   };
 
-  const handleEliminar = async (id: number) => {
-    if (!confirm("¿Seguro que deseas eliminar este usuario?")) return;
-    await fetch(`http://localhost:4000/api/usuarios/${id}`, { method: "DELETE" });
+  const confirmarEliminar = async () => {
+    if (!usuarioAEliminar) return;
+    await fetch(`http://localhost:4000/api/usuarios/${usuarioAEliminar.id_usuario}`, { method: "DELETE" });
+    setUsuarioAEliminar(null); // Cierra el modal
+    cargarUsuarios();
+  };
+
+  const abrirModalEditar = (usuario: Usuario) => {
+    setUsuarioEditar(usuario);
+    setDatosEditados({ username: usuario.username, activo: usuario.activo });
+  };
+
+  const handleEditar = async () => {
+    if (!usuarioEditar) return;
+    await fetch(`http://localhost:4000/api/usuarios/${usuarioEditar.id_usuario}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(datosEditados),
+    });
+    setUsuarioEditar(null);
     cargarUsuarios();
   };
 
@@ -173,11 +197,11 @@ export default function DashboardUsuarios() {
                     {u.activo === "S" ? "Activo" : "Inactivo"}
                   </span>
                 </td>
-                <td style={{ padding: "10px 12px" }}>
+                <td style={{ padding: "10px 12px", display: "flex", gap: "0.5rem" }}>
                   <button
-                    onClick={() => handleEliminar(u.id_usuario)}
+                    onClick={() => abrirModalEditar(u)}
                     style={{
-                      backgroundColor: "#dc3545",
+                      backgroundColor: "#808080",
                       color: "#fff",
                       padding: "0.5rem 1rem",
                       borderRadius: "8px",
@@ -185,8 +209,24 @@ export default function DashboardUsuarios() {
                       cursor: "pointer",
                       transition: "all 0.3s ease",
                     }}
-                    onMouseOver={(e) => { e.currentTarget.style.backgroundColor = "#b02a37"; e.currentTarget.style.transform = "translateY(-2px)"; }}
-                    onMouseOut={(e) => { e.currentTarget.style.backgroundColor = "#dc3545"; e.currentTarget.style.transform = "translateY(0)"; }}
+                    onMouseOver={(e) => { e.currentTarget.style.backgroundColor = "#C0C0C0"; e.currentTarget.style.transform = "translateY(-2px)"; }}
+                    onMouseOut={(e) => { e.currentTarget.style.backgroundColor = "#808080"; e.currentTarget.style.transform = "translateY(0)"; }}
+                  >
+                    Modificar
+                  </button>
+                  <button
+                    onClick={() => setUsuarioAEliminar(u)}
+                    style={{
+                      backgroundColor: "#6c757d",
+                      color: "#fff",
+                      padding: "0.5rem 1rem",
+                      borderRadius: "8px",
+                      border: "none",
+                      cursor: "pointer",
+                      transition: "all 0.3s ease",
+                    }}
+                    onMouseOver={(e) => { e.currentTarget.style.backgroundColor = "#C0C0C0"; e.currentTarget.style.transform = "translateY(-2px)"; }}
+                    onMouseOut={(e) => { e.currentTarget.style.backgroundColor = "#808080"; e.currentTarget.style.transform = "translateY(0)"; }}
                   >
                     Eliminar
                   </button>
@@ -196,6 +236,95 @@ export default function DashboardUsuarios() {
           </tbody>
         </table>
       </div>
+
+      {/* Modal de confirmación */}
+      {usuarioAEliminar && (
+        <div style={overlay}>
+          <div style={modal}>
+            <h3 style={{ marginBottom: "1rem", color: "#6c757d" }}>Confirmar Eliminación</h3>
+            <p>¿Seguro que deseas dar de baja al usuario <b>{usuarioAEliminar.username}</b>?</p>
+            <div style={{ marginTop: "1.5rem", display: "flex", justifyContent: "center", gap: "1rem" }}>
+              <button onClick={() => setUsuarioAEliminar(null)} style={btnGray}>Cancelar</button>
+              <button onClick={confirmarEliminar} style={btnRed}>Confirmar</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de edición */}
+      {usuarioEditar && (
+        <div style={overlay}>
+          <div style={modal}>
+            <h3 style={{ marginBottom: "1rem", color: "#0d6efd" }}>Editar Usuario</h3>
+            <input
+              value={datosEditados.username}
+              onChange={(e) => setDatosEditados({ ...datosEditados, username: e.target.value })}
+              placeholder="Nuevo Username"
+              style={{ padding: "0.5rem 1rem", marginBottom: "1rem", width: "100%", borderRadius: "8px", border: "1px solid #ccc" }}
+            />
+            <select
+              value={datosEditados.activo}
+              onChange={(e) => setDatosEditados({ ...datosEditados, activo: e.target.value })}
+              style={{ padding: "0.5rem 1rem", marginBottom: "1rem", width: "100%", borderRadius: "8px", border: "1px solid #ccc" }}
+            >
+              <option value="S">Activo</option>
+              <option value="N">Inactivo</option>
+            </select>
+            <div style={{ display: "flex", justifyContent: "center", gap: "1rem" }}>
+              <button onClick={() => setUsuarioEditar(null)} style={btnGray}>Cancelar</button>
+              <button onClick={handleEditar} style={btnBlue}>Guardar</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
+
+/* --- estilos reutilizables --- */
+const overlay: React.CSSProperties = {
+  position: "fixed",
+  top: 0, left: 0, right: 0, bottom: 0,
+  backgroundColor: "rgba(0,0,0,0.5)",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  zIndex: 1000,
+};
+
+const modal: React.CSSProperties = {
+  background: "#fff",
+  padding: "2rem",
+  borderRadius: "12px",
+  boxShadow: "0 5px 20px rgba(0,0,0,0.2)",
+  maxWidth: "400px",
+  width: "100%",
+  textAlign: "center",
+};
+
+const btnGray: React.CSSProperties = {
+  backgroundColor: "#6c757d",
+  color: "#fff",
+  padding: "0.6rem 1.2rem",
+  borderRadius: "8px",
+  border: "none",
+  cursor: "pointer",
+};
+
+const btnRed: React.CSSProperties = {
+  backgroundColor: "#dc3545",
+  color: "#fff",
+  padding: "0.6rem 1.2rem",
+  borderRadius: "8px",
+  border: "none",
+  cursor: "pointer",
+};
+
+const btnBlue: React.CSSProperties = {
+  backgroundColor: "#0d6efd",
+  color: "#fff",
+  padding: "0.6rem 1.2rem",
+  borderRadius: "8px",
+  border: "none",
+  cursor: "pointer",
+};
