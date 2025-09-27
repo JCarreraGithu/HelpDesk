@@ -1,4 +1,4 @@
-import { SaveIcon } from '@heroicons/react/24/solid';
+import { ArrowDownTrayIcon } from '@heroicons/react/24/solid';
 
 export default function CrearCaso() {
   return (
@@ -72,7 +72,7 @@ export default function CrearCaso() {
           type="submit"
           className="w-full bg-blue-600 text-white py-3 rounded-2xl font-semibold hover:bg-blue-700 transition duration-200 text-lg flex items-center justify-center gap-2"
         >
-          <SaveIcon className="w-5 h-5" />
+          <ArrowDownTrayIcon className="w-5 h-5" />
           Crear
         </button>
       </form>
