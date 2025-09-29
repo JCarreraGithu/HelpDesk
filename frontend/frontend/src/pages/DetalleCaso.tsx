@@ -18,7 +18,7 @@ interface CasoDetalle {
   empleado?: string;
   tipo_incidencia?: string;
   prioridad?: string;
-  sla?: any;
+  estado_actual?: string;
   historial?: Historial[];
 }
 
@@ -27,9 +27,7 @@ export default function DetalleCaso() {
   const navigate = useNavigate();
   const casoDesdeState = location.state?.caso;
 
-  const [caso, setCaso] = useState<CasoDetalle | null>(
-    casoDesdeState || null
-  );
+  const [caso, setCaso] = useState<CasoDetalle | null>(casoDesdeState || null);
 
   useEffect(() => {
     if (!casoDesdeState) {
@@ -50,6 +48,7 @@ export default function DetalleCaso() {
     { label: "Empleado", value: caso.empleado || "N/A", icon: <FaUser />, color: "#cfe2ff" },
     { label: "Tipo de incidencia", value: caso.tipo_incidencia || "N/A", icon: <FaExclamationCircle />, color: "#f8d7da" },
     { label: "Prioridad", value: caso.prioridad || "N/A", icon: <FaClock />, color: "#ffe5b4" },
+    { label: "Estado actual", value: caso.estado_actual || "N/A", icon: <FaTasks />, color: "#d1c4e9" }, // <-- agregado
     { label: "Fecha creación", value: caso.fecha_creacion ? new Date(caso.fecha_creacion).toLocaleString() : "N/A", icon: <FaClock />, color: "#d1c4e9" },
   ];
 
