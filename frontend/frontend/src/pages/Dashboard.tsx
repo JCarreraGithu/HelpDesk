@@ -6,6 +6,7 @@ import DetalleCaso from "./DetalleCaso";
 import DashboardUsuarios from "./DashboardUsuarios";
 import PerfilUsuario from "./PerfilUsuario";
 import Incidencia from "./incidencia";
+import Repuestos from "./Repuestos";
 import "./Dashboard.css"; // Se mantiene al final de los imports de módulos y componentes
 
 export default function Dashboard() {
@@ -41,6 +42,7 @@ export default function Dashboard() {
           <Route path="usuarios" element={<DashboardUsuarios />} />
           <Route path="perfil" element={<PerfilUsuario />} />
           <Route path="Incidencia" element={<Incidencia />} />
+           <Route path="Repuestos" element={<Repuestos />} />
         </Routes>
       </div>
 

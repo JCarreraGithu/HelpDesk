@@ -151,6 +151,7 @@ export default function Navbar() {
         {/* Link al dashboard de usuarios */}
         <Link to="/dashboard/usuarios">Usuarios</Link>
         <Link to="/dashboard/incidencia">Incidencia</Link>
+         <Link to="/dashboard/repuestos">Repuestos</Link>
       </nav>
     </>
   );
