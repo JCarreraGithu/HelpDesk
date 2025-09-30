@@ -84,15 +84,15 @@ export default function CrearCaso() {
   }, [mensaje]);
 
   return (
-    <div style={{ background: "#A9A9A9" ,maxWidth: "900px", margin: "2rem auto", padding: "1rem", fontFamily: "'Segoe UI', Tahoma, sans-serif" }}>
+    <div style={{ maxWidth: "900px", margin: "2rem auto", padding: "1rem", fontFamily: "'Segoe UI', Tahoma, sans-serif" }}>
       <h1 style={{ textAlign: "left", fontSize: "2rem", fontWeight: "bold", marginBottom: "1.5rem", color: "#2d3748" }}>
         📝 Nuevo Caso
       </h1>
 
       <form onSubmit={handleSubmit}>
-        <div style={{ background:"" ,display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.5rem", marginBottom: "1.5rem" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.5rem", marginBottom: "1.5rem" }}>
           {/* Tipo de Incidencia */}
-          <div style={{ background: "#E0E0E0", border: "1px solid #e2e8f0", borderRadius: "10px", padding: "1rem" }}>
+          <div style={{ background: "#f7fafc", border: "1px solid #e2e8f0", borderRadius: "10px", padding: "1rem" }}>
             <label style={{ fontWeight: "600", display: "flex", alignItems: "center", gap: ".5rem", marginBottom: ".5rem" }}>
               <img src={fileIcon} alt="Tipo" style={{ width: "20px", height: "20px" }} />
               Tipo de Incidencia
@@ -118,7 +118,7 @@ export default function CrearCaso() {
           </div>
 
           {/* Prioridad */}
-          <div style={{ background: "#E0E0E0", border: "1px solid #e2e8f0", borderRadius: "10px", padding: "1rem" }}>
+          <div style={{ background: "#f7fafc", border: "1px solid #e2e8f0", borderRadius: "10px", padding: "1rem" }}>
             <label style={{ fontWeight: "600", display: "flex", alignItems: "center", gap: ".5rem", marginBottom: ".5rem" }}>
               <img src={flagIcon} alt="Prioridad" style={{ width: "20px", height: "20px" }} />
               Prioridad
@@ -131,7 +131,7 @@ export default function CrearCaso() {
                 maxWidth: "500px",
                 padding: ".7rem",
                 borderRadius: "6px",
-                border: "1px solid #E0E0E0",
+                border: "1px solid #cbd5e0",
               }}
             >
               <option value="">Seleccione prioridad</option>
@@ -145,7 +145,7 @@ export default function CrearCaso() {
         </div>
 
         {/* Título */}
-        <div style={{ background: "#E0E0E0", borderRadius: "10px", padding: "1rem", marginBottom: "1.5rem" }}>
+        <div style={{ background: "#edf2f7", borderRadius: "10px", padding: "1rem", marginBottom: "1.5rem" }}>
           <label style={{ fontWeight: "600", display: "flex", alignItems: "center", gap: ".5rem", marginBottom: ".5rem" }}>
             <img src={messageIcon} alt="Título" style={{ width: "20px", height: "20px" }} />
             Título del caso
@@ -166,7 +166,7 @@ export default function CrearCaso() {
         </div>
 
         {/* Descripción */}
-        <div style={{ background: "#E0E0E0", borderRadius: "10px", padding: "1rem", marginBottom: "1.5rem" }}>
+        <div style={{ background: "#edf2f7", borderRadius: "10px", padding: "1rem", marginBottom: "1.5rem" }}>
           <label style={{ fontWeight: "600", display: "flex", alignItems: "center", gap: ".5rem", marginBottom: ".5rem" }}>
             <img src={alertIcon} alt="Descripción" style={{ width: "20px", height: "20px" }} />
             Descripción
@@ -193,7 +193,7 @@ export default function CrearCaso() {
             type="submit"
             disabled={loading}
             style={{
-              background: loading ? "#E0E0E0" : "#2b6cb0",
+              background: loading ? "#a0aec0" : "#2b6cb0",
               color: "#fff",
               padding: "0.9rem 1.5rem",
               border: "none",
