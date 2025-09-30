@@ -22,6 +22,8 @@ interface CasoDetalle {
   historial?: Historial[];
 }
 
+// ...imports y tipos siguen igual
+
 export default function DetalleCaso() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -44,11 +46,10 @@ export default function DetalleCaso() {
 
   const campos = [
     { label: "Título", value: caso.titulo, icon: <FaTasks />, color: "#d1e7dd" },
-    { label: "Descripción", value: caso.descripcion, icon: <FaTasks />, color: "#fff3cd" },
     { label: "Empleado", value: caso.empleado || "N/A", icon: <FaUser />, color: "#cfe2ff" },
     { label: "Tipo de incidencia", value: caso.tipo_incidencia || "N/A", icon: <FaExclamationCircle />, color: "#f8d7da" },
     { label: "Prioridad", value: caso.prioridad || "N/A", icon: <FaClock />, color: "#ffe5b4" },
-    { label: "Estado actual", value: caso.estado_actual || "N/A", icon: <FaTasks />, color: "#d1c4e9" }, // <-- agregado
+    { label: "Estado actual", value: caso.estado_actual || "N/A", icon: <FaTasks />, color: "#d1c4e9" },
     { label: "Fecha creación", value: caso.fecha_creacion ? new Date(caso.fecha_creacion).toLocaleString() : "N/A", icon: <FaClock />, color: "#d1c4e9" },
   ];
 
@@ -61,7 +62,7 @@ export default function DetalleCaso() {
         </h2>
 
         {/* Tarjetas de campos */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1rem", marginBottom: "2rem" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1rem", marginBottom: "1.5rem" }}>
           {campos.map((campo) => (
             <div key={campo.label} style={{
               backgroundColor: campo.color,
@@ -91,6 +92,24 @@ export default function DetalleCaso() {
             </div>
           ))}
         </div>
+
+        {/* Descripción independiente que se ajusta al contenido */}
+<div style={{
+  backgroundColor: "#fff3cd",
+  padding: "1rem",
+  borderRadius: "12px",
+  boxShadow: "0 5px 15px rgba(0,0,0,0.1)",
+  marginBottom: "2rem",
+  display: "inline-block",
+  whiteSpace: "pre-wrap",
+  wordBreak: "break-word",
+  maxWidth: "600px", // evita que crezca demasiado
+  minWidth: "150px"  // ancho mínimo para no verse muy pequeño
+}}>
+  <h3 style={{ marginTop: 0, marginBottom: "0.5rem", fontWeight: 600 }}>Descripción</h3>
+  <p style={{ margin: 0 }}>{caso.descripcion || "No hay descripción disponible."}</p>
+</div>
+
 
         {/* Historial */}
         <h3 style={{ color: "#198754", marginBottom: "1rem", borderBottom: "1px solid #198754", paddingBottom: "0.3rem" }}>Historial</h3>
