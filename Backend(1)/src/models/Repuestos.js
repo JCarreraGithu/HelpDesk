@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-// src/models/Repuestos.js
-=======
->>>>>>> c288cad (se agregan endoints)
 import { DataTypes } from "sequelize";
 import { sequelize } from "../config/db.js";
 
@@ -24,25 +20,13 @@ export const Repuestos = sequelize.define("Repuestos", {
   stock: {
     type: DataTypes.INTEGER,
     defaultValue: 0,
-<<<<<<< HEAD
-    validate: {
-      min: 0
-    },
-=======
     validate: { min: 0 },
->>>>>>> c288cad (se agregan endoints)
     field: "STOCK"
   },
   precio_unitario: {
     type: DataTypes.DECIMAL(10, 2),
     allowNull: false,
-<<<<<<< HEAD
-    validate: {
-      min: 0
-    },
-=======
     validate: { min: 0 },
->>>>>>> c288cad (se agregan endoints)
     field: "PRECIO_UNITARIO"
   }
 }, {
