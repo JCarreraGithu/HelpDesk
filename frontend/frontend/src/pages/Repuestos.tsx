@@ -1,193 +1,174 @@
-import { useState, useEffect } from "react";
+// src/pages/Repuestos.tsx
+import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { Pencil, Trash2, Package, Plus } from "lucide-react";
 
-// 🖼️ Íconos (puedes cambiarlos si ya tienes otros en assets)
-import boxIcon from "../assets/file.png";
-import alertIcon from "../assets/alert.jpeg";
-import moneyIcon from "../assets/clock.png";
+interface Repuesto {
+  id_repuesto: number;
+  nombre: string;
+  descripcion: string;
+  stock: number;
+  precio_unitario: string;
+}
 
-export default function Repuestos() {
+const Repuestos = () => {
+  const [repuestos, setRepuestos] = useState<Repuesto[]>([]);
   const [nombre, setNombre] = useState("");
   const [descripcion, setDescripcion] = useState("");
-  const [stock, setStock] = useState<number>(0);
-  const [precioUnitario, setPrecioUnitario] = useState<number>(0);
-  const [loading, setLoading] = useState(false);
-  const [mensaje, setMensaje] = useState<{ tipo: "success" | "error"; texto: string } | null>(null);
+  const [stock, setStock] = useState(0);
+  const [precio, setPrecio] = useState("");
+  const [editingId, setEditingId] = useState<number | null>(null);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!nombre.trim() || precioUnitario <= 0) {
-      setMensaje({ tipo: "error", texto: "⚠️ Nombre y precio unitario son obligatorios" });
-      return;
-    }
-
-    setLoading(true);
+  const fetchRepuestos = async () => {
     try {
-      await axios.post("http://localhost:4000/api/repuestos", {
-        nombre,
-        descripcion,
-        stock,
-        precio_unitario: precioUnitario,
-      });
-
-      setMensaje({ tipo: "success", texto: "✅ Repuesto registrado correctamente" });
-
-      // limpiar campos
-      setNombre("");
-      setDescripcion("");
-      setStock(0);
-      setPrecioUnitario(0);
-    } catch (error) {
-      console.error(error);
-      setMensaje({ tipo: "error", texto: "❌ Error al registrar repuesto" });
-    } finally {
-      setLoading(false);
+      const res = await axios.get("http://localhost:4000/api/repuestos");
+      setRepuestos(res.data);
+    } catch (err) {
+      console.error(err);
     }
   };
 
   useEffect(() => {
-    if (mensaje) {
-      const timer = setTimeout(() => setMensaje(null), 4000);
-      return () => clearTimeout(timer);
+    fetchRepuestos();
+  }, []);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      if (editingId === null) {
+        await axios.post("http://localhost:4000/api/repuestos", {
+          nombre,
+          descripcion,
+          stock,
+          precio_unitario: precio,
+        });
+      } else {
+        await axios.put(`http://localhost:4000/api/repuestos/${editingId}`, {
+          nombre,
+          descripcion,
+          stock,
+          precio_unitario: precio,
+        });
+      }
+      setNombre("");
+      setDescripcion("");
+      setStock(0);
+      setPrecio("");
+      setEditingId(null);
+      fetchRepuestos();
+    } catch (err) {
+      console.error("Error al guardar repuesto:", err);
     }
-  }, [mensaje]);
+  };
+
+  const handleEdit = (repuesto: Repuesto) => {
+    setNombre(repuesto.nombre);
+    setDescripcion(repuesto.descripcion);
+    setStock(repuesto.stock);
+    setPrecio(repuesto.precio_unitario);
+    setEditingId(repuesto.id_repuesto);
+  };
+
+  const handleDelete = async (id: number) => {
+    if (!window.confirm("¿Desea eliminar este repuesto?")) return;
+    try {
+      await axios.delete(`http://localhost:4000/api/repuestos/${id}`);
+      fetchRepuestos();
+    } catch (err) {
+      console.error("Error al eliminar repuesto:", err);
+    }
+  };
 
   return (
-    <div style={{ maxWidth: "700px", margin: "2rem auto", padding: "1rem", fontFamily: "'Segoe UI', Tahoma, sans-serif" }}>
-      <h1 style={{ textAlign: "left", fontSize: "2rem", fontWeight: "bold", marginBottom: "1.5rem", color: "#2d3748" }}>
-        📦 Registrar Repuesto
-      </h1>
+    <div className="max-w-5xl mx-auto mt-10 p-6 bg-gray-50 rounded-2xl shadow-lg">
+      <h2 className="text-3xl font-bold mb-6 text-center flex items-center justify-center gap-3 text-gray-800">
+        <Package size={28} className="text-green-600" />
+        Repuestos
+      </h2>
 
-      <form onSubmit={handleSubmit}>
-        {/* Nombre */}
-        <div style={{ marginBottom: "1.2rem" }}>
-          <label style={{ fontWeight: "600", display: "block", marginBottom: ".5rem" }}>
-            <img src={boxIcon} alt="Nombre" style={{ width: "20px", height: "20px", marginRight: "5px" }} />
-            Nombre
-          </label>
+      <form
+        onSubmit={handleSubmit}
+        className="mb-8 grid grid-cols-1 sm:grid-cols-4 gap-4 items-center"
+      >
+        <input
+          type="text"
+          value={nombre}
+          onChange={(e) => setNombre(e.target.value)}
+          placeholder="Nombre"
+          className="border p-3 rounded-lg shadow-sm focus:ring-2 focus:ring-green-400 focus:outline-none"
+        />
+        <input
+          type="text"
+          value={descripcion}
+          onChange={(e) => setDescripcion(e.target.value)}
+          placeholder="Descripción"
+          className="border p-3 rounded-lg shadow-sm focus:ring-2 focus:ring-green-400 focus:outline-none"
+        />
+        <input
+          type="number"
+          value={stock}
+          onChange={(e) => setStock(Number(e.target.value))}
+          placeholder="Stock"
+          className="border p-3 rounded-lg shadow-sm focus:ring-2 focus:ring-green-400 focus:outline-none"
+        />
+        <div className="flex gap-2">
           <input
             type="text"
-            value={nombre}
-            onChange={(e) => setNombre(e.target.value)}
-            placeholder="Ejemplo: Tarjeta madre ASUS"
-            style={{
-              width: "70%",
-              maxWidth: "500px",
-              padding: ".7rem",
-              borderRadius: "6px",
-              border: "1px solid #cbd5e0",
-            }}
-            required
+            value={precio}
+            onChange={(e) => setPrecio(e.target.value)}
+            placeholder="Precio unitario"
+            className="flex-1 border p-3 rounded-lg shadow-sm focus:ring-2 focus:ring-green-400 focus:outline-none"
           />
-        </div>
-
-        {/* Descripción */}
-        <div style={{ marginBottom: "1.2rem" }}>
-          <label style={{ fontWeight: "600", display: "block", marginBottom: ".5rem" }}>
-            <img src={alertIcon} alt="Descripción" style={{ width: "20px", height: "20px", marginRight: "5px" }} />
-            Descripción
-          </label>
-          <textarea
-            value={descripcion}
-            onChange={(e) => setDescripcion(e.target.value)}
-            placeholder="Detalles del repuesto..."
-            rows={3}
-            style={{
-              width: "70%",
-              maxWidth: "500px",
-              padding: ".7rem",
-              borderRadius: "6px",
-              border: "1px solid #cbd5e0",
-              resize: "vertical",
-            }}
-          />
-        </div>
-
-        {/* Stock */}
-        <div style={{ marginBottom: "1.2rem" }}>
-          <label style={{ fontWeight: "600", display: "block", marginBottom: ".5rem" }}>
-            📊 Stock
-          </label>
-          <input
-            type="number"
-            value={stock}
-            min={0}
-            onChange={(e) => setStock(Number(e.target.value))}
-            placeholder="0"
-            style={{
-              width: "200px",
-              padding: ".7rem",
-              borderRadius: "6px",
-              border: "1px solid #cbd5e0",
-            }}
-          />
-        </div>
-
-        {/* Precio Unitario */}
-        <div style={{ marginBottom: "1.2rem" }}>
-          <label style={{ fontWeight: "600", display: "block", marginBottom: ".5rem" }}>
-            <img src={moneyIcon} alt="Precio" style={{ width: "20px", height: "20px", marginRight: "5px" }} />
-            Precio Unitario
-          </label>
-          <input
-            type="number"
-            step="0.01"
-            min={0}
-            value={precioUnitario}
-            onChange={(e) => setPrecioUnitario(Number(e.target.value))}
-            placeholder="0.00"
-            style={{
-              width: "200px",
-              padding: ".7rem",
-              borderRadius: "6px",
-              border: "1px solid #cbd5e0",
-            }}
-            required
-          />
-        </div>
-
-        {/* Botón */}
-        <div style={{ textAlign: "right" }}>
           <button
             type="submit"
-            disabled={loading}
-            style={{
-              background: loading ? "#a0aec0" : "#2b6cb0",
-              color: "#fff",
-              padding: "0.9rem 1.5rem",
-              border: "none",
-              borderRadius: "8px",
-              fontSize: "1rem",
-              fontWeight: "bold",
-              cursor: loading ? "not-allowed" : "pointer",
-              transition: "background 0.3s",
-            }}
+            className="bg-green-500 text-white px-4 flex items-center gap-2 rounded-lg hover:bg-green-600 transition"
           >
-            {loading ? "Guardando..." : "Registrar Repuesto"}
+            <Plus size={18} />
+            {editingId === null ? "Agregar" : "Actualizar"}
           </button>
         </div>
       </form>
 
-      {/* Notificación */}
-      {mensaje && (
-        <div
-          style={{
-            position: "fixed",
-            bottom: "20px",
-            right: "20px",
-            background: mensaje.tipo === "success" ? "#48bb78" : "#f56565",
-            color: "white",
-            padding: "1rem 1.5rem",
-            borderRadius: "8px",
-            boxShadow: "0 4px 10px rgba(0,0,0,0.2)",
-            fontWeight: "bold",
-            zIndex: 1000,
-          }}
-        >
-          {mensaje.texto}
-        </div>
-      )}
+      <table className="w-full table-auto border-collapse bg-white rounded-lg shadow-md overflow-hidden">
+        <thead>
+          <tr className="bg-green-100 text-gray-700">
+            <th className="border p-3 text-left">Nombre</th>
+            <th className="border p-3 text-left">Descripción</th>
+            <th className="border p-3 text-left">Stock</th>
+            <th className="border p-3 text-left">Precio</th>
+            <th className="border p-3 text-left">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          {repuestos.map((r) => (
+            <tr
+              key={r.id_repuesto}
+              className="hover:bg-green-50 transition-all"
+            >
+              <td className="border p-3">{r.nombre}</td>
+              <td className="border p-3">{r.descripcion}</td>
+              <td className="border p-3">{r.stock}</td>
+              <td className="border p-3">{r.precio_unitario}</td>
+              <td className="border p-3 flex gap-3">
+                <button
+                  onClick={() => handleEdit(r)}
+                  className="text-blue-500 hover:text-blue-700"
+                >
+                  <Pencil size={18} />
+                </button>
+                <button
+                  onClick={() => handleDelete(r.id_repuesto)}
+                  className="text-red-500 hover:text-red-700"
+                >
+                  <Trash2 size={18} />
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
-}
+};
+
+export default Repuestos;

@@ -5,7 +5,7 @@ import VerCasos from "./VerCasos";
 import DetalleCaso from "./DetalleCaso";
 import DashboardUsuarios from "./DashboardUsuarios";
 import PerfilUsuario from "./PerfilUsuario";
-import Incidencia from "./incidencia";
+import Incidencia from "./Incidencia";
 import Repuestos from "./Repuestos";
 import "./Dashboard.css"; // Se mantiene al final de los imports de módulos y componentes
 
