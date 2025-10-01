@@ -1,4 +1,3 @@
-// src/models/Repuestos.js
 import { DataTypes } from "sequelize";
 import { sequelize } from "../config/db.js";
 
@@ -21,17 +20,13 @@ export const Repuestos = sequelize.define("Repuestos", {
   stock: {
     type: DataTypes.INTEGER,
     defaultValue: 0,
-    validate: {
-      min: 0
-    },
+    validate: { min: 0 },
     field: "STOCK"
   },
   precio_unitario: {
     type: DataTypes.DECIMAL(10, 2),
     allowNull: false,
-    validate: {
-      min: 0
-    },
+    validate: { min: 0 },
     field: "PRECIO_UNITARIO"
   }
 }, {

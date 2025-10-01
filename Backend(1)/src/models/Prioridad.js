@@ -1,10 +1,17 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "../config/db.js";
 
-export const Prioridad = sequelize.define('Prioridad', {
-  id_prioridad: { type: DataTypes.NUMBER, primaryKey: true, autoIncrement: true, field: "ID_PRIORIDAD" },
-  nombre: { type: DataTypes.STRING(50), allowNull: false, field: "NOMBRE" }
+export const Prioridad = sequelize.define("Prioridad", {
+    id_prioridad: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        field: "ID_PRIORIDAD" // <-- esto mapea la columna real
+    },
+    nombre: {
+        type: DataTypes.STRING,
+        field: "NOMBRE"
+    }
 }, {
-  tableName: 'PRIORIDAD',
-  timestamps: false
+    tableName: "PRIORIDAD",
+    timestamps: false
 });
