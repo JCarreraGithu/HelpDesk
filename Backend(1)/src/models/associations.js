@@ -10,6 +10,8 @@ import { EncuestaSatisfaccion } from "./EncuestaSatisfaccion.js";
 import { Notificaciones } from "./Notificaciones.js";
 import { EstadoCaso } from "./EstadoCaso.js";
 import { Incidencia } from "./Incidencia.js";
+import { Puesto } from "./Puesto.js";
+
 
 // ------------------- Relaciones -------------------
 
@@ -60,10 +62,18 @@ Repuestos.hasMany(SolicitudRepuestos, { foreignKey: "id_repuesto" });
 // EncuestaSatisfaccion ↔ Caso
 EncuestaSatisfaccion.belongsTo(Caso, { foreignKey: "id_caso" });
 Caso.hasOne(EncuestaSatisfaccion, { foreignKey: "id_caso" });
+// Notificaciones ↔ Caso
+Notificaciones.belongsTo(Caso, { foreignKey: "ID_CASO" });
+Caso.hasMany(Notificaciones, { foreignKey: "ID_CASO" });
 
-// Notificaciones ↔ Caso y Empleado
-Notificaciones.belongsTo(Caso, { foreignKey: "id_caso" });
-Caso.hasMany(Notificaciones, { foreignKey: "id_caso" });
+Notificaciones.belongsTo(Empleado, { foreignKey: "ID_EMPLEADO" });
+Empleado.hasMany(Notificaciones, { foreignKey: "ID_EMPLEADO" });
 
-Notificaciones.belongsTo(Empleado, { foreignKey: "id_empleado" });
-Empleado.hasMany(Notificaciones, { foreignKey: "id_empleado" });
+
+Caso.belongsTo(Empleado, { foreignKey: "id_tecnico", as: "Tecnico" });
+Empleado.hasMany(Caso, { foreignKey: "id_tecnico", as: "CasosAsignados" });
+
+
+// Relación con Puesto
+Empleado.belongsTo(Puesto, { foreignKey: "id_puesto" });
+Puesto.hasMany(Empleado, { foreignKey: "id_puesto" });
