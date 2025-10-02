@@ -1,8 +1,104 @@
-usuarios:
+Empelados
 
-	CREAR
-	POS http://localhost:4000/api/usuarios
+	ver empleados
+	get http://localhost:4000/api/empleados 
+
+	crear empleado
+	post http://localhost:4000/api/empleados
 	
+	{
+  "id_departamento": 1,
+  "nombre": "Marlon",
+  "apellido": "Yodani",
+  "correo": "myodani@empresa.com",
+  "telefono": "12345678",
+  "rol": "AGENTE",
+  "activo": "S",
+  "id_puesto":1
+}
+
+
+	dar de baja un empleado
+	patch http://localhost:4000/api/empleados/activo/3
+	
+	{ "activo": "N" }  // para dar de baja
+
+	
+	buscar por nombre 
+	get http://localhost:4000/api/empleados/buscar/nombre?nombre=Marlon
+
+	buscar técnicos 
+
+	get http://localhost:4000/api/empleados/tecnicos
+
+CASOS
+
+	ver casos
+	http://localhost:4000/api/casos
+
+	buscar por id
+	http://localhost:4000/api/casos/id/1
+
+	buscar por nombre
+	http://localhost:4000/api/casos/titulo/Impresora%20bloqueada
+	
+	crear caso
+	post
+
+	http://localhost:4000/api/casos
+{
+  "id_empleado_solicita": 1,
+  "id_tipo_incidencia": 1,
+  "titulo": "Pruebas",
+  "descripcion": "Este caso es solo para pruebas del sistema.",
+  "id_prioridad": 1
+}
+
+	cerrar caso
+	http://localhost:4000/api/casos/cerrar/1
+	{
+  "id_empleado": 1,
+  "detalles": "Cambio de estado a En Proceso"
+}
+
+
+	cambiar estado caso 
+
+	http://localhost:4000/api/casos/62
+
+	
+
+	{
+  "id_estado_actual": 2,
+  "detalles": "Cambio de estado a En Proceso"
+}
+
+	asignar recurso 
+
+	http://localhost:4000/api/casos/asignar-tecnico/24
+	
+	{
+  "id_tecnico": 26
+}
+
+
+
+LOGIN
+
+	probar el login 
+	http://localhost:4000/api/auth/login
+	{
+  "username": "anag",
+  "password": "12345"
+}
+
+
+
+USUARIOS
+
+	crear usuarios
+
+	post http://localhost:4000/api/usuarios
 	
 	{
   "id_empleado": 1,
@@ -12,78 +108,87 @@ usuarios:
 }
 
 
-	ACTUALIZAR http://localhost:4000/api/usuarios/7
+	actualziar usuarios
 
-{
+	http://localhost:4000/api/usuarios/7
+	{
   "username": "usuarioEditado",
   "password": "nuevoPassword",
   "activo": "N"
 }
-		
-	borrar usuario http://localhost:4000/api/usuarios/7
 
-	ver usuario http://localhost:4000/api/usuarios/7
 
-Login
+	borrar usuarios
 
-	post http://localhost:4000/api/auth/login
+	http://localhost:4000/api/usuarios/7
 
-casos
+	ver usuarios
 
-	ver casos get http://localhost:4000/api/casos
+	http://localhost:4000/api/usuarios
 
-	buscar por id : get http://localhost:4000/api/casos/id/4
 
-	buscar por nombre get http://localhost:4000/api/casos/titulo/Impresora%20bloqueada
+incidencias y prioridades
+ver tipo incidencias
 
-	crear caso post http://localhost:4000/api/casos
+	http://localhost:4000/api/config/tipos-incidencia
 	
-	{
-  "id_empleado_solicita": 2,
-  "id_tipo_incidencia": 1,
-  "titulo": "Impresora bloqueada",
-  "descripcion": "La impresora del área de finanzas no imprime",
-  "id_prioridad": 1,
-  "id_sla": 1
-}
+	ver prioridad
+http://localhost:4000/api/config/prioridades
 
-	cerrar caso put http://localhost:4000/api/casos/cerrar/3
+	ver incidencias
 
-	{
-  "id_empleado": 2
-}  
+http://localhost:4000/api/config/incidencias
 
- //se debe mandar un usuario que es el que esta logeado en la pagina  y es quien loe sta cerrando para dejar eso en el hjistorial 
+REPUESTOS
+	ver
+	http://localhost:4000/api/repuestos
 
-
-
-empleados //no lo usaremos por ahora 
-
-
-	ver empleados http://localhost:4000/api/empleados/3
-
-	crear caso post http://localhost:4000/api/empleados
+	crear
+http://localhost:4000/api/repuestos
 
 	{
-  "id_departamento": 1,
-  "nombre": "Marlon",
-  "apellido": "Yodani",
-  "correo": "myodani@empresa.com",
-  "telefono": "12345678",
-  "rol": "AGENTE",
-  "activo": "S"
+    "nombre": "Auriculares con micrófono",
+    "descripcion": "Auriculares con micrófono para soporte remoto",
+    "stock": 18,
+    "precio_unitario": 25.00
+  }
+
+	buscar por id
+
+	http://localhost:4000/api/repuestos/2
+
+	actualizar 
+
+	http://localhost:4000/api/repuestos/1
+{
+  "stock": 25,
+  "precio_unitario": 27.00
 }
 
 
-	dar de baja un empleado patch http://localhost:4000/api/empleados/activo/3
 
-	{ "activo": "N" }  // para dar de baja
+	borrar
+	http://localhost:4000/api/repuestos/1
 
-	buscar por nombre get http://localhost:4000/api/empleados/buscar/nombre?nombre=Marlon
+	buscar por noknre
+
+	http://localhost:4000/api/repuestos/buscar?nombre=RAM 8GB
 
 
+notificacinoes
+
+ver
+	http://localhost:4000/api/notificaciones/1
+
+	
+
+	
 
 
+	
+	
+
+	
 	
 	
 	
