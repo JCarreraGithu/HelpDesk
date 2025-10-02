@@ -1,157 +1,143 @@
-import { useEffect, useState } from "react";
+// src/pages/Incidencias.tsx
+import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { Pencil, Trash2, Plus, AlertCircle } from "lucide-react";
 
-// 🖼️ Importar íconos
-import alertIcon from "../assets/alert.jpeg";
-import clockIcon from "../assets/clock.png";
-import fileIcon from "../assets/file.png";
+interface Incidencia {
+  id_tipo: number;
+  tipo: string;
+  descripcion: string;
+}
 
-export default function Incidencia() {
-  const [tipoIncidencia, setTipoIncidencia] = useState("");
+const Incidencias = () => {
+  const [incidencias, setIncidencias] = useState<Incidencia[]>([]);
+  const [tipo, setTipo] = useState("");
   const [descripcion, setDescripcion] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [mensaje, setMensaje] = useState<{ tipo: "success" | "error"; texto: string } | null>(null);
+  const [editingId, setEditingId] = useState<number | null>(null);
 
-  const idEmpleadoLogueado = 1;
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!tipoIncidencia.trim() || !descripcion.trim()) {
-      setMensaje({ tipo: "error", texto: "⚠️ Completa todos los campos." });
-      return;
-    }
-
-    setLoading(true);
+  // 🟢 Cargar incidencias existentes
+  const fetchIncidencias = async () => {
     try {
-      await axios.post("http://localhost:4000/api/incidencias", {
-        id_empleado_solicita: idEmpleadoLogueado,
-        tipo_incidencia: tipoIncidencia, // ahora es texto, no ID
-        descripcion,
-      });
-
-      setMensaje({ tipo: "success", texto: "Incidencia creada correctamente" });
-      setDescripcion("");
-      setTipoIncidencia("");
-    } catch (error) {
-      console.error(error);
-      setMensaje({ tipo: "error", texto: "Error al crear la incidencia" });
-    } finally {
-      setLoading(false);
+      const res = await axios.get("http://localhost:4000/api/tipos-incidencia");
+      setIncidencias(res.data);
+    } catch (err) {
+      console.error(err);
     }
   };
 
   useEffect(() => {
-    if (mensaje) {
-      const timer = setTimeout(() => setMensaje(null), 4000);
-      return () => clearTimeout(timer);
+    fetchIncidencias();
+  }, []);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!tipo.trim() || !descripcion.trim()) return;
+
+    try {
+      if (editingId === null) {
+        await axios.post("http://localhost:4000/api/tipos-incidencia", {
+          tipo,
+          descripcion,
+        });
+      } else {
+        await axios.put(`http://localhost:4000/api/tipos-incidencia/${editingId}`, {
+          tipo,
+          descripcion,
+        });
+      }
+
+      setTipo("");
+      setDescripcion("");
+      setEditingId(null);
+      fetchIncidencias();
+    } catch (err) {
+      console.error("Error al guardar incidencia:", err);
     }
-  }, [mensaje]);
+  };
+
+  const handleEdit = (inc: Incidencia) => {
+    setTipo(inc.tipo);
+    setDescripcion(inc.descripcion);
+    setEditingId(inc.id_tipo);
+  };
+
+  const handleDelete = async (id: number) => {
+    if (!window.confirm("¿Desea eliminar esta incidencia?")) return;
+    try {
+      await axios.delete(`http://localhost:4000/api/tipos-incidencia/${id}`);
+      fetchIncidencias();
+    } catch (err) {
+      console.error("Error al eliminar incidencia:", err);
+    }
+  };
 
   return (
-    <div style={{ maxWidth: "700px", margin: "2rem auto", padding: "1rem", fontFamily: "'Segoe UI', Tahoma, sans-serif" }}>
-      <h1 style={{ textAlign: "left", fontSize: "2rem", fontWeight: "bold", marginBottom: "1.5rem", color: "#2d3748" }}>
-        📝 Reportar Incidencia
-      </h1>
+    <div className="max-w-5xl mx-auto mt-10 p-6 bg-gray-50 rounded-2xl shadow-lg">
+      <h2 className="text-3xl font-bold mb-6 text-center flex items-center justify-center gap-3 text-gray-800">
+        <AlertCircle size={28} className="text-red-600" />
+        Tipos de Incidencia
+      </h2>
 
-      <form onSubmit={handleSubmit}>
-        {/* Tipo de Incidencia (texto en lugar de combobox) */}
-        <div style={{ background: "#f7fafc", border: "1px solid #e2e8f0", borderRadius: "10px", padding: "1rem", marginBottom: "1.5rem" }}>
-          <label style={{ fontWeight: "600", display: "flex", alignItems: "center", gap: ".5rem", marginBottom: ".5rem" }}>
-            <img src={fileIcon} alt="Tipo" style={{ width: "20px", height: "20px" }} />
-            Tipo de Incidencia
-          </label>
-          <input
-            type="text"
-            value={tipoIncidencia}
-            onChange={(e) => setTipoIncidencia(e.target.value)}
-            placeholder="Ejemplo: Problema con impresora"
-            style={{
-              width: "70%",
-              maxWidth: "500px",
-              padding: ".7rem",
-              borderRadius: "6px",
-              border: "1px solid #cbd5e0",
-            }}
-          />
-        </div>
-
-        {/* Descripción */}
-        <div style={{ background: "#edf2f7", borderRadius: "10px", padding: "1rem", marginBottom: "1.5rem" }}>
-          <label style={{ fontWeight: "600", display: "flex", alignItems: "center", gap: ".5rem", marginBottom: ".5rem" }}>
-            <img src={alertIcon} alt="Descripción" style={{ width: "20px", height: "20px" }} />
-            Descripción
-          </label>
-          <textarea
-            value={descripcion}
-            onChange={(e) => setDescripcion(e.target.value)}
-            placeholder="Describe la incidencia con detalle..."
-            rows={4}
-            style={{
-              width: "70%",
-              maxWidth: "500px",
-              padding: ".8rem",
-              borderRadius: "6px",
-              border: "1px solid #a0aec0",
-              resize: "vertical",
-            }}
-          />
-        </div>
-
-        {/* Botón */}
-        <div style={{ textAlign: "right" }}>
-          <button
-            type="submit"
-            disabled={loading}
-            style={{
-              background: loading ? "#a0aec0" : "#2b6cb0",
-              color: "#fff",
-              padding: "0.9rem 1.5rem",
-              border: "none",
-              borderRadius: "8px",
-              fontSize: "1rem",
-              fontWeight: "bold",
-              cursor: loading ? "not-allowed" : "pointer",
-              transition: "background 0.3s",
-              display: "flex",
-              alignItems: "center",
-              gap: ".5rem",
-              justifyContent: "center",
-            }}
-          >
-            <img src={clockIcon} alt="Guardar" style={{ width: "20px", height: "20px" }} />
-            {loading ? "Guardando..." : "Crear Incidencia"}
-          </button>
-        </div>
+      <form
+        onSubmit={handleSubmit}
+        className="mb-8 grid grid-cols-1 sm:grid-cols-3 gap-4 items-center"
+      >
+        <input
+          type="text"
+          value={tipo}
+          onChange={(e) => setTipo(e.target.value)}
+          placeholder="Tipo"
+          className="border p-3 rounded-lg shadow-sm focus:ring-2 focus:ring-red-400 focus:outline-none"
+        />
+        <input
+          type="text"
+          value={descripcion}
+          onChange={(e) => setDescripcion(e.target.value)}
+          placeholder="Descripción"
+          className="border p-3 rounded-lg shadow-sm focus:ring-2 focus:ring-red-400 focus:outline-none"
+        />
+        <button
+          type="submit"
+          className="bg-red-500 text-white px-4 flex items-center gap-2 rounded-lg hover:bg-red-600 transition"
+        >
+          <Plus size={18} />
+          {editingId === null ? "Agregar" : "Actualizar"}
+        </button>
       </form>
 
-      {/* Notificación flotante */}
-      {mensaje && (
-        <div
-          style={{
-            position: "fixed",
-            bottom: "20px",
-            right: "20px",
-            background: mensaje.tipo === "success" ? "#48bb78" : "#f56565",
-            color: "white",
-            padding: "1rem 1.5rem",
-            borderRadius: "8px",
-            boxShadow: "0 4px 10px rgba(0,0,0,0.2)",
-            fontWeight: "bold",
-            zIndex: 1000,
-            display: "flex",
-            alignItems: "center",
-            gap: ".5rem",
-          }}
-        >
-          <img
-            src={mensaje.tipo === "success" ? clockIcon : alertIcon}
-            alt="Estado"
-            style={{ width: "20px", height: "20px" }}
-          />
-          {mensaje.texto}
-        </div>
-      )}
+      <table className="w-full table-auto border-collapse bg-white rounded-lg shadow-md overflow-hidden">
+        <thead>
+          <tr className="bg-red-100 text-gray-700">
+            <th className="border p-3 text-left">Tipo</th>
+            <th className="border p-3 text-left">Descripción</th>
+            <th className="border p-3 text-left">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          {incidencias.map((i) => (
+            <tr key={i.id_tipo} className="hover:bg-red-50 transition-all">
+              <td className="border p-3">{i.tipo}</td>
+              <td className="border p-3">{i.descripcion}</td>
+              <td className="border p-3 flex gap-3">
+                <button
+                  onClick={() => handleEdit(i)}
+                  className="text-blue-500 hover:text-blue-700"
+                >
+                  <Pencil size={18} />
+                </button>
+                <button
+                  onClick={() => handleDelete(i.id_tipo)}
+                  className="text-red-500 hover:text-red-700"
+                >
+                  <Trash2 size={18} />
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
-}
+};
+
+export default Incidencias;

@@ -1,186 +1,156 @@
-import { useEffect, useState } from "react";
-import userPlaceholder from "../assets/user-placeholder.png"; // avatar por defecto
-import { FaUser, FaIdBadge, FaUserCircle, FaUserTag } from "react-icons/fa";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { Pencil, Trash2, Plus } from "lucide-react";
 
-export default function PerfilUsuario() {
-  const [usuario, setUsuario] = useState<any>(null);
-  const [showAvatar, setShowAvatar] = useState(false); // para mostrar modal
+interface Usuario {
+  id_usuario: number;
+  id_empleado: number;
+  username: string;
+  password: string;
+  ultimo_login: string | null;
+}
+
+const Usuarios = () => {
+  const [usuarios, setUsuarios] = useState<Usuario[]>([]);
+  const [idEmpleado, setIdEmpleado] = useState<number>(0);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [editingId, setEditingId] = useState<number | null>(null);
+
+  const fetchUsuarios = async () => {
+    try {
+      const res = await axios.get("http://localhost:4000/api/usuarios");
+      setUsuarios(res.data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   useEffect(() => {
-    const userData = localStorage.getItem("usuarioLogeado");
-    if (userData) setUsuario(JSON.parse(userData));
+    fetchUsuarios();
   }, []);
 
-  if (!usuario)
-    return (
-      <p style={{ textAlign: "center", marginTop: "2rem" }}>Cargando...</p>
-    );
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      if (editingId === null) {
+        await axios.post("http://localhost:4000/api/usuarios", {
+          id_empleado: idEmpleado,
+          username,
+          password,
+        });
+      } else {
+        await axios.put(`http://localhost:4000/api/usuarios/${editingId}`, {
+          id_empleado: idEmpleado,
+          username,
+          password,
+        });
+      }
+      setIdEmpleado(0);
+      setUsername("");
+      setPassword("");
+      setEditingId(null);
+      fetchUsuarios();
+    } catch (err) {
+      console.error("Error al guardar usuario:", err);
+    }
+  };
 
-  const campos = [
-    { label: "Nombre", value: `${usuario.nombre} ${usuario.apellido}`, icon: <FaUser /> },
-    { label: "Rol", value: usuario.rol, icon: <FaUserTag /> },
-    { label: "ID Empleado", value: usuario.id_empleado, icon: <FaIdBadge /> },
-    { label: "Username", value: usuario.username || "No asignado", icon: <FaUserCircle /> },
-  ];
+  const handleEdit = (usuario: Usuario) => {
+    setIdEmpleado(usuario.id_empleado);
+    setUsername(usuario.username);
+    setPassword(usuario.password);
+    setEditingId(usuario.id_usuario);
+  };
+
+  const handleDelete = async (id: number) => {
+    if (!window.confirm("¿Desea eliminar este usuario?")) return;
+    try {
+      await axios.delete(`http://localhost:4000/api/usuarios/${id}`);
+      fetchUsuarios();
+    } catch (err) {
+      console.error("Error al eliminar usuario:", err);
+    }
+  };
 
   return (
-    <div
-      style={{
-        width: "100%",
-        padding: "1rem",
-        backgroundColor: "#C0C0C0",
-        minHeight: "100vh",
-        boxSizing: "border-box",
-      }}
-    >
-      <div
-        style={{
-          background: "linear-gradient(160deg, #f9fafc, #e6f0eb)",
-          padding: "2rem",
-          borderRadius: "16px",
-          boxShadow: "0 8px 30px rgba(0,0,0,0.1)",
-          width: "100%",
-          boxSizing: "border-box",
-          fontFamily: "'Inter', Arial, sans-serif",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-        }}
+    <div className="max-w-5xl mx-auto mt-10 p-6 bg-gray-50 rounded-2xl shadow-lg">
+      <h2 className="text-3xl font-bold mb-6 text-center flex items-center justify-center gap-3 text-gray-800">
+        <Plus size={28} className="text-blue-600" />
+        Usuarios
+      </h2>
+
+      <form
+        onSubmit={handleSubmit}
+        className="mb-8 grid grid-cols-1 sm:grid-cols-4 gap-4 items-center"
       >
-        {/* Avatar */}
-        <img
-          src={userPlaceholder}
-          alt="Avatar Usuario"
-          style={{
-            width: "120px",
-            height: "120px",
-            borderRadius: "50%",
-            marginBottom: "1.5rem",
-            objectFit: "cover",
-            border: "4px solid #198754",
-            cursor: "pointer",
-            transition: "transform 0.2s",
-          }}
-          onClick={() => setShowAvatar(true)}
-          onMouseOver={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
-          onMouseOut={(e) => (e.currentTarget.style.transform = "scale(1)")}
+        <input
+          type="number"
+          value={idEmpleado}
+          onChange={(e) => setIdEmpleado(Number(e.target.value))}
+          placeholder="ID Empleado"
+          className="border p-3 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none"
         />
-
-        <h2
-          style={{
-            marginBottom: "2rem",
-            color: "#198754",
-            fontSize: "2rem",
-            borderBottom: "2px solid #198754",
-            paddingBottom: "0.5rem",
-            textAlign: "center",
-          }}
+        <input
+          type="text"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          placeholder="Username"
+          className="border p-3 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none"
+        />
+        <input
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="Password"
+          className="border p-3 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none"
+        />
+        <button
+          type="submit"
+          className="bg-blue-500 text-white px-4 flex items-center gap-2 rounded-lg hover:bg-blue-600 transition"
         >
-          Perfil de Usuario
-        </h2>
+          <Plus size={18} />
+          {editingId === null ? "Agregar" : "Actualizar"}
+        </button>
+      </form>
 
-        {/* Tarjetas de datos */}
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
-            gap: "1.5rem",
-            width: "100%",
-          }}
-        >
-          {campos.map((campo) => (
-            <div
-              key={campo.label}
-              style={{
-                backgroundColor: "#ffffff",
-                padding: "1rem 1.5rem",
-                borderRadius: "12px",
-                boxShadow: "0 5px 15px rgba(0,0,0,0.1)",
-                display: "flex",
-                alignItems: "center",
-                gap: "0.8rem",
-                transition: "transform 0.3s, box-shadow 0.3s",
-                cursor: "default",
-              }}
-              onMouseOver={(e) => {
-                e.currentTarget.style.transform = "translateY(-3px)";
-                e.currentTarget.style.boxShadow = "0 10px 25px rgba(0,0,0,0.15)";
-              }}
-              onMouseOut={(e) => {
-                e.currentTarget.style.transform = "translateY(0)";
-                e.currentTarget.style.boxShadow = "0 5px 15px rgba(0,0,0,0.1)";
-              }}
-            >
-              <div style={{ fontSize: "1.8rem", color: "#198754" }}>{campo.icon}</div>
-              <div>
-                <p style={{ margin: 0, fontWeight: 600 }}>{campo.label}:</p>
-                <p style={{ margin: 0, color: "#555" }}>{campo.value}</p>
-              </div>
-            </div>
+      <table className="w-full table-auto border-collapse bg-white rounded-lg shadow-md overflow-hidden">
+        <thead>
+          <tr className="bg-blue-100 text-gray-700">
+            <th className="border p-3 text-left">ID Usuario</th>
+            <th className="border p-3 text-left">ID Empleado</th>
+            <th className="border p-3 text-left">Username</th>
+            <th className="border p-3 text-left">Ultimo Login</th>
+            <th className="border p-3 text-left">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          {usuarios.map((u) => (
+            <tr key={u.id_usuario} className="hover:bg-blue-50 transition-all">
+              <td className="border p-3">{u.id_usuario}</td>
+              <td className="border p-3">{u.id_empleado}</td>
+              <td className="border p-3">{u.username}</td>
+              <td className="border p-3">{u.ultimo_login ?? "-"}</td>
+              <td className="border p-3 flex gap-3">
+                <button
+                  onClick={() => handleEdit(u)}
+                  className="text-blue-500 hover:text-blue-700"
+                >
+                  <Pencil size={18} />
+                </button>
+                <button
+                  onClick={() => handleDelete(u.id_usuario)}
+                  className="text-red-500 hover:text-red-700"
+                >
+                  <Trash2 size={18} />
+                </button>
+              </td>
+            </tr>
           ))}
-        </div>
-
-        {/* Botón */}
-        <div style={{ marginTop: "2.5rem" }}>
-          <button
-            style={{
-              backgroundColor: "#198754",
-              color: "#fff",
-              padding: "0.8rem 2.2rem",
-              borderRadius: "12px",
-              border: "none",
-              cursor: "pointer",
-              fontSize: "1.1rem",
-              boxShadow: "0 5px 15px rgba(0,0,0,0.2)",
-              transition: "all 0.3s ease",
-            }}
-            onClick={() => alert("Función de editar perfil aún no implementada")}
-            onMouseOver={(e) => {
-              e.currentTarget.style.backgroundColor = "#157347";
-              e.currentTarget.style.transform = "translateY(-2px)";
-              e.currentTarget.style.boxShadow = "0 8px 20px rgba(0,0,0,0.25)";
-            }}
-            onMouseOut={(e) => {
-              e.currentTarget.style.backgroundColor = "#198754";
-              e.currentTarget.style.transform = "translateY(0)";
-              e.currentTarget.style.boxShadow = "0 5px 15px rgba(0,0,0,0.2)";
-            }}
-          >
-            Editar Perfil
-          </button>
-        </div>
-      </div>
-
-      {/* Modal para ver avatar */}
-      {showAvatar && (
-        <div
-          onClick={() => setShowAvatar(false)}
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            width: "100vw",
-            height: "100vh",
-            backgroundColor: "rgba(0,0,0,0.7)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            zIndex: 1000,
-            cursor: "pointer",
-          }}
-        >
-          <img
-            src={userPlaceholder}
-            alt="Avatar grande"
-            style={{
-              maxWidth: "90%",
-              maxHeight: "90%",
-              borderRadius: "16px",
-              boxShadow: "0 10px 25px rgba(0,0,0,0.3)",
-            }}
-          />
-        </div>
-      )}
+        </tbody>
+      </table>
     </div>
   );
-}
+};
+
+export default Usuarios;
