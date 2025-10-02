@@ -28,7 +28,6 @@ const formatearCaso = (caso) => ({
   })) || []
 });
 
-// ---------------- Mostrar todos los casos ----------------
 export const getCasos = async (req, res) => {
   try {
     const casos = await Caso.findAll({
@@ -44,7 +43,8 @@ export const getCasos = async (req, res) => {
           include: [
             { model: EstadoCaso, attributes: ["nombre"] },
             { model: Empleado, attributes: ["nombre", "apellido"] }
-          ]
+          ],
+          order: [['fecha', 'DESC']] // <- orden descendente por fecha
         }
       ]
     });
@@ -71,7 +71,8 @@ export const getCasoById = async (req, res) => {
           include: [
             { model: EstadoCaso, attributes: ["nombre"] },
             { model: Empleado, attributes: ["nombre", "apellido"] }
-          ]
+          ],
+          order: [['fecha', 'DESC']] // <- orden descendente por fecha
         }
       ]
     });
@@ -83,7 +84,6 @@ export const getCasoById = async (req, res) => {
     res.status(500).json({ msg: error.message });
   }
 };
-
 // ---------------- Crear caso ----------------
 export const createCaso = async (req, res) => {
   try {
@@ -129,7 +129,8 @@ export const getCasoByTitulo = async (req, res) => {
           include: [
             { model: EstadoCaso, attributes: ["nombre"] },
             { model: Empleado, attributes: ["nombre", "apellido"] }
-          ]
+          ],
+          order: [['fecha', 'DESC']] // <- orden descendente por fecha
         }
       ]
     });
@@ -148,11 +149,19 @@ export const updateCaso = async (req, res) => {
 
     const estadoAnterior = caso.id_estado_actual;
     const nuevoEstado = req.body.id_estado_actual;
+    const comentario = req.body.detalles || `Cambio de estado a ${nuevoEstado}`;
 
     await caso.update(req.body);
 
-    // Crear notificación si el estado cambió
+    // Crear historial con comentario
     if (nuevoEstado && nuevoEstado !== estadoAnterior) {
+      await HistorialCaso.create({
+        id_caso: caso.id_caso,
+        comentario,
+        id_estado: nuevoEstado,
+        id_empleado: req.body.id_empleado
+      });
+
       const estadoObj = await EstadoCaso.findByPk(nuevoEstado);
       const nombreEstado = estadoObj ? estadoObj.nombre : nuevoEstado;
 
@@ -169,6 +178,7 @@ export const updateCaso = async (req, res) => {
     res.status(500).json({ msg: error.message });
   }
 };
+
 
 // ---------------- Cerrar caso ----------------
 export const cerrarCaso = async (req, res) => {
@@ -228,14 +238,29 @@ export const cerrarCaso = async (req, res) => {
 export const asignarTecnico = async (req, res) => {
   try {
     const { id_caso } = req.params;
-    const { id_tecnico } = req.body;
+    const { id_tecnico, comentario } = req.body;
 
     const caso = await Caso.findByPk(id_caso);
     if (!caso) return res.status(404).json({ msg: "Caso no encontrado" });
 
     await caso.update({ id_tecnico });
 
-    // Traer de nuevo con relaciones
+    // Agregar historial con comentario
+    await HistorialCaso.create({
+      id_caso: caso.id_caso,
+      comentario: comentario || `Técnico asignado: ${id_tecnico}`,
+      id_estado: caso.id_estado_actual,
+      id_empleado: id_tecnico
+    });
+
+    // Crear notificación
+    await Notificaciones.create({
+      ID_CASO: caso.id_caso,
+      ID_EMPLEADO: id_tecnico,
+      MENSAJE: `Se te ha asignado el caso ID ${caso.id_caso}`,
+      ESTADO: "Encolado"
+    });
+
     const casoCompleto = await Caso.findByPk(id_caso, {
       include: [
         { model: Empleado, attributes: ["nombre", "apellido"] },
@@ -252,13 +277,6 @@ export const asignarTecnico = async (req, res) => {
           ]
         }
       ]
-    });
-
-    await Notificaciones.create({
-      ID_CASO: caso.id_caso,
-      ID_EMPLEADO: id_tecnico,
-      MENSAJE: `Se te ha asignado el caso ID ${caso.id_caso}`,
-      ESTADO: "Encolado"
     });
 
     res.json({ msg: "Técnico asignado correctamente", caso: formatearCaso(casoCompleto) });
