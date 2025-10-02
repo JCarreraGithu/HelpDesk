@@ -5,7 +5,7 @@ import lupaIcon from "../assets/lupa.png";
 import notiIcon from "../assets/noti.png";
 import userIcon from "../assets/log0.png";
 import confiIcon from "../assets/confi.png";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 interface NavbarProps {
   darkMode: boolean;
@@ -14,30 +14,29 @@ interface NavbarProps {
 
 export default function Navbar({ darkMode, setDarkMode }: NavbarProps) {
   const navigate = useNavigate();
-  const location = useLocation(); // <-- hook para la ruta actual
+  const location = useLocation();
   const [searchId, setSearchId] = useState("");
   const [searchTitle, setSearchTitle] = useState("");
   const [showInput, setShowInput] = useState(false);
   const [showConfig, setShowConfig] = useState(false);
   const [notificaciones, setNotificaciones] = useState<any[]>([]);
   const [showNoti, setShowNoti] = useState(false);
+  const [showOpciones, setShowOpciones] = useState(false);
 
-  // Persistencia frontend de notificaciones leídas
+  const opcionesRef = useRef<HTMLDivElement>(null);
+
   const leidasStorageKey = "notificacionesLeidas";
   const notificacionesLeidas = JSON.parse(localStorage.getItem(leidasStorageKey) || "[]");
 
-  // ID del empleado logueado
   const usuarioLogeado = localStorage.getItem("usuarioLogeado");
   const idEmpleadoLogeado = usuarioLogeado ? JSON.parse(usuarioLogeado).id_empleado : null;
 
   const handleSearch = async () => {
     try {
       let url = "";
-      if (searchId.trim()) {
-        url = `http://localhost:4000/api/casos/id/${searchId.trim()}`;
-      } else if (searchTitle.trim()) {
-        url = `http://localhost:4000/api/casos/titulo/${encodeURIComponent(searchTitle.trim())}`;
-      } else return;
+      if (searchId.trim()) url = `http://localhost:4000/api/casos/id/${searchId.trim()}`;
+      else if (searchTitle.trim()) url = `http://localhost:4000/api/casos/titulo/${encodeURIComponent(searchTitle.trim())}`;
+      else return;
 
       const res = await fetch(url);
       if (!res.ok) {
@@ -46,15 +45,10 @@ export default function Navbar({ darkMode, setDarkMode }: NavbarProps) {
       }
 
       const data = await res.json();
-      let casoData;
-      if (Array.isArray(data)) {
-        if (data.length === 0) {
-          alert("Caso no encontrado");
-          return;
-        }
-        casoData = data[0];
-      } else {
-        casoData = data;
+      const casoData = Array.isArray(data) ? data[0] : data;
+      if (!casoData) {
+        alert("Caso no encontrado");
+        return;
       }
 
       setSearchId("");
@@ -71,7 +65,6 @@ export default function Navbar({ darkMode, setDarkMode }: NavbarProps) {
     if (e.key === "Enter") handleSearch();
   };
 
-  // Función para obtener notificaciones
   const fetchNotificaciones = async () => {
     if (!idEmpleadoLogeado) return;
     try {
@@ -85,35 +78,40 @@ export default function Navbar({ darkMode, setDarkMode }: NavbarProps) {
     }
   };
 
-  // 🔄 Polling automático cada 5 segundos
   useEffect(() => {
-    fetchNotificaciones(); // cargar al inicio
-    const interval = setInterval(() => {
-      fetchNotificaciones();
-    }, 5000); // 5 segundos
+    fetchNotificaciones();
+    const interval = setInterval(() => fetchNotificaciones(), 5000);
     return () => clearInterval(interval);
   }, []);
 
-  // Marcar notificación como leída
   const marcarLeida = (id: number) => {
     const nuevasLeidas = [...notificacionesLeidas, id];
     localStorage.setItem(leidasStorageKey, JSON.stringify(nuevasLeidas));
     setNotificaciones(notificaciones.filter((n) => n.ID_NOTIFICACION !== id));
   };
 
-  // Cantidad de no leídas
   const notiNoLeidas = notificaciones.length;
+
+  // Cerrar dropdown si se hace click fuera
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (opcionesRef.current && !opcionesRef.current.contains(event.target as Node)) {
+        setShowOpciones(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   return (
     <>
+      {/* Header superior */}
       <header className="navbar-header">
-        {/* Izquierda */}
         <div className="navbar-left">
           <img src={logo} alt="Logo Help Desk" className="logo" />
           <h1>Help Desk</h1>
         </div>
 
-        {/* Centro */}
         <div className="navbar-center">
           <button onClick={() => setShowInput(!showInput)} className="search-button">
             <img src={lupaIcon} alt="Buscar" className="search-icon" />
@@ -142,7 +140,6 @@ export default function Navbar({ darkMode, setDarkMode }: NavbarProps) {
           )}
         </div>
 
-        {/* Derecha */}
         <div className="navbar-right">
           <button onClick={() => setShowConfig(!showConfig)} className="config-button">
             <img src={confiIcon} alt="Configuración" className="config-icon" />
@@ -161,25 +158,21 @@ export default function Navbar({ darkMode, setDarkMode }: NavbarProps) {
             <img src={sesionIcon} alt="Cerrar sesión" className="logout-icon" />
           </button>
         </div>
-
-        {/* Panel de configuración */}
-        {showConfig && (
-          <div className="config-panel">
-            <h4>Configuración</h4>
-            <label className="switch">
-              <input
-                type="checkbox"
-                checked={darkMode}
-                onChange={() => setDarkMode(!darkMode)}
-              />
-              <span className="slider round"></span>
-              <span style={{ marginLeft: "8px" }}>Modo nocturno</span>
-            </label>
-            <label><input type="checkbox" /> Animaciones</label>
-            <label><input type="checkbox" /> Compactar vista</label>
-          </div>
-        )}
       </header>
+
+      {/* Panel de configuración */}
+      {showConfig && (
+        <div className="config-panel">
+          <h4>Configuración</h4>
+          <label className="switch">
+            <input type="checkbox" checked={darkMode} onChange={() => setDarkMode(!darkMode)} />
+            <span className="slider round"></span>
+            <span style={{ marginLeft: "8px" }}>Modo nocturno</span>
+          </label>
+          <label><input type="checkbox" /> Animaciones</label>
+          <label><input type="checkbox" /> Compactar vista</label>
+        </div>
+      )}
 
       {/* Panel de notificaciones */}
       {showNoti && (
@@ -201,7 +194,6 @@ export default function Navbar({ darkMode, setDarkMode }: NavbarProps) {
             animation: "fadeIn 0.25s ease-out",
           }}
         >
-          {/* Header */}
           <div
             style={{
               padding: "12px 16px",
@@ -232,7 +224,6 @@ export default function Navbar({ darkMode, setDarkMode }: NavbarProps) {
             )}
           </div>
 
-          {/* Lista */}
           <div
             style={{
               padding: "12px",
@@ -297,13 +288,13 @@ export default function Navbar({ darkMode, setDarkMode }: NavbarProps) {
         </div>
       )}
 
-      {/* Navegación */}
-      <nav>
+      {/* Navegación principal */}
+      <nav style={{ display: "flex", gap: "16px", position: "relative", padding: "10px 20px" }}>
         <Link
           to="/dashboard/ver-casos"
           className={location.pathname === "/dashboard/ver-casos" ? "active" : ""}
         >
-          Casos
+          Ver Casos
         </Link>
         <Link
           to="/dashboard/crear-caso"
@@ -317,6 +308,84 @@ export default function Navbar({ darkMode, setDarkMode }: NavbarProps) {
         >
           Usuarios
         </Link>
+
+        {/* Más Opciones */}
+        <div
+          ref={opcionesRef}
+          style={{ position: "relative" }}
+          onMouseEnter={() => setShowOpciones(true)}
+          onMouseLeave={() => setShowOpciones(false)}
+        >
+          <Link
+            to="/dashboard/empleados"
+            style={{
+              backgroundColor: location.pathname.startsWith("/dashboard/empleados") ? "#198754" : "#f0f0f0",
+              color: location.pathname.startsWith("/dashboard/empleados") ? "#fff" : "#333",
+              border: "1px solid #ccc",
+              borderRadius: "6px",
+              padding: "6px 12px",
+              cursor: "pointer",
+              fontWeight: 500,
+              textDecoration: "none",
+            }}
+          >
+            Más Opciones ▾
+          </Link>
+
+          {showOpciones && (
+            <div
+              style={{
+                position: "absolute",
+                top: "100%",
+                right: 0,
+                background: "#fff",
+                boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+                borderRadius: "8px",
+                overflow: "hidden",
+                marginTop: "4px",
+                minWidth: "180px",
+                zIndex: 1000,
+              }}
+            >
+              <Link
+                to="/dashboard/empleados"
+                style={{
+                  display: "block",
+                  width: "100%",
+                  padding: "8px 12px",
+                  border: "none",
+                  background: "white",
+                  textAlign: "left",
+                  cursor: "pointer",
+                  color: "#333",
+                  textDecoration: "none",
+                }}
+                onMouseEnter={e => (e.currentTarget.style.backgroundColor = "#f0f0f0")}
+                onMouseLeave={e => (e.currentTarget.style.backgroundColor = "white")}
+              >
+                Empleados
+              </Link>
+              <Link
+                to="#"
+                style={{
+                  display: "block",
+                  width: "100%",
+                  padding: "8px 12px",
+                  border: "none",
+                  background: "white",
+                  textAlign: "left",
+                  cursor: "pointer",
+                  color: "#333",
+                  textDecoration: "none",
+                }}
+                onMouseEnter={e => (e.currentTarget.style.backgroundColor = "#f0f0f0")}
+                onMouseLeave={e => (e.currentTarget.style.backgroundColor = "white")}
+              >
+                Otra opción
+              </Link>
+            </div>
+          )}
+        </div>
       </nav>
     </>
   );

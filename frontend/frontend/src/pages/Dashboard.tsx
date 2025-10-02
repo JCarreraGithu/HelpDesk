@@ -7,6 +7,7 @@ import DashboardUsuarios from "./DashboardUsuarios";
 import PerfilUsuario from "./PerfilUsuario";
 import { useState, useEffect } from "react";
 import "./Dashboard.css";
+import Empleados from "./Empleados";
 
 export default function Dashboard() {
   const [darkMode, setDarkMode] = useState(false);
@@ -51,13 +52,14 @@ export default function Dashboard() {
           boxSizing: "border-box",
         }}
       >
-        <Routes>
-          <Route path="ver-casos" element={<VerCasos />} />
-          <Route path="crear-caso" element={<CrearCaso />} />
-          <Route path="detalle-caso" element={<DetalleCaso />} />
-          <Route path="usuarios" element={<DashboardUsuarios />} />
-          <Route path="perfil" element={<PerfilUsuario />} />
-        </Routes>
+       <Routes>
+  <Route path="ver-casos" element={<VerCasos />} />
+  <Route path="crear-caso" element={<CrearCaso />} />
+  <Route path="detalle-caso" element={<DetalleCaso />} />
+  <Route path="usuarios" element={<DashboardUsuarios />} />
+  <Route path="perfil" element={<PerfilUsuario />} />
+  <Route path="empleados" element={<Empleados />} />  {/* <-- nueva ruta */}
+</Routes>
       </div>
 
       {/* FOOTER */}
