@@ -1,5 +1,8 @@
+
 import { DataTypes } from "sequelize";
 import { sequelize } from "../config/db.js";
+
+
 
 export const Caso = sequelize.define('Caso', {
   id_caso: {
@@ -17,6 +20,16 @@ export const Caso = sequelize.define('Caso', {
     type: DataTypes.NUMBER,
     allowNull: false,
     field: "ID_TIPO_INCIDENCIA"
+  },
+  id_incidencia: {
+    type: DataTypes.NUMBER,
+    allowNull: true, // puede ser null
+    field: "ID_INCIDENCIA"
+  },
+  id_tecnico: {  // ✅ Nuevo campo
+    type: DataTypes.NUMBER,
+    allowNull: true,
+    field: "ID_TECNICO"
   },
   titulo: {
     type: DataTypes.STRING(200),
@@ -37,9 +50,14 @@ export const Caso = sequelize.define('Caso', {
     defaultValue: DataTypes.NOW,
     field: "FECHA_CREACION"
   },
-  id_estado_actual: { type: DataTypes.NUMBER, field: "ID_ESTADO_ACTUAL" },
-  fecha_cierre: { type: DataTypes.DATE, field: "FECHA_CIERRE" }, // <--- agregado
-  id_sla: { type: DataTypes.NUMBER, field: "ID_SLA" }
+  id_estado_actual: {
+    type: DataTypes.NUMBER,
+    field: "ID_ESTADO_ACTUAL"
+  },
+  fecha_cierre: {
+    type: DataTypes.DATE,
+    field: "FECHA_CIERRE"
+  }
 }, {
   tableName: 'CASOS',
   timestamps: false
