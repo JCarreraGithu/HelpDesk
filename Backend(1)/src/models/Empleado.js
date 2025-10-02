@@ -15,3 +15,5 @@ export const Empleado = sequelize.define("Empleado", {
   tableName: "EMPLEADO",
   timestamps: false
 });
+
+export default Empleado;   // al final del archivo

@@ -1,25 +1,16 @@
 import { Sequelize } from "sequelize";
-import dotenv from "dotenv";
 
-dotenv.config();
-
-export const sequelize = new Sequelize({
-  dialect: "oracle",
-  username: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  dialectOptions: {
-    connectString: `${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_SERVICE}`
-  },
-  logging: false
+export const sequelize = new Sequelize("helpdesk", "root", "", {
+  host: "127.0.0.1",
+  dialect: "mysql",
+  port: 3306
 });
 
-// Función para probar la conexión
 export const testConnection = async () => {
   try {
     await sequelize.authenticate();
-    console.log("✅ Conexión a la DB exitosa");
+    console.log("✅ Conectado a MySQL correctamente.");
   } catch (error) {
-    console.error("❌ Error DB:", error);
+    console.error("❌ Error al conectar a MySQL:", error);
   }
 };
- 

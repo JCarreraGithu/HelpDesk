@@ -6,7 +6,10 @@ import historialCasoRoutes from "./src/routes/HistorialCasoRoutes.js";
 import "./src/models/associations.js";
 import cors from "cors";
 import authRoutes from "./src/routes/AuthRoutes.js";
-import usuariosRoutes from "./src/routes/UsuariosRoutes.js"; // 🔹 CORREGIDO
+import usuariosRoutes from "./src/routes/UsuariosRoutes.js";
+import repuestoRoutes from "./src/routes/RepuestoRoutes.js";
+import IncidenciaRoutes from "./src/routes/IncidenciaRoutes.js";
+//import usuariosRoutes from "./src/routes/UsuariosRoutes.js";
 
 const app = express();
 app.use(express.json());
@@ -17,11 +20,16 @@ app.use(cors({
 
 const PORT = process.env.PORT || 4000;
 
+// 👇 Rutas
 app.use("/api/empleados", empleadoRoutes);
 app.use("/api/casos", casoRoutes);
 app.use("/historial", historialCasoRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/usuarios", usuariosRoutes);
+app.use("/api/repuestos", repuestoRoutes);
+app.use("/api/tipos-incidencia", IncidenciaRoutes);
+app.use("/api/usuarios", usuariosRoutes);
+//app.use("/api/tipos-incidencia", IncidenciaRoutes); // ✅ agregamos la ruta
 
 app.listen(PORT, async () => {
   console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`);

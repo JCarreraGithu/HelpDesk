@@ -1,7 +1,7 @@
 import { Caso } from "../models/Caso.js";
 import {Empleado} from "../models/Empleado.js";
 import {Prioridad} from "../models/Prioridad.js";
-import {TipoIncidencia} from "../models/TipoIncidencias.js";
+//import {TipoIncidencia} from "../models/TipoIncidencias.js";
 import {SLA} from "../models/SLA.js";
 import {HistorialCaso} from "../models/HistorialCaso.js";
 import {EstadoCaso} from "../models/EstadoCaso.js";

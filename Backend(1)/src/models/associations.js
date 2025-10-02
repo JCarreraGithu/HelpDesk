@@ -2,7 +2,7 @@
 import { Empleado } from "./Empleado.js";
 import { Departamento } from "./Departamento.js";
 import { Caso } from "./Caso.js";
-import { TipoIncidencia } from "./TipoIncidencias.js";
+//import { TipoIncidencia } from "./TipoIncidencia.js";
 import { Prioridad } from "./Prioridad.js";
 import { HistorialCaso } from "./HistorialCaso.js";
 import { SLA } from "./SLA.js";
@@ -22,8 +22,8 @@ Caso.belongsTo(Empleado, { foreignKey: "id_empleado_solicita" });
 Empleado.hasMany(Caso, { foreignKey: "id_empleado_solicita" });
 
 // Casos ↔ TipoIncidencia
-Caso.belongsTo(TipoIncidencia, { foreignKey: "id_tipo_incidencia" });
-TipoIncidencia.hasMany(Caso, { foreignKey: "id_tipo_incidencia" });
+//Caso.belongsTo(TipoIncidencia, { foreignKey: "id_tipo_incidencia" });
+//TipoIncidencia.hasMany(Caso, { foreignKey: "id_tipo_incidencia" });
 
 // Casos ↔ Prioridad
 Caso.belongsTo(Prioridad, { foreignKey: "id_prioridad" });

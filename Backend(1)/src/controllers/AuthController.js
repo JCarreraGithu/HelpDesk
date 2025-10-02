@@ -1,4 +1,4 @@
-import { Usuario } from "../models/Usuarios.js";
+import { Usuario } from "../models/Usuario.js";
 import bcrypt from "bcryptjs";
 import { Empleado } from "../models/Empleado.js";
 
