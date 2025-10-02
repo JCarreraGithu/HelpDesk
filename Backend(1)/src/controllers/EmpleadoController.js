@@ -6,7 +6,16 @@ export const getEmpleados = async (req, res) => {
   try {
     const empleados = await Empleado.findAll({
       include: { model: Puesto, attributes: ["nombre"] },
-      attributes: ["id_empleado", "nombre", "apellido", "correo", "id_puesto", "rol", "activo"]
+      attributes: [
+        "id_empleado",
+        "nombre",
+        "apellido",
+        "correo",
+        "telefono",
+        "id_puesto",
+        "rol",
+        "activo"
+      ]
     });
     res.json(empleados);
   } catch (error) {
@@ -66,13 +75,22 @@ export const toggleActivoEmpleado = async (req, res) => {
   }
 };
 
-// Obtener solo técnicos (id_puesto = 2)
+// Obtener solo técnicos (ejemplo id_puesto = 2)
 export const getTecnicos = async (req, res) => {
   try {
     const tecnicos = await Empleado.findAll({
       where: { id_puesto: 2 }, // ID del puesto técnico
       include: { model: Puesto, attributes: ["nombre"] },
-      attributes: ["id_empleado", "nombre", "apellido", "correo", "id_puesto"]
+      attributes: [
+        "id_empleado",
+        "nombre",
+        "apellido",
+        "correo",
+        "telefono",
+        "id_puesto",
+        "rol",
+        "activo"
+      ]
     });
     res.json(tecnicos);
   } catch (error) {
@@ -87,7 +105,18 @@ export const getEmpleadoByNombre = async (req, res) => {
     if (!nombre) return res.status(400).json({ msg: "Debe enviar el nombre a buscar" });
 
     const empleados = await Empleado.findAll({
-      where: { nombre }
+      where: { nombre },
+      include: { model: Puesto, attributes: ["nombre"] },
+      attributes: [
+        "id_empleado",
+        "nombre",
+        "apellido",
+        "correo",
+        "telefono",
+        "id_puesto",
+        "rol",
+        "activo"
+      ]
     });
 
     if (empleados.length === 0) return res.status(404).json({ msg: "No se encontraron empleados" });

@@ -1,162 +1,167 @@
-import { useState } from "react";
-import { FaTimes } from "react-icons/fa";
+import React, { useState, useEffect } from "react";
+import FormularioEmpleado from "./FormularioEmpleado"; // ✅ sigue importado
 
-interface Empleado {
-  id_departamento: number;
-  nombre: string;
-  apellido: string;
-  correo: string;
-  telefono: string;
-  rol: string;
-  activo: string;
-  id_puesto: number;
-}
+const Empleados = () => {
+  const [empleados, setEmpleados] = useState([]);
+  const [busqueda, setBusqueda] = useState("");
+  const [mostrarModal, setMostrarModal] = useState(false);
 
-const departamentos = [
-  { id: 1, nombre: "Soporte Técnico" },
-  { id: 2, nombre: "Sistemas" },
-  { id: 21, nombre: "Soporte Técnico" },
-  { id: 22, nombre: "Sistemas" },
-  { id: 23, nombre: "Recursos Humanos" },
-  { id: 24, nombre: "Finanzas" },
-  { id: 25, nombre: "Ventas" },
-  { id: 26, nombre: "Marketing" },
-  { id: 27, nombre: "Logística" },
-  { id: 28, nombre: "Compras" },
-  { id: 29, nombre: "Desarrollo" },
-  { id: 30, nombre: "Legal" },
-];
-
-const puestos = [
-  { id: 1, nombre: "Técnico de Soporte" },
-  { id: 2, nombre: "Analista de Sistemas" },
-  { id: 3, nombre: "Supervisor" },
-  { id: 4, nombre: "Administrador" },
-  { id: 5, nombre: "Desarrollador" },
-  { id: 6, nombre: "Montacarguista" },
-];
-
-export default function FormularioEmpleado({ onGuardar, onCerrar }: { onGuardar: (data: Empleado) => void, onCerrar: () => void }) {
-  const [empleado, setEmpleado] = useState<Empleado>({
-    id_departamento: 1,
-    nombre: "",
-    apellido: "",
-    correo: "",
-    telefono: "",
-    rol: "AGENTE",
-    activo: "S",
-    id_puesto: 1,
-  });
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setEmpleado(prev => ({ ...prev, [name]: name.includes("id_") ? parseInt(value) : value }));
+  // 🔹 Traer empleados desde API
+  const fetchEmpleados = async () => {
+    const res = await fetch("http://localhost:4000/api/empleados");
+    const data = await res.json();
+    setEmpleados(data);
   };
 
-  const handleSubmit = () => {
-    if (!empleado.nombre || !empleado.apellido || !empleado.correo) {
-      alert("Nombre, Apellido y Correo son obligatorios");
+  useEffect(() => {
+    fetchEmpleados();
+  }, []);
+
+  // 🔹 Buscar por nombre
+  const buscarEmpleado = async () => {
+    if (!busqueda.trim()) {
+      fetchEmpleados();
       return;
     }
-    onGuardar(empleado);
+    const res = await fetch(`http://localhost:4000/api/empleados/buscar/nombre?nombre=${busqueda}`);
+    const data = await res.json();
+    setEmpleados(data);
   };
 
   return (
-    <div style={{
-      background: "#fff", padding: "1rem 1.5rem", borderRadius: "12px",
-      width: "350px", position: "relative", boxShadow: "0 4px 12px rgba(0,0,0,0.25)"
-    }}>
-      <button onClick={onCerrar} style={{ position: "absolute", top: "0.5rem", right: "0.5rem", border: "none", background: "transparent", cursor: "pointer" }}>
-        <FaTimes />
-      </button>
-      <h3 style={{ textAlign: "center", marginBottom: "1rem" }}>Agregar Empleado</h3>
-
-      <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+    <div>
+      {/* 🔍 Barra de búsqueda */}
+      <div style={{ marginBottom: "1rem", display: "flex", gap: "0.5rem", alignItems: "center" }}>
         <input
           type="text"
-          name="nombre"
-          placeholder="Nombre"
-          value={empleado.nombre}
-          onChange={handleChange}
-          style={{ padding: "0.4rem", fontSize: "0.9rem", borderRadius: "6px", border: "1px solid #ccc" }}
-        />
-        <input
-          type="text"
-          name="apellido"
-          placeholder="Apellido"
-          value={empleado.apellido}
-          onChange={handleChange}
-          style={{ padding: "0.4rem", fontSize: "0.9rem", borderRadius: "6px", border: "1px solid #ccc" }}
-        />
-        <input
-          type="email"
-          name="correo"
-          placeholder="Correo"
-          value={empleado.correo}
-          onChange={handleChange}
-          style={{ padding: "0.4rem", fontSize: "0.9rem", borderRadius: "6px", border: "1px solid #ccc" }}
-        />
-        <input
-          type="text"
-          name="telefono"
-          placeholder="Teléfono"
-          value={empleado.telefono}
-          onChange={handleChange}
-          style={{ padding: "0.4rem", fontSize: "0.9rem", borderRadius: "6px", border: "1px solid #ccc" }}
-        />
-
-        <select
-          name="id_departamento"
-          value={empleado.id_departamento}
-          onChange={handleChange}
-          style={{ padding: "0.4rem", fontSize: "0.9rem", borderRadius: "6px", border: "1px solid #ccc" }}
-        >
-          {departamentos.map(d => (
-            <option key={d.id} value={d.id}>{d.nombre}</option>
-          ))}
-        </select>
-
-        <select
-          name="id_puesto"
-          value={empleado.id_puesto}
-          onChange={handleChange}
-          style={{ padding: "0.4rem", fontSize: "0.9rem", borderRadius: "6px", border: "1px solid #ccc" }}
-        >
-          {puestos.map(p => (
-            <option key={p.id} value={p.id}>{p.nombre}</option>
-          ))}
-        </select>
-
-        <select
-          name="rol"
-          value={empleado.rol}
-          onChange={handleChange}
-          style={{ padding: "0.4rem", fontSize: "0.9rem", borderRadius: "6px", border: "1px solid #ccc" }}
-        >
-          <option value="AGENTE">AGENTE</option>
-          <option value="ADMIN">ADMIN</option>
-        </select>
-
-        <select
-          name="activo"
-          value={empleado.activo}
-          onChange={handleChange}
-          style={{ padding: "0.4rem", fontSize: "0.9rem", borderRadius: "6px", border: "1px solid #ccc" }}
-        >
-          <option value="S">Activo</option>
-          <option value="N">Inactivo</option>
-        </select>
-
-        <button
-          onClick={handleSubmit}
+          placeholder="Buscar por nombre..."
+          value={busqueda}
+          onChange={e => setBusqueda(e.target.value)}
           style={{
-            backgroundColor: "#198754", color: "#fff", padding: "0.5rem",
-            borderRadius: "8px", border: "none", cursor: "pointer", marginTop: "0.5rem"
+            width: "250px",
+            padding: "0.5rem 0.75rem",
+            borderRadius: "8px",
+            border: "1px solid #ccc",
+            fontSize: "0.9rem",
+            outline: "none",
+            transition: "all 0.2s ease-in-out"
+          }}
+          onFocus={(e) => (e.target.style.border = "1px solid #0d6efd")}
+          onBlur={(e) => (e.target.style.border = "1px solid #ccc")}
+        />
+        <button 
+          onClick={buscarEmpleado} 
+          style={{ 
+            backgroundColor: "#0d6efd", 
+            color: "white", 
+            padding: "0.45rem 1rem", 
+            border: "none", 
+            borderRadius: "8px", 
+            fontSize: "0.9rem",
+            cursor: "pointer"
           }}
         >
-          Guardar
+          Buscar
+        </button>
+        <button 
+          onClick={fetchEmpleados} 
+          style={{ 
+            backgroundColor: "#6c757d", 
+            color: "white", 
+            padding: "0.45rem 1rem", 
+            border: "none", 
+            borderRadius: "8px", 
+            fontSize: "0.9rem",
+            cursor: "pointer"
+          }}
+        >
+          Ver Todos
         </button>
       </div>
+
+      {/* 👇 Botón para abrir el modal */}
+      <button
+        onClick={() => setMostrarModal(true)}
+        style={{
+          backgroundColor: "#198754",
+          color: "white",
+          padding: "0.5rem 1rem",
+          border: "none",
+          borderRadius: "8px",
+          marginBottom: "1rem",
+          cursor: "pointer"
+        }}
+      >
+        + Agregar Empleado
+      </button>
+
+   {mostrarModal && (
+  <div
+    style={{
+      position: "fixed",
+      top: 0,
+      left: 0,
+      width: "100vw",
+      height: "100vh",
+      backgroundColor: "rgba(0, 0, 0, 0.5)", // fondo semi-transparente
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      zIndex: 1000,
+    }}
+  >
+    <div
+      style={{
+        background: "white",
+        padding: "2rem",
+        borderRadius: "12px",
+        boxShadow: "0px 4px 15px rgba(0,0,0,0.2)",
+        minWidth: "600px",  // Aumentamos el mínimo
+        maxWidth: "900px",  // Aumentamos el máximo
+        width: "90%",
+      }}
+    >
+      <FormularioEmpleado
+        onClose={() => setMostrarModal(false)}
+        onSave={fetchEmpleados}
+      />
+    </div>
+  </div>
+)}
+
+
+
+      {/* Lista de empleados */}
+      <table border="1" cellPadding="8" style={{ width: "100%", borderCollapse: "collapse" }}>
+        <thead>
+          <tr style={{ backgroundColor: "#f1f1f1" }}>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Apellido</th>
+            <th>Correo</th>
+            <th>Teléfono</th>
+            <th>Puesto</th>
+            <th>Rol</th>
+            <th>Activo</th>
+          </tr>
+        </thead>
+        <tbody>
+          {empleados.map((emp) => (
+            <tr key={emp.id_empleado}>
+              <td>{emp.id_empleado}</td>
+              <td>{emp.nombre}</td>
+              <td>{emp.apellido}</td>
+              <td>{emp.correo}</td>
+              <td>{emp.telefono}</td>
+              <td>{emp.Puesto?.nombre}</td>
+              <td>{emp.rol}</td>
+              <td>{emp.activo}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
-}
+};
+
+export default Empleados;

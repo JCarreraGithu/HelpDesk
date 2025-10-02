@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import empleadoImg from "../assets/empleado.png";
 
 interface Usuario {
   id_usuario: number;
@@ -12,10 +13,8 @@ export default function DashboardUsuarios() {
   const [showForm, setShowForm] = useState(false);
   const [nuevoUsuario, setNuevoUsuario] = useState({ id_empleado: "", username: "", password: "" });
 
-  // Estado para confirmar eliminación
+  // Estados para confirmar eliminación y edición
   const [usuarioAEliminar, setUsuarioAEliminar] = useState<Usuario | null>(null);
-
-  // Estado para modificar usuario
   const [usuarioEditar, setUsuarioEditar] = useState<Usuario | null>(null);
   const [datosEditados, setDatosEditados] = useState({ username: "", activo: "" });
 
@@ -25,9 +24,7 @@ export default function DashboardUsuarios() {
     setUsuarios(data);
   };
 
-  useEffect(() => {
-    cargarUsuarios();
-  }, []);
+  useEffect(() => { cargarUsuarios(); }, []);
 
   const handleCrear = async () => {
     if (!nuevoUsuario.id_empleado || !nuevoUsuario.username || !nuevoUsuario.password) {
@@ -47,7 +44,7 @@ export default function DashboardUsuarios() {
   const confirmarEliminar = async () => {
     if (!usuarioAEliminar) return;
     await fetch(`http://localhost:4000/api/usuarios/${usuarioAEliminar.id_usuario}`, { method: "DELETE" });
-    setUsuarioAEliminar(null); // Cierra el modal
+    setUsuarioAEliminar(null);
     cargarUsuarios();
   };
 
@@ -69,20 +66,13 @@ export default function DashboardUsuarios() {
 
   return (
     <div style={{ padding: "1rem", minHeight: "100vh", backgroundColor: "#C0C0C0" }}>
-      <h2
-        style={{
-          color: "#198754",
-          borderBottom: "2px solid #198754",
-          paddingBottom: "0.5rem",
-          marginBottom: "1.5rem",
-        }}
-      >
+      <h2 style={{ color: "#198754", borderBottom: "2px solid #198754", paddingBottom: "0.5rem", marginBottom: "1.5rem" }}>
         Usuarios
       </h2>
 
-      {/* Botón alternar Formulario */}
+      {/* Botón para abrir el modal */}
       <button
-        onClick={() => setShowForm(!showForm)}
+        onClick={() => setShowForm(true)}
         style={{
           backgroundColor: "#198754",
           color: "#fff",
@@ -96,140 +86,65 @@ export default function DashboardUsuarios() {
         onMouseOver={(e) => { e.currentTarget.style.backgroundColor = "#157347"; e.currentTarget.style.transform = "translateY(-2px)"; }}
         onMouseOut={(e) => { e.currentTarget.style.backgroundColor = "#198754"; e.currentTarget.style.transform = "translateY(0)"; }}
       >
-        {showForm ? "Cancelar" : "Agregar Usuario"}
+        Agregar Usuario
       </button>
 
-      {/* Formulario */}
+      {/* Modal Nuevo Usuario */}
       {showForm && (
-        <div
-          style={{
-            backgroundColor: "#fff",
-            padding: "2rem",
-            borderRadius: "16px",
-            marginBottom: "2rem",
-            boxShadow: "0 5px 20px rgba(0,0,0,0.1)",
-          }}
-        >
-          <h3 style={{ marginBottom: "1rem", color: "#198754" }}>Nuevo Usuario</h3>
-          <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap", alignItems: "center" }}>
-            <input
-              placeholder="ID empleado"
-              value={nuevoUsuario.id_empleado}
-              onChange={(e) => setNuevoUsuario({ ...nuevoUsuario, id_empleado: e.target.value })}
-              style={{ padding: "0.5rem 0.8rem", borderRadius: "8px", border: "1px solid #c7ded3", width: "120px" }}
-            />
-            <input
-              placeholder="Username"
-              value={nuevoUsuario.username}
-              onChange={(e) => setNuevoUsuario({ ...nuevoUsuario, username: e.target.value })}
-              style={{ padding: "0.5rem 0.8rem", borderRadius: "8px", border: "1px solid #c7ded3", width: "200px" }}
-            />
-            <input
-              placeholder="Password"
-              type="password"
-              value={nuevoUsuario.password}
-              onChange={(e) => setNuevoUsuario({ ...nuevoUsuario, password: e.target.value })}
-              style={{ padding: "0.5rem 0.8rem", borderRadius: "8px", border: "1px solid #c7ded3", width: "200px" }}
-            />
+        <div style={overlay}>
+          <div style={modalContainer}>
+            <div style={{ flex: 1 }}>
+              <h3 style={{ marginBottom: "1rem", color: "#198754" }}>Nuevo Usuario</h3>
+              <div style={inputGroup}>
+                <label>ID Empleado</label>
+                <input placeholder="ID empleado" value={nuevoUsuario.id_empleado} onChange={(e) => setNuevoUsuario({ ...nuevoUsuario, id_empleado: e.target.value })} style={inputStyle} />
+              </div>
+              <div style={inputGroup}>
+                <label>Username</label>
+                <input placeholder="Username" value={nuevoUsuario.username} onChange={(e) => setNuevoUsuario({ ...nuevoUsuario, username: e.target.value })} style={inputStyle} />
+              </div>
+              <div style={inputGroup}>
+                <label>Password</label>
+                <input type="password" placeholder="Password" value={nuevoUsuario.password} onChange={(e) => setNuevoUsuario({ ...nuevoUsuario, password: e.target.value })} style={inputStyle} />
+              </div>
+              <div style={{ display: "flex", justifyContent: "flex-end", gap: "0.5rem", marginTop: "1rem" }}>
+                <button onClick={() => setShowForm(false)} style={btnGray}>Volver</button>
+                <button onClick={handleCrear} style={btnGreen}>Crear</button>
+              </div>
+            </div>
+            <div style={{ marginLeft: "2rem" }}>
+              <img src={empleadoImg} alt="Empleado" style={{ width: "200px", borderRadius: "12px" }} />
+            </div>
           </div>
-          <button
-            onClick={handleCrear}
-            style={{
-              backgroundColor: "#198754",
-              color: "#fff",
-              padding: "0.8rem 2rem",
-              borderRadius: "12px",
-              border: "none",
-              cursor: "pointer",
-              marginTop: "1rem",
-              transition: "all 0.3s ease",
-            }}
-            onMouseOver={(e) => { e.currentTarget.style.backgroundColor = "#157347"; e.currentTarget.style.transform = "translateY(-2px)"; }}
-            onMouseOut={(e) => { e.currentTarget.style.backgroundColor = "#198754"; e.currentTarget.style.transform = "translateY(0)"; }}
-          >
-            Crear
-          </button>
         </div>
       )}
 
       {/* Tabla de usuarios */}
-      <div
-        style={{
-          overflowX: "auto",
-          backgroundColor: "#fff",
-          padding: "1rem",
-          borderRadius: "16px",
-          boxShadow: "0 5px 20px rgba(0,0,0,0.1)",
-        }}
-      >
+      <div style={tablaContainer}>
         <table style={{ width: "100%", borderCollapse: "collapse", borderRadius: "12px", overflow: "hidden" }}>
           <thead style={{ backgroundColor: "#d9ebe3" }}>
             <tr>
-              <th style={{ padding: "12px", textAlign: "left" }}>ID</th>
-              <th style={{ padding: "12px", textAlign: "left" }}>Empleado</th>
-              <th style={{ padding: "12px", textAlign: "left" }}>Usuario</th>
-              <th style={{ padding: "12px", textAlign: "left" }}>Activo</th>
-              <th style={{ padding: "12px", textAlign: "left" }}>Acciones</th>
+              <th style={thStyle}>ID</th>
+              <th style={thStyle}>Empleado</th>
+              <th style={thStyle}>Usuario</th>
+              <th style={thStyle}>Activo</th>
+              <th style={thStyle}>Acciones</th>
             </tr>
           </thead>
           <tbody>
             {usuarios.map((u) => (
-              <tr
-                key={u.id_usuario}
-                style={{ transition: "background 0.3s", cursor: "default" }}
-                onMouseOver={(e) => (e.currentTarget.style.backgroundColor = "#eef5f4")}
-                onMouseOut={(e) => (e.currentTarget.style.backgroundColor = "transparent")}
-              >
-                <td style={{ padding: "10px 12px" }}>{u.id_usuario}</td>
-                <td style={{ padding: "10px 12px" }}>{u.Empleado?.nombre} {u.Empleado?.apellido} ({u.Empleado?.rol})</td>
-                <td style={{ padding: "10px 12px" }}>{u.username}</td>
-                <td style={{ padding: "10px 12px" }}>
-                  <span
-                    style={{
-                      padding: "0.2rem 0.6rem",
-                      borderRadius: "12px",
-                      color: "#fff",
-                      backgroundColor: u.activo === "S" ? "#198754" : "#dc3545",
-                      fontWeight: 600,
-                      fontSize: "0.9rem",
-                    }}
-                  >
+              <tr key={u.id_usuario} style={{ transition: "background 0.3s", cursor: "default" }} onMouseOver={(e) => (e.currentTarget.style.backgroundColor = "#eef5f4")} onMouseOut={(e) => (e.currentTarget.style.backgroundColor = "transparent")}>
+                <td style={tdStyle}>{u.id_usuario}</td>
+                <td style={tdStyle}>{u.Empleado?.nombre} {u.Empleado?.apellido} ({u.Empleado?.rol})</td>
+                <td style={tdStyle}>{u.username}</td>
+                <td style={tdStyle}>
+                  <span style={{ padding: "0.2rem 0.6rem", borderRadius: "12px", color: "#fff", backgroundColor: u.activo === "S" ? "#198754" : "#dc3545", fontWeight: 600, fontSize: "0.9rem" }}>
                     {u.activo === "S" ? "Activo" : "Inactivo"}
                   </span>
                 </td>
                 <td style={{ padding: "10px 12px", display: "flex", gap: "0.5rem" }}>
-                  <button
-                    onClick={() => abrirModalEditar(u)}
-                    style={{
-                      backgroundColor: "#808080",
-                      color: "#fff",
-                      padding: "0.5rem 1rem",
-                      borderRadius: "8px",
-                      border: "none",
-                      cursor: "pointer",
-                      transition: "all 0.3s ease",
-                    }}
-                    onMouseOver={(e) => { e.currentTarget.style.backgroundColor = "#C0C0C0"; e.currentTarget.style.transform = "translateY(-2px)"; }}
-                    onMouseOut={(e) => { e.currentTarget.style.backgroundColor = "#808080"; e.currentTarget.style.transform = "translateY(0)"; }}
-                  >
-                    Modificar
-                  </button>
-                  <button
-                    onClick={() => setUsuarioAEliminar(u)}
-                    style={{
-                      backgroundColor: "#6c757d",
-                      color: "#fff",
-                      padding: "0.5rem 1rem",
-                      borderRadius: "8px",
-                      border: "none",
-                      cursor: "pointer",
-                      transition: "all 0.3s ease",
-                    }}
-                    onMouseOver={(e) => { e.currentTarget.style.backgroundColor = "#C0C0C0"; e.currentTarget.style.transform = "translateY(-2px)"; }}
-                    onMouseOut={(e) => { e.currentTarget.style.backgroundColor = "#808080"; e.currentTarget.style.transform = "translateY(0)"; }}
-                  >
-                    Eliminar
-                  </button>
+                  <button onClick={() => abrirModalEditar(u)} style={btnGray}>Modificar</button>
+                  <button onClick={() => setUsuarioAEliminar(u)} style={btnRed}>Eliminar</button>
                 </td>
               </tr>
             ))}
@@ -237,7 +152,7 @@ export default function DashboardUsuarios() {
         </table>
       </div>
 
-      {/* Modal de confirmación */}
+      {/* Modal Eliminación */}
       {usuarioAEliminar && (
         <div style={overlay}>
           <div style={modal}>
@@ -251,7 +166,7 @@ export default function DashboardUsuarios() {
         </div>
       )}
 
-      {/* Modal de edición */}
+      {/* Modal Edición */}
       {usuarioEditar && (
         <div style={overlay}>
           <div style={modal}>
@@ -283,48 +198,41 @@ export default function DashboardUsuarios() {
 
 /* --- estilos reutilizables --- */
 const overlay: React.CSSProperties = {
-  position: "fixed",
-  top: 0, left: 0, right: 0, bottom: 0,
+  position: "fixed", top: 0, left: 0, right: 0, bottom: 0,
   backgroundColor: "rgba(0,0,0,0.5)",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
+  display: "flex", alignItems: "center", justifyContent: "center",
   zIndex: 1000,
 };
 
-const modal: React.CSSProperties = {
-  background: "#fff",
+const modalContainer: React.CSSProperties = {
+  display: "flex",
+  backgroundColor: "#fff",
   padding: "2rem",
   borderRadius: "12px",
   boxShadow: "0 5px 20px rgba(0,0,0,0.2)",
-  maxWidth: "400px",
-  width: "100%",
-  textAlign: "center",
+  maxWidth: "800px",
+  width: "90%",
+  alignItems: "flex-start",
 };
 
-const btnGray: React.CSSProperties = {
-  backgroundColor: "#6c757d",
-  color: "#fff",
-  padding: "0.6rem 1.2rem",
-  borderRadius: "8px",
-  border: "none",
-  cursor: "pointer",
+const modal: React.CSSProperties = {
+  backgroundColor: "#fff",
+  padding: "2rem",
+  borderRadius: "12px",
+  width: "400px",
+  maxWidth: "90%",
+  boxShadow: "0 5px 20px rgba(0,0,0,0.2)",
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
 };
 
-const btnRed: React.CSSProperties = {
-  backgroundColor: "#dc3545",
-  color: "#fff",
-  padding: "0.6rem 1.2rem",
-  borderRadius: "8px",
-  border: "none",
-  cursor: "pointer",
-};
-
-const btnBlue: React.CSSProperties = {
-  backgroundColor: "#0d6efd",
-  color: "#fff",
-  padding: "0.6rem 1.2rem",
-  borderRadius: "8px",
-  border: "none",
-  cursor: "pointer",
-};
+const inputGroup: React.CSSProperties = { display: "flex", flexDirection: "column", marginBottom: "1rem" };
+const inputStyle: React.CSSProperties = { padding: "0.5rem 0.8rem", borderRadius: "8px", border: "1px solid #c7ded3", width: "250px", transition: "all 0.2s", outline: "none" };
+const btnGray: React.CSSProperties = { backgroundColor: "#6c757d", color: "#fff", padding: "0.5rem 1.2rem", borderRadius: "8px", border: "none", cursor: "pointer" };
+const btnGreen: React.CSSProperties = { backgroundColor: "#198754", color: "#fff", padding: "0.5rem 1.2rem", borderRadius: "8px", border: "none", cursor: "pointer" };
+const btnBlue: React.CSSProperties = { backgroundColor: "#0d6efd", color: "#fff", padding: "0.5rem 1.2rem", borderRadius: "8px", border: "none", cursor: "pointer" };
+const btnRed: React.CSSProperties = { backgroundColor: "#dc3545", color: "#fff", padding: "0.5rem 1rem", borderRadius: "8px", border: "none", cursor: "pointer" };
+const tablaContainer: React.CSSProperties = { overflowX: "auto", backgroundColor: "#fff", padding: "1rem", borderRadius: "16px", boxShadow: "0 5px 20px rgba(0,0,0,0.1)" };
+const thStyle: React.CSSProperties = { padding: "12px", textAlign: "left" };
+const tdStyle: React.CSSProperties = { padding: "10px 12px" };
