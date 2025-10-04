@@ -5,16 +5,11 @@ import VerCasos from "./VerCasos";
 import DetalleCaso from "./DetalleCaso";
 import DashboardUsuarios from "./DashboardUsuarios";
 import PerfilUsuario from "./PerfilUsuario";
-<<<<<<< HEAD
-import Incidencia from "./incidencia";
-import "./Dashboard.css"; // Se mantiene al final de los imports de módulos y componentes
-=======
 import { useState, useEffect } from "react";
 import "./Dashboard.css";
 import Empleados from "./Empleados";
 import Estadistics from "./Estadistics";
 
->>>>>>> jimmy
 
 export default function Dashboard() {
   const [darkMode, setDarkMode] = useState(false);
@@ -59,16 +54,6 @@ export default function Dashboard() {
           boxSizing: "border-box",
         }}
       >
-<<<<<<< HEAD
-        <Routes>
-          <Route path="ver-casos" element={<VerCasos />} />
-          <Route path="crear-caso" element={<CrearCaso />} />
-          <Route path="detalle-caso" element={<DetalleCaso />} />
-          <Route path="usuarios" element={<DashboardUsuarios />} />
-          <Route path="perfil" element={<PerfilUsuario />} />
-          <Route path="Incidencia" element={<Incidencia />} />
-        </Routes>
-=======
        <Routes>
   <Route path="ver-casos" element={<VerCasos />} />
   <Route path="crear-caso" element={<CrearCaso />} />
@@ -78,7 +63,6 @@ export default function Dashboard() {
   <Route path="empleados" element={<Empleados />} />  
    <Route path="estadisticas" element={<Estadistics />} />  
 </Routes>
->>>>>>> jimmy
       </div>
 
       {/* FOOTER */}
