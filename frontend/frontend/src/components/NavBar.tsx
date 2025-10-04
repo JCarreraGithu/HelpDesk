@@ -355,14 +355,6 @@ export default function Navbar({ darkMode, setDarkMode }: NavbarProps) {
   <img src={estadisticasIcon} alt="Estadísticas" style={{ width: "24px", height: "24px" }} />
 </Link>
 
-<<<<<<< HEAD
-      {/* Navegación */}
-      <nav>
-        <Link to="/dashboard/ver-casos" className="active">Casos</Link>
-        <Link to="/dashboard/crear-caso">Nuevo Reporte</Link>
-        <Link to="/dashboard/usuarios">Usuarios</Link>
-        <Link to="/dashboard/incidencia">Incidencia</Link>
-=======
         <Link
           to="/dashboard/usuarios"
           className={location.pathname === "/dashboard/usuarios" ? "active" : ""}
@@ -447,7 +439,6 @@ export default function Navbar({ darkMode, setDarkMode }: NavbarProps) {
             </div>
           )}
         </div>
->>>>>>> jimmy
       </nav>
     </>
   );
