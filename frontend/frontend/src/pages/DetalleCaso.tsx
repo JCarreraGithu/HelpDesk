@@ -232,21 +232,47 @@ export default function DetalleCaso() {
         </div>
 
         {/* Historial */}
-        <div>
-          <h3 style={{ borderBottom: "2px solid #198754", paddingBottom: "0.5rem", marginBottom: "1rem" }}>Actividad</h3>
-          <ul style={{ listStyle: "none", padding: 0 }}>
-            {caso.historial
-              ?.sort((a, b) => new Date(a.fecha).getTime() - new Date(b.fecha).getTime())
-              .map(h => (
-                <li key={h.id_historial} style={{ backgroundColor: "#fff", marginBottom: "0.8rem", padding: "1rem", borderRadius: "12px", boxShadow: "0 4px 10px rgba(0,0,0,0.1)", display: "flex", flexDirection: "column", gap: "0.3rem" }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontWeight: "bold" }}>{h.empleado}</div>
-                  <div>{h.comentario}</div>
-                  <div style={{ fontSize: "0.85rem", color: "#666" }}>{new Date(h.fecha).toLocaleString()}</div>
-                  <div style={{ fontSize: "0.85rem", color: "#198754" }}>{h.estado}</div>
-                </li>
-              ))}
-          </ul>
-        </div>
+<div>
+  <h3 style={{ borderBottom: "2px solid #198754", paddingBottom: "0.5rem", marginBottom: "1rem" }}>Actividad</h3>
+  <ul style={{ listStyle: "none", padding: 0 }}>
+    {caso.historial
+      ?.sort((a, b) => new Date(a.fecha).getTime() - new Date(b.fecha).getTime())
+      .map(h => (
+        <li
+          key={h.id_historial}
+          style={{
+            backgroundColor: "#fff",
+            marginBottom: "0.8rem",
+            padding: "1rem",
+            borderRadius: "12px",
+            boxShadow: "0 4px 10px rgba(0,0,0,0.1)",
+            display: "flex",
+            flexDirection: "column",
+            gap: "0.5rem"
+          }}
+        >
+          {/* Nombre + icono */}
+          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontWeight: "bold" }}>
+            <FaUser style={{ color: "#198754" }} /> {h.empleado}
+          </div>
+
+          {/* Comentario + fecha al lado derecho */}
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <span>{h.comentario}</span>
+            <span style={{ fontSize: "0.85rem", color: "#666" }}>
+              {new Date(h.fecha).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+            </span>
+          </div>
+
+          {/* Estado debajo */}
+          <div style={{ fontSize: "0.85rem", color: "#198754", marginTop: "0.3rem" }}>
+            {h.estado}
+          </div>
+        </li>
+      ))}
+  </ul>
+</div>
+
 
         {/* ------------------- MODALES ------------------- */}
         {modalTipo === "cerrar" && (

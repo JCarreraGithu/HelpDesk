@@ -6,6 +6,7 @@ import notiIcon from "../assets/noti.png";
 import userIcon from "../assets/log0.png";
 import confiIcon from "../assets/confi.png";
 import { useState, useEffect, useRef } from "react";
+import estadisticasIcon from "../assets/estadisticas.png";
 
 interface NavbarProps {
   darkMode: boolean;
@@ -174,119 +175,153 @@ export default function Navbar({ darkMode, setDarkMode }: NavbarProps) {
         </div>
       )}
 
-      {/* Panel de notificaciones */}
-      {showNoti && (
-        <div
-          className="noti-panel"
+     {/* Panel de notificaciones mejorado */}
+{showNoti && (
+  <div
+    className="noti-panel"
+    style={{
+      position: "absolute",
+      top: "60px",
+      right: "20px",
+      width: "360px",
+      maxHeight: "500px",
+      backgroundColor: "#f9fafa",
+      boxShadow: "0 8px 24px rgba(0,0,0,0.2)",
+      borderRadius: "14px",
+      overflow: "hidden",
+      zIndex: 1000,
+      display: "flex",
+      flexDirection: "column",
+      animation: "fadeIn 0.3s ease-out",
+    }}
+  >
+    {/* Header del panel */}
+    <div
+      style={{
+        padding: "12px 16px",
+        borderBottom: "1px solid #ddd",
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        background: "#198754",
+        color: "#fff",
+        fontWeight: "bold",
+        fontSize: "14px",
+      }}
+    >
+      Notificaciones
+      {notificaciones.length > 0 && (
+        <button
+          onClick={() => {
+            setNotificaciones([]);
+            localStorage.setItem(leidasStorageKey, JSON.stringify([...notificacionesLeidas, ...notificaciones.map(n => n.ID_NOTIFICACION)]));
+          }}
           style={{
-            position: "absolute",
-            top: "60px",
-            right: "20px",
-            width: "360px",
-            maxHeight: "450px",
-            backgroundColor: "#f9fafa",
-            boxShadow: "0 6px 16px rgba(0,0,0,0.2)",
-            borderRadius: "14px",
-            overflow: "hidden",
-            zIndex: 1000,
-            display: "flex",
-            flexDirection: "column",
-            animation: "fadeIn 0.25s ease-out",
+            border: "none",
+            background: "#dc3545",
+            color: "white",
+            cursor: "pointer",
+            fontSize: "12px",
+            padding: "4px 8px",
+            borderRadius: "6px",
           }}
         >
-          <div
-            style={{
-              padding: "12px 16px",
-              borderBottom: "1px solid #ddd",
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              background: "#eceff1",
-            }}
-          >
-            <h4 style={{ margin: 0, fontSize: "15px", color: "#333" }}>Notificaciones</h4>
-            {notificaciones.length > 0 && (
+          Limpiar todas
+        </button>
+      )}
+    </div>
+
+    {/* Contenido del panel */}
+    <div
+      style={{
+        padding: "12px",
+        flex: 1,
+        overflowY: "auto",
+        display: "flex",
+        flexDirection: "column",
+        gap: "12px",
+      }}
+    >
+      {notificaciones.length === 0 ? (
+        <p style={{ textAlign: "center", color: "#777", fontStyle: "italic", margin: "20px 0" }}>
+          No hay notificaciones
+        </p>
+      ) : (
+        notificaciones.map((n, idx) => {
+          const colores = ["#e3f2fd", "#e8f5e9", "#fff3e0"];
+          const color = colores[idx % colores.length];
+
+          return (
+            <div
+              key={n.ID_NOTIFICACION}
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "flex-start",
+                padding: "12px 16px",
+                backgroundColor: color,
+                borderRadius: "12px",
+                boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
+                position: "relative",
+                transition: "transform 0.2s ease, opacity 0.2s ease",
+              }}
+            >
+              <div style={{ flex: 1 }}>
+                <p style={{ margin: 0, fontSize: "14px", fontWeight: 500, color: "#222" }}>
+                  {n.MENSAJE}
+                </p>
+                <small style={{ fontSize: "11px", color: "#555" }}>
+                  {n.FECHA ? new Date(n.FECHA).toLocaleString() : ""}
+                </small>
+              </div>
               <button
-                onClick={() => setNotificaciones([])}
+                onClick={() => {
+                  // SweetAlert2 animación al eliminar
+                  import("sweetalert2").then(Swal => {
+                    Swal.default.fire({
+                      title: "Eliminar notificación?",
+                      text: "No se podrá recuperar esta notificación en la vista actual",
+                      icon: "warning",
+                      showCancelButton: true,
+                      confirmButtonColor: "#198754",
+                      cancelButtonColor: "#dc3545",
+                      confirmButtonText: "Sí, eliminar",
+                      cancelButtonText: "Cancelar",
+                    }).then((result) => {
+                      if (result.isConfirmed) {
+                        marcarLeida(n.ID_NOTIFICACION);
+                        Swal.default.fire({
+                          icon: "success",
+                          title: "Eliminada",
+                          timer: 1000,
+                          showConfirmButton: false,
+                        });
+                      }
+                    });
+                  });
+                }}
                 style={{
                   border: "none",
-                  background: "#e57373",
+                  background: "#ef5350",
                   color: "white",
                   cursor: "pointer",
-                  fontSize: "12px",
+                  fontSize: "13px",
                   padding: "4px 8px",
-                  borderRadius: "6px",
-                  transition: "background 0.2s",
+                  borderRadius: "8px",
+                  fontWeight: "bold",
                 }}
+                title="Eliminar notificación"
               >
-                Limpiar todas
+                ✕
               </button>
-            )}
-          </div>
-
-          <div
-            style={{
-              padding: "12px",
-              flex: 1,
-              overflowY: "auto",
-              display: "flex",
-              flexDirection: "column",
-              gap: "10px",
-            }}
-          >
-            {notificaciones.length === 0 ? (
-              <p style={{ textAlign: "center", color: "#777", fontStyle: "italic", margin: "20px 0" }}>
-                No hay notificaciones
-              </p>
-            ) : (
-              notificaciones.map((n, idx) => {
-                const colores = ["#e3f2fd", "#e8f5e9", "#fff3e0"];
-                const color = colores[idx % colores.length];
-                return (
-                  <div
-                    key={n.ID_NOTIFICACION}
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "flex-start",
-                      padding: "10px 12px",
-                      backgroundColor: color,
-                      border: "1px solid #ddd",
-                      borderRadius: "10px",
-                      boxShadow: "inset 0 0 4px rgba(0,0,0,0.05)",
-                    }}
-                  >
-                    <div style={{ flex: 1, marginRight: "10px" }}>
-                      <p style={{ margin: 0, fontSize: "14px", color: "#222", fontWeight: 500 }}>
-                        {n.MENSAJE}
-                      </p>
-                      <small style={{ fontSize: "11px", color: "#555" }}>
-                        {n.FECHA ? new Date(n.FECHA).toLocaleString() : ""}
-                      </small>
-                    </div>
-                    <button
-                      onClick={() => marcarLeida(n.ID_NOTIFICACION)}
-                      style={{
-                        border: "none",
-                        background: "#ef5350",
-                        color: "white",
-                        cursor: "pointer",
-                        fontSize: "13px",
-                        padding: "4px 8px",
-                        borderRadius: "6px",
-                        fontWeight: "bold",
-                      }}
-                      title="Eliminar notificación"
-                    >
-                      ✕
-                    </button>
-                  </div>
-                );
-              })
-            )}
-          </div>
-        </div>
+            </div>
+          );
+        })
       )}
+    </div>
+  </div>
+)}
+
 
       {/* Navegación principal */}
       <nav style={{ display: "flex", gap: "16px", position: "relative", padding: "10px 20px" }}>
@@ -302,6 +337,24 @@ export default function Navbar({ darkMode, setDarkMode }: NavbarProps) {
         >
           Nuevo Reporte
         </Link>
+        <Link
+  to="/dashboard/estadisticas"
+  style={{
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    width: "40px",
+    height: "40px",
+    backgroundColor: location.pathname === "/dashboard/estadisticas" ? "#198754" : "#f0f0f0",
+    borderRadius: "8px",
+    border: "1px solid #ccc",
+    cursor: "pointer",
+    padding: "6px",
+  }}
+>
+  <img src={estadisticasIcon} alt="Estadísticas" style={{ width: "24px", height: "24px" }} />
+</Link>
+
         <Link
           to="/dashboard/usuarios"
           className={location.pathname === "/dashboard/usuarios" ? "active" : ""}

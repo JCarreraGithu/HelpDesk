@@ -8,6 +8,8 @@ import PerfilUsuario from "./PerfilUsuario";
 import { useState, useEffect } from "react";
 import "./Dashboard.css";
 import Empleados from "./Empleados";
+import Estadistics from "./Estadistics";
+
 
 export default function Dashboard() {
   const [darkMode, setDarkMode] = useState(false);
@@ -58,7 +60,8 @@ export default function Dashboard() {
   <Route path="detalle-caso" element={<DetalleCaso />} />
   <Route path="usuarios" element={<DashboardUsuarios />} />
   <Route path="perfil" element={<PerfilUsuario />} />
-  <Route path="empleados" element={<Empleados />} />  {/* <-- nueva ruta */}
+  <Route path="empleados" element={<Empleados />} />  
+   <Route path="estadisticas" element={<Estadistics />} />  
 </Routes>
       </div>
 
