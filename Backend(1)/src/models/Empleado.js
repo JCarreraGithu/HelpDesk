@@ -14,10 +14,27 @@ export const Empleado = sequelize.define("Empleado", {
     allowNull: false, 
     field: "ID_DEPARTAMENTO" 
   },
-  nombre: { type: DataTypes.STRING(100), allowNull: false, field: "NOMBRE" },
-  apellido: { type: DataTypes.STRING(100), allowNull: false, field: "APELLIDO" },
-  correo: { type: DataTypes.STRING(150), allowNull: false, unique: true, field: "CORREO" },
-  telefono: { type: DataTypes.STRING(20), field: "TELEFONO" },
+  nombre: { 
+    type: DataTypes.STRING(100), 
+    allowNull: false, 
+    field: "NOMBRE" 
+  },
+  apellido: { 
+    type: DataTypes.STRING(100), 
+    allowNull: false, 
+    field: "APELLIDO" 
+  },
+  correo: { 
+    type: DataTypes.STRING(150), 
+    allowNull: false, 
+    unique: true, 
+    field: "CORREO" 
+  },
+  telefono: { 
+    type: DataTypes.STRING(20), 
+    allowNull: true, 
+    field: "TELEFONO" 
+  },
   id_puesto: { 
     type: DataTypes.DECIMAL, 
     allowNull: false, 

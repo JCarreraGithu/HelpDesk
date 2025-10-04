@@ -15,6 +15,6 @@ router.get("/", listarRepuestos);
 router.get("/:id", buscarRepuesto);
 router.put("/:id", editarRepuesto);
 router.delete("/:id", eliminarRepuesto);
-router.get("/buscar", buscarRepuestoPorNombre);
+router.get("/buscar/nombre", buscarRepuestoPorNombre);
 
 export default router;
