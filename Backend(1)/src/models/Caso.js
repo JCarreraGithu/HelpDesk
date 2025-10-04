@@ -6,28 +6,28 @@ import { sequelize } from "../config/db.js";
 
 export const Caso = sequelize.define('Caso', {
   id_caso: {
-    type: DataTypes.NUMBER,
+    type: DataTypes.INTEGER,  // para campos enteros
     primaryKey: true,
     autoIncrement: true,
     field: "ID_CASO"
   },
   id_empleado_solicita: {
-    type: DataTypes.NUMBER,
+     type: DataTypes.INTEGER, 
     allowNull: false,
     field: "ID_EMPLEADO_SOLICITA"
   },
   id_tipo_incidencia: {
-    type: DataTypes.NUMBER,
+     type: DataTypes.INTEGER, 
     allowNull: false,
     field: "ID_TIPO_INCIDENCIA"
   },
   id_incidencia: {
-    type: DataTypes.NUMBER,
+    type: DataTypes.INTEGER, 
     allowNull: true, // puede ser null
     field: "ID_INCIDENCIA"
   },
   id_tecnico: {  // ✅ Nuevo campo
-    type: DataTypes.NUMBER,
+     type: DataTypes.INTEGER, 
     allowNull: true,
     field: "ID_TECNICO"
   },
@@ -42,7 +42,7 @@ export const Caso = sequelize.define('Caso', {
     field: "DESCRIPCION"
   },
   id_prioridad: {
-    type: DataTypes.NUMBER,
+    type: DataTypes.INTEGER, 
     field: "ID_PRIORIDAD"
   },
   fecha_creacion: {
@@ -51,7 +51,7 @@ export const Caso = sequelize.define('Caso', {
     field: "FECHA_CREACION"
   },
   id_estado_actual: {
-    type: DataTypes.NUMBER,
+     type: DataTypes.INTEGER, 
     field: "ID_ESTADO_ACTUAL"
   },
   fecha_cierre: {
@@ -60,5 +60,6 @@ export const Caso = sequelize.define('Caso', {
   }
 }, {
   tableName: 'CASOS',
+   schema: 'MLOPEZ',  // <- agrega esto
   timestamps: false
 });
