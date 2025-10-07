@@ -60,6 +60,5 @@ export const Caso = sequelize.define('Caso', {
   }
 }, {
   tableName: 'CASOS',
-   schema: 'MLOPEZ',  // <- agrega esto
   timestamps: false
 });

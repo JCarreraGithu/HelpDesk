@@ -3,7 +3,7 @@ import logo from "../assets/logo.png";
 import sesionIcon from "../assets/sesion.png";
 import lupaIcon from "../assets/lupa.png";
 import notiIcon from "../assets/noti.png";
-import userIcon from "../assets/log0.png";
+import userIcon from "../assets/Log0.png";
 import confiIcon from "../assets/confi.png";
 import { useState, useEffect, useRef } from "react";
 import estadisticasIcon from "../assets/estadisticas.png";
