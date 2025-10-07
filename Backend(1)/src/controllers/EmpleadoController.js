@@ -1,5 +1,5 @@
 import { Empleado } from "../models/Empleado.js";
-import { Puesto } from "../models/Puesto.js";
+import { Puesto } from "../models/Puestos.js";
 
 // Listar todos los empleados
 export const getEmpleados = async (req, res) => {

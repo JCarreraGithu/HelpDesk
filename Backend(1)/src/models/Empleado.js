@@ -1,6 +1,6 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "../config/db.js";
-import { Puesto } from "./Puesto.js";
+import { Puesto } from "./Puestos.js";
 
 export const Empleado = sequelize.define("Empleado", {
   id_empleado: { 

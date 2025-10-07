@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import empleadoImg from "../assets/empleado.png"; // asegúrate de la ruta
+import empleadoImg from "../assets/empleado.png";
 
 interface FormularioEmpleadoProps {
   onClose: () => void;
@@ -18,11 +18,25 @@ const FormularioEmpleado: React.FC<FormularioEmpleadoProps> = ({ onClose, onSave
     activo: "S"
   });
 
+  const [modalError, setModalError] = useState(false);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    setEmpleado({ ...empleado, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+
+    if (name === "telefono" && !/^\d*$/.test(value)) {
+      setModalError(true);
+      return; // no actualiza el valor si hay letra
+    }
+
+    setEmpleado({ ...empleado, [name]: value });
   };
 
   const handleSubmit = () => {
+    if (!empleado.telefono.match(/^\d*$/)) {
+      setModalError(true);
+      return;
+    }
+
     fetch("http://localhost:4000/api/empleados", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -50,7 +64,6 @@ const FormularioEmpleado: React.FC<FormularioEmpleadoProps> = ({ onClose, onSave
   };
 
   const selectStyle = { ...inputStyle, cursor: "pointer" };
-
   const buttonStyle = {
     padding: "0.5rem 1rem",
     borderRadius: "8px",
@@ -61,173 +74,157 @@ const FormularioEmpleado: React.FC<FormularioEmpleadoProps> = ({ onClose, onSave
   };
 
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "row",
-        gap: "2rem",
-        padding: "1.5rem",
-        background: "#2d2d2d",
-        borderRadius: "16px",
-        boxShadow: "0 8px 25px rgba(0,0,0,0.3)",
-        alignItems: "flex-start"
-      }}
-    >
-      {/* 📝 Formulario */}
-      <div style={{ display: "flex", flexDirection: "column", gap: "1rem", flex: 1 }}>
-        <h3 style={{ textAlign: "center", color: "#198754" }}>Agregar Empleado</h3>
-
-        {/* Nombre */}
-        <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "0.5rem" }}>
-          <span style={{ width: "120px", color: "#fff", fontWeight: "bold" }}>👤 Nombre:</span>
-          <input
-            name="nombre"
-            placeholder="Escriba el nombre"
-            value={empleado.nombre}
-            onChange={handleChange}
-            style={inputStyle}
-            onFocus={(e) => (e.target.style.border = "2px solid #198754")}
-            onBlur={(e) => (e.target.style.border = "1px solid #555")}
-          />
-        </div>
-
-        {/* Apellido */}
-        <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "0.5rem" }}>
-          <span style={{ width: "120px", color: "#fff", fontWeight: "bold" }}>📝 Apellido:</span>
-          <input
-            name="apellido"
-            placeholder="Escriba el apellido"
-            value={empleado.apellido}
-            onChange={handleChange}
-            style={inputStyle}
-            onFocus={(e) => (e.target.style.border = "2px solid #198754")}
-            onBlur={(e) => (e.target.style.border = "1px solid #555")}
-          />
-        </div>
-
-        {/* Correo */}
-        <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "0.5rem" }}>
-          <span style={{ width: "120px", color: "#fff", fontWeight: "bold" }}>📧 Correo:</span>
-          <input
-            name="correo"
-            placeholder="Correo electrónico"
-            value={empleado.correo}
-            onChange={handleChange}
-            style={inputStyle}
-            onFocus={(e) => (e.target.style.border = "2px solid #198754")}
-            onBlur={(e) => (e.target.style.border = "1px solid #555")}
-          />
-        </div>
-
-        {/* Teléfono */}
-        <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "0.5rem" }}>
-          <span style={{ width: "120px", color: "#fff", fontWeight: "bold" }}>📞 Teléfono:</span>
-          <input
-            name="telefono"
-            placeholder="Número de teléfono"
-            value={empleado.telefono}
-            onChange={handleChange}
-            style={inputStyle}
-            onFocus={(e) => (e.target.style.border = "2px solid #198754")}
-            onBlur={(e) => (e.target.style.border = "1px solid #555")}
-          />
-        </div>
-
-        {/* Rol */}
-        <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "0.5rem" }}>
-          <span style={{ width: "120px", color: "#fff", fontWeight: "bold" }}>🔑 Rol:</span>
-          <select
-            name="rol"
-            value={empleado.rol}
-            onChange={handleChange}
-            style={selectStyle}
-          >
-            <option value="" disabled style={{ color: "#ccc" }}>Seleccione un rol</option>
-            <option value="USUARIO">USUARIO</option>
-            <option value="AGENTE">AGENTE</option>
-            <option value="SUPERVISOR">SUPERVISOR</option>
-            <option value="ADMIN">ADMIN</option>
-          </select>
-        </div>
-
-        {/* Departamento */}
-        <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "0.5rem" }}>
-          <span style={{ width: "120px", color: "#fff", fontWeight: "bold" }}>🏢 Departamento:</span>
-          <select
-            name="id_departamento"
-            value={empleado.id_departamento}
-            onChange={handleChange}
-            style={selectStyle}
-          >
-            <option value="" disabled style={{ color: "#ccc" }}>Seleccione un departamento</option>
-            <option value={1}>Soporte Técnico</option>
-            <option value={2}>Sistemas</option>
-            <option value={23}>Recursos Humanos</option>
-            <option value={24}>Finanzas</option>
-            <option value={25}>Ventas</option>
-            <option value={26}>Marketing</option>
-            <option value={27}>Logística</option>
-            <option value={28}>Compras</option>
-            <option value={29}>Desarrollo</option>
-            <option value={30}>Legal</option>
-          </select>
-        </div>
-
-        {/* Puesto */}
-        <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "0.5rem" }}>
-          <span style={{ width: "120px", color: "#fff", fontWeight: "bold" }}>💼 Puesto:</span>
-          <select
-            name="id_puesto"
-            value={empleado.id_puesto}
-            onChange={handleChange}
-            style={selectStyle}
-          >
-            <option value="" disabled style={{ color: "#ccc" }}>Seleccione un puesto</option>
-            <option value={1}>Técnico de Soporte</option>
-            <option value={2}>Analista de Sistemas</option>
-            <option value={3}>Supervisor</option>
-            <option value={4}>Administrador</option>
-            <option value={5}>Desarrollador</option>
-            <option value={6}>Montacarguista</option>
-          </select>
-        </div>
-
-        {/* Botones */}
-        <div style={{ display: "flex", justifyContent: "flex-end", gap: "0.5rem", marginTop: "1rem" }}>
-          <button
-            onClick={onClose}
-            style={{ ...buttonStyle, backgroundColor: "#6c757d", color: "white" }}
-            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#5a6268")}
-            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#6c757d")}
-          >
-            Volver
-          </button>
-
-          <button
-            onClick={handleSubmit}
-            style={{ ...buttonStyle, backgroundColor: "#198754", color: "white" }}
-            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#157347")}
-            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#198754")}
-          >
-            Guardar
-          </button>
-        </div>
-      </div>
-
-      {/* 📸 Imagen al lado derecho */}
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <img
-          src={empleadoImg}
-          alt="Empleado"
+    <>
+      {/* Modal de error */}
+      {modalError && (
+        <div
           style={{
-            width: "180px",
-            height: "180px",
-            borderRadius: "12px",
-            boxShadow: "0 4px 15px rgba(0,0,0,0.3)"
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            backgroundColor: "rgba(0,0,0,0.6)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 1000
           }}
-        />
+        >
+          <div
+            style={{
+              backgroundColor: "#fff",
+              padding: "2rem",
+              borderRadius: "12px",
+              width: "320px",
+              textAlign: "center",
+              boxShadow: "0 4px 20px rgba(0,0,0,0.3)"
+            }}
+          >
+            <h3 style={{ color: "#dc3545", marginBottom: "1rem" }}>Error</h3>
+            <p style={{ marginBottom: "1.5rem" }}>
+              Por favor, escribe solo caracteres numéricos en el campo Teléfono.
+            </p>
+            <button
+              style={{
+                padding: "0.5rem 1rem",
+                borderRadius: "8px",
+                border: "none",
+                backgroundColor: "#dc3545",
+                color: "white",
+                cursor: "pointer"
+              }}
+              onClick={() => setModalError(false)}
+            >
+              Cerrar
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Formulario */}
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          gap: "2rem",
+          padding: "1.5rem",
+          background: "#2d2d2d",
+          borderRadius: "16px",
+          boxShadow: "0 8px 25px rgba(0,0,0,0.3)",
+          alignItems: "flex-start"
+        }}
+      >
+        <div style={{ display: "flex", flexDirection: "column", gap: "1rem", flex: 1 }}>
+          <h3 style={{ textAlign: "center", color: "#198754" }}>Agregar Empleado</h3>
+
+          {/* Nombre */}
+          <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "0.5rem" }}>
+            <span style={{ width: "120px", color: "#fff", fontWeight: "bold" }}>👤 Nombre:</span>
+            <input
+              name="nombre"
+              placeholder="Escriba el nombre"
+              value={empleado.nombre}
+              onChange={handleChange}
+              style={inputStyle}
+            />
+          </div>
+
+          {/* Apellido */}
+          <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "0.5rem" }}>
+            <span style={{ width: "120px", color: "#fff", fontWeight: "bold" }}>📝 Apellido:</span>
+            <input
+              name="apellido"
+              placeholder="Escriba el apellido"
+              value={empleado.apellido}
+              onChange={handleChange}
+              style={inputStyle}
+            />
+          </div>
+
+          {/* Correo */}
+          <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "0.5rem" }}>
+            <span style={{ width: "120px", color: "#fff", fontWeight: "bold" }}>📧 Correo:</span>
+            <input
+              name="correo"
+              placeholder="Correo electrónico"
+              value={empleado.correo}
+              onChange={handleChange}
+              style={inputStyle}
+            />
+          </div>
+
+          {/* Teléfono */}
+          <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "0.5rem" }}>
+            <span style={{ width: "120px", color: "#fff", fontWeight: "bold" }}>📞 Teléfono:</span>
+            <input
+              name="telefono"
+              placeholder="Número de teléfono"
+              value={empleado.telefono}
+              onChange={handleChange}
+              style={inputStyle}
+            />
+          </div>
+
+          {/* Rol */}
+          <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "0.5rem" }}>
+            <span style={{ width: "120px", color: "#fff", fontWeight: "bold" }}>🔑 Rol:</span>
+            <select name="rol" value={empleado.rol} onChange={handleChange} style={selectStyle}>
+              <option value="" disabled style={{ color: "#ccc" }}>Seleccione un rol</option>
+              <option value="USUARIO">USUARIO</option>
+              <option value="AGENTE">AGENTE</option>
+              <option value="SUPERVISOR">SUPERVISOR</option>
+              <option value="ADMIN">ADMIN</option>
+            </select>
+          </div>
+
+          {/* Botones */}
+          <div style={{ display: "flex", justifyContent: "flex-end", gap: "0.5rem", marginTop: "1rem" }}>
+            <button
+              onClick={onClose}
+              style={{ ...buttonStyle, backgroundColor: "#6c757d", color: "white" }}
+            >
+              Volver
+            </button>
+
+            <button
+              onClick={handleSubmit}
+              style={{ ...buttonStyle, backgroundColor: "#198754", color: "white" }}
+            >
+              Guardar
+            </button>
+          </div>
+        </div>
+
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <img
+            src={empleadoImg}
+            alt="Empleado"
+            style={{ width: "180px", height: "180px", borderRadius: "12px", boxShadow: "0 4px 15px rgba(0,0,0,0.3)" }}
+          />
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

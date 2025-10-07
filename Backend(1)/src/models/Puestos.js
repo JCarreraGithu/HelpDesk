@@ -1,14 +1,14 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "../config/db.js";
 
-export const Departamento = sequelize.define(
-  "Departamento",
+export const Puesto = sequelize.define(
+  "Puesto",
   {
-    id_departamento: {
+    id_puesto: {
       type: DataTypes.NUMBER,
       primaryKey: true,
       autoIncrement: true,
-      field: "ID_DEPARTAMENTO",
+      field: "ID_PUESTO",
     },
     nombre: {
       type: DataTypes.STRING(100),
@@ -23,7 +23,7 @@ export const Departamento = sequelize.define(
     },
   },
   {
-    tableName: "DEPARTAMENTOS",
+    tableName: "PUESTOS",
     timestamps: false,
   }
 );

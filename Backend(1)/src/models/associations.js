@@ -10,7 +10,7 @@ import { EncuestaSatisfaccion } from "./EncuestaSatisfaccion.js";
 import { Notificaciones } from "./Notificaciones.js";
 import { EstadoCaso } from "./EstadoCaso.js";
 import { Incidencia } from "./Incidencia.js";
-import { Puesto } from "./Puesto.js";
+import { Puesto } from "./Puestos.js";
 
 
 // ------------------- Relaciones -------------------
