@@ -11,6 +11,7 @@ import { Notificaciones } from "./Notificaciones.js";
 import { EstadoCaso } from "./EstadoCaso.js";
 import { Incidencia } from "./Incidencia.js";
 import { Puesto } from "./Puesto.js";
+import { HistorialCasoRepuestos } from "./HistorialCasoRepuestos.js";
 
 
 // ------------------- Relaciones -------------------
@@ -77,3 +78,12 @@ Empleado.hasMany(Caso, { foreignKey: "id_tecnico", as: "CasosAsignados" });
 // Relación con Puesto
 Empleado.belongsTo(Puesto, { foreignKey: "id_puesto" });
 Puesto.hasMany(Empleado, { foreignKey: "id_puesto" });
+
+
+// HistorialCaso ↔ HistorialCasoRepuestos
+HistorialCasoRepuestos.belongsTo(HistorialCaso, { foreignKey: "id_historial" });
+HistorialCaso.hasMany(HistorialCasoRepuestos, { foreignKey: "id_historial" });
+
+// HistorialCasoRepuestos ↔ Repuestos
+HistorialCasoRepuestos.belongsTo(Repuestos, { foreignKey: "id_repuesto" });
+Repuestos.hasMany(HistorialCasoRepuestos, { foreignKey: "id_repuesto" });

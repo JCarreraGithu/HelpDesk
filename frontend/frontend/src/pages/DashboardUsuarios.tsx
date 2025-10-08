@@ -1,5 +1,10 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
 import empleadoImg from "../assets/empleado.png";
+import { motion } from "framer-motion";
+
+const MySwal = withReactContent(Swal);
 
 interface Usuario {
   id_usuario: number;
@@ -10,25 +15,37 @@ interface Usuario {
 
 export default function DashboardUsuarios() {
   const [usuarios, setUsuarios] = useState<Usuario[]>([]);
-  const [showForm, setShowForm] = useState(false);
   const [nuevoUsuario, setNuevoUsuario] = useState({ id_empleado: "", username: "", password: "" });
+  const [showForm, setShowForm] = useState(false);
 
-  // Estados para confirmar eliminación y edición
-  const [usuarioAEliminar, setUsuarioAEliminar] = useState<Usuario | null>(null);
   const [usuarioEditar, setUsuarioEditar] = useState<Usuario | null>(null);
   const [datosEditados, setDatosEditados] = useState({ username: "", activo: "" });
 
-  const cargarUsuarios = async () => {
-    const res = await fetch("http://localhost:4000/api/usuarios");
-    const data = await res.json();
-    setUsuarios(data);
+  const [mostrarPassword, setMostrarPassword] = useState(false);
+  const [erroresPassword, setErroresPassword] = useState<string[]>([]);
+
+  const fetchUsuarios = async () => {
+    try {
+      const res = await fetch("http://localhost:4000/api/usuarios");
+      const data = await res.json();
+      setUsuarios(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error(error);
+      setUsuarios([]);
+    }
   };
 
-  useEffect(() => { cargarUsuarios(); }, []);
+  useEffect(() => {
+    fetchUsuarios();
+  }, []);
 
-  const handleCrear = async () => {
+  const handleCrearUsuario = async () => {
     if (!nuevoUsuario.id_empleado || !nuevoUsuario.username || !nuevoUsuario.password) {
-      alert("Por favor, completa todos los campos");
+      MySwal.fire({ icon: "warning", title: "Complete todos los campos", confirmButtonColor: "#dc3545" });
+      return;
+    }
+    if (erroresPassword.length > 0) {
+      MySwal.fire({ icon: "error", title: "Contraseña inválida", text: "Revise los requisitos", confirmButtonColor: "#dc3545" });
       return;
     }
     await fetch("http://localhost:4000/api/usuarios", {
@@ -38,14 +55,9 @@ export default function DashboardUsuarios() {
     });
     setNuevoUsuario({ id_empleado: "", username: "", password: "" });
     setShowForm(false);
-    cargarUsuarios();
-  };
-
-  const confirmarEliminar = async () => {
-    if (!usuarioAEliminar) return;
-    await fetch(`http://localhost:4000/api/usuarios/${usuarioAEliminar.id_usuario}`, { method: "DELETE" });
-    setUsuarioAEliminar(null);
-    cargarUsuarios();
+    setMostrarPassword(false);
+    fetchUsuarios();
+    MySwal.fire({ icon: "success", title: "Usuario creado", confirmButtonColor: "#198754" });
   };
 
   const abrirModalEditar = (usuario: Usuario) => {
@@ -53,7 +65,7 @@ export default function DashboardUsuarios() {
     setDatosEditados({ username: usuario.username, activo: usuario.activo });
   };
 
-  const handleEditar = async () => {
+  const handleEditarUsuario = async () => {
     if (!usuarioEditar) return;
     await fetch(`http://localhost:4000/api/usuarios/${usuarioEditar.id_usuario}`, {
       method: "PUT",
@@ -61,67 +73,282 @@ export default function DashboardUsuarios() {
       body: JSON.stringify(datosEditados),
     });
     setUsuarioEditar(null);
-    cargarUsuarios();
+    fetchUsuarios();
+    MySwal.fire({ icon: "success", title: "Usuario actualizado", confirmButtonColor: "#198754" });
+  };
+
+  const darBajaUsuario = async (usuario: Usuario) => {
+    const result = await MySwal.fire({
+      title: `¿Eliminar a ${usuario.username}?`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#dc3545",
+      cancelButtonColor: "#6c757d",
+      confirmButtonText: "Eliminar",
+    });
+    if (result.isConfirmed) {
+      await fetch(`http://localhost:4000/api/usuarios/${usuario.id_usuario}`, { method: "DELETE" });
+      fetchUsuarios();
+      MySwal.fire({ icon: "success", title: "Usuario eliminado", confirmButtonColor: "#198754" });
+    }
+  };
+
+  const mostrarDetalleUsuario = (usuario: Usuario) => {
+    MySwal.fire({
+      title: `${usuario.Empleado.nombre} ${usuario.Empleado.apellido}`,
+      html: `
+        <div style="display:flex;gap:20px;align-items:center;">
+          <div style="text-align:center;">
+            <img src="${empleadoImg}" style="width:120px;border-radius:50%;border:3px solid #0d6efd;" />
+          </div>
+          <div style="flex:1;font-size:15px;">
+            <p>🛠 Rol: ${usuario.Empleado.rol}</p>
+            <p>Usuario: ${usuario.username}</p>
+            <p>Activo: ${usuario.activo === "S" ? "Sí" : "No"}</p>
+          </div>
+        </div>
+      `,
+      showCloseButton: true,
+      showConfirmButton: false,
+      width: "500px",
+    });
+  };
+
+  const validarPassword = (pass: string) => {
+    const errores: string[] = [];
+    if (!/[A-Z]/.test(pass)) errores.push("Debe contener al menos una mayúscula");
+    if (!/[0-9]/.test(pass)) errores.push("Debe contener al menos un número");
+    if (!/[!@#$%^&*(),.?\":{}|<>]/.test(pass)) errores.push("Debe contener al menos un carácter especial");
+    if (pass.length < 8) errores.push("Debe tener al menos 8 caracteres");
+    if (pass.length > 20) errores.push("No puede tener más de 20 caracteres");
+    setErroresPassword(errores);
   };
 
   return (
-    <div style={{ padding: "1rem", minHeight: "100vh", backgroundColor: "#C0C0C0" }}>
-      <h2 style={{ color: "#198754", borderBottom: "2px solid #198754", paddingBottom: "0.5rem", marginBottom: "1.5rem" }}>
-        Usuarios
-      </h2>
+    <div style={{ padding: "1rem", backgroundColor: "#C0C0C0", minHeight: "600px" }}>
+      <h2 style={{ color: "#0d6efd", textAlign: "center", marginBottom: "1.5rem" }}>Usuarios Registrados</h2>
 
-      {/* Botón para abrir el modal */}
-      <button
+      <motion.button
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
         onClick={() => setShowForm(true)}
         style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "10px",
           backgroundColor: "#198754",
           color: "#fff",
-          padding: "0.8rem 1.5rem",
-          borderRadius: "12px",
           border: "none",
+          borderRadius: "10px",
+          padding: "0.7rem 1.5rem",
           cursor: "pointer",
-          marginBottom: "1.5rem",
-          transition: "all 0.3s ease",
+          marginBottom: "1rem",
+          boxShadow: "0px 4px 10px #CCCCCC",
+          fontSize: "1rem",
         }}
-        onMouseOver={(e) => { e.currentTarget.style.backgroundColor = "#157347"; e.currentTarget.style.transform = "translateY(-2px)"; }}
-        onMouseOut={(e) => { e.currentTarget.style.backgroundColor = "#198754"; e.currentTarget.style.transform = "translateY(0)"; }}
       >
-        Agregar Usuario
-      </button>
+        <span style={{ fontSize: "1.5rem", fontWeight: "bold" }}>➕</span>
+        <span>Agregar Usuario</span>
+      </motion.button>
 
-      {/* Modal Nuevo Usuario */}
       {showForm && (
-        <div style={overlay}>
-          <div style={modalContainer}>
-            <div style={{ flex: 1 }}>
-              <h3 style={{ marginBottom: "1rem", color: "#198754" }}>Nuevo Usuario</h3>
-              <div style={inputGroup}>
-                <label>ID Empleado</label>
-                <input placeholder="ID empleado" value={nuevoUsuario.id_empleado} onChange={(e) => setNuevoUsuario({ ...nuevoUsuario, id_empleado: e.target.value })} style={inputStyle} />
-              </div>
-              <div style={inputGroup}>
-                <label>Username</label>
-                <input placeholder="Username" value={nuevoUsuario.username} onChange={(e) => setNuevoUsuario({ ...nuevoUsuario, username: e.target.value })} style={inputStyle} />
-              </div>
-              <div style={inputGroup}>
-                <label>Password</label>
-                <input type="password" placeholder="Password" value={nuevoUsuario.password} onChange={(e) => setNuevoUsuario({ ...nuevoUsuario, password: e.target.value })} style={inputStyle} />
-              </div>
-              <div style={{ display: "flex", justifyContent: "flex-end", gap: "0.5rem", marginTop: "1rem" }}>
-                <button onClick={() => setShowForm(false)} style={btnGray}>Volver</button>
-                <button onClick={handleCrear} style={btnGreen}>Crear</button>
-              </div>
-            </div>
-            <div style={{ marginLeft: "2rem" }}>
-              <img src={empleadoImg} alt="Empleado" style={{ width: "200px", borderRadius: "12px" }} />
-            </div>
-          </div>
-        </div>
+  <div style={{
+    position: "fixed", top: 0, left: 0, width: "100vw", height: "100vh",
+    backgroundColor: "rgba(0,0,0,0.5)", display: "flex", justifyContent: "center", alignItems: "center", zIndex: 1000
+  }}>
+    <motion.div
+      initial={{ scale: 0.8, opacity: 0 }}
+      animate={{ scale: 1, opacity: 1 }}
+      exit={{ scale: 0.8, opacity: 0 }}
+      style={{
+        background: "#2d2d2d",
+        padding: "2rem",
+        borderRadius: "12px",
+        boxShadow: "0px 4px 15px rgba(0,0,0,0.3)",
+        width: "500px"
+      }}
+    >
+      <h3 style={{ marginBottom: "1rem", color: "#198754", textAlign: "center" }}>Nuevo Usuario</h3>
+
+      <div style={{ marginBottom: "0.8rem" }}>
+        <label style={{ color: "#fff", fontSize: "0.95rem", marginBottom: "0.2rem", display: "block" }}>Escriba el código de empleado:</label>
+        <input
+          placeholder="Código de empleado"
+          value={nuevoUsuario.id_empleado}
+          onChange={e => setNuevoUsuario({ ...nuevoUsuario, id_empleado: e.target.value })}
+          style={{
+            padding: "0.6rem 1rem",
+            borderRadius: "8px",
+            border: "1px solid #198754",
+            width: "100%",
+            outline: "none",
+            backgroundColor: "#3b3b3b",
+            color: "#fff",
+            fontSize: "1rem",
+            "::placeholder": { color: "#fff" }
+          }}
+        />
+      </div>
+
+      <div style={{ marginBottom: "0.8rem" }}>
+        <label style={{ color: "#fff", fontSize: "0.95rem", marginBottom: "0.2rem", display: "block" }}>Escriba el username:</label>
+        <input
+          placeholder="Username"
+          value={nuevoUsuario.username}
+          onChange={e => setNuevoUsuario({ ...nuevoUsuario, username: e.target.value })}
+          style={{
+            padding: "0.6rem 1rem",
+            borderRadius: "8px",
+            border: "1px solid #0dcaf0",
+            width: "100%",
+            outline: "none",
+            backgroundColor: "#444444",
+            color: "#fff",
+            fontSize: "1rem",
+          }}
+        />
+      </div>
+
+      <div style={{ marginBottom: "0.8rem", position: "relative" }}>
+        <label style={{ color: "#fff", fontSize: "0.95rem", marginBottom: "0.2rem", display: "block" }}>Escriba la contraseña:</label>
+        <input
+          type={mostrarPassword ? "text" : "password"}
+          placeholder="Contraseña"
+          value={nuevoUsuario.password}
+          onChange={(e) => {
+            const pass = e.target.value;
+            setNuevoUsuario({ ...nuevoUsuario, password: pass });
+            validarPassword(pass);
+          }}
+          style={{
+            padding: "0.6rem 1rem",
+            borderRadius: "8px",
+            border: "1px solid #ffc107",
+            width: "100%",
+            outline: "none",
+            backgroundColor: "#333333",
+            color: "#fff",
+            fontSize: "1rem",
+          }}
+        />
+        <span
+          onClick={() => setMostrarPassword(!mostrarPassword)}
+          style={{
+            position: "absolute",
+            right: "10px",
+            top: "50%",
+            transform: "translateY(-50%)",
+            cursor: "pointer",
+            color: "#fff",
+            fontSize: "0.9rem"
+          }}
+        >
+          {mostrarPassword ? "Ocultar" : "Mostrar"}
+        </span>
+      </div>
+
+      {erroresPassword.length > 0 && (
+        <ul style={{ color: "#ff4d4f", fontSize: "0.85rem", marginTop: "0.5rem" }}>
+          {erroresPassword.map((err, i) => <li key={i}>{err}</li>)}
+        </ul>
       )}
 
+      <div style={{ display: "flex", justifyContent: "flex-end", gap: "0.5rem", marginTop: "1rem" }}>
+        <button onClick={() => setShowForm(false)} style={btnGray}>Cancelar</button>
+        <button onClick={handleCrearUsuario} style={btnGreen}>Crear</button>
+      </div>
+    </motion.div>
+  </div>
+)}
+
+{usuarioEditar && (
+  <div
+    style={{
+      position: "fixed",
+      top: 0,
+      left: 0,
+      width: "100vw",
+      height: "100vh",
+      backgroundColor: "rgba(0,0,0,0.5)",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      zIndex: 1000,
+    }}
+  >
+    <motion.div
+      initial={{ scale: 0.8, opacity: 0 }}
+      animate={{ scale: 1, opacity: 1 }}
+      exit={{ scale: 0.8, opacity: 0 }}
+      style={{
+        background: "#2d2d2d",
+        padding: "2rem",
+        borderRadius: "12px",
+        boxShadow: "0px 4px 15px rgba(0,0,0,0.3)",
+        width: "500px",
+      }}
+    >
+      <h3 style={{ marginBottom: "1rem", color: "#198754", textAlign: "center" }}>Editar Usuario</h3>
+
+      {/* Username */}
+      <div style={{ marginBottom: "0.8rem" }}>
+        <label style={{ color: "#fff", fontSize: "0.95rem", marginBottom: "0.2rem", display: "block" }}>
+          Escriba el username:
+        </label>
+        <input
+          placeholder="Username"
+          value={datosEditados.username}
+          onChange={e => setDatosEditados({ ...datosEditados, username: e.target.value })}
+          style={{
+            padding: "0.6rem 1rem",
+            borderRadius: "8px",
+            border: "1px solid #0dcaf0",
+            width: "100%",
+            outline: "none",
+            backgroundColor: "#444444",
+            color: "#fff",
+            fontSize: "1rem",
+          }}
+        />
+      </div>
+
+      {/* Activo */}
+      <div style={{ marginBottom: "0.8rem" }}>
+        <label style={{ color: "#fff", fontSize: "0.95rem", marginBottom: "0.2rem", display: "block" }}>
+          Activo:
+        </label>
+        <select
+          value={datosEditados.activo}
+          onChange={e => setDatosEditados({ ...datosEditados, activo: e.target.value })}
+          style={{
+            padding: "0.6rem 1rem",
+            borderRadius: "8px",
+            border: "1px solid #198754",
+            width: "100%",
+            outline: "none",
+            backgroundColor: "#3b3b3b",
+            color: "#fff",
+            fontSize: "1rem",
+            cursor: "pointer",
+          }}
+        >
+          <option value="S">Sí</option>
+          <option value="N">No</option>
+        </select>
+      </div>
+
+      {/* Botones */}
+      <div style={{ display: "flex", justifyContent: "flex-end", gap: "0.5rem", marginTop: "1rem" }}>
+        <button onClick={() => setUsuarioEditar(null)} style={btnGray}>Cancelar</button>
+        <button onClick={handleEditarUsuario} style={btnGreen}>Guardar</button>
+      </div>
+    </motion.div>
+  </div>
+)}
+
       {/* Tabla de usuarios */}
-      <div style={tablaContainer}>
-        <table style={{ width: "100%", borderCollapse: "collapse", borderRadius: "12px", overflow: "hidden" }}>
+      <div style={{ overflowX: "auto", backgroundColor: "#fff", padding: "1rem", borderRadius: "16px", boxShadow: "0 5px 20px rgba(0,0,0,0.1)" }}>
+        <table style={{ width: "100%", borderCollapse: "collapse" }}>
           <thead style={{ backgroundColor: "#d9ebe3" }}>
             <tr>
               <th style={thStyle}>ID</th>
@@ -132,107 +359,44 @@ export default function DashboardUsuarios() {
             </tr>
           </thead>
           <tbody>
-            {usuarios.map((u) => (
-              <tr key={u.id_usuario} style={{ transition: "background 0.3s", cursor: "default" }} onMouseOver={(e) => (e.currentTarget.style.backgroundColor = "#eef5f4")} onMouseOut={(e) => (e.currentTarget.style.backgroundColor = "transparent")}>
+            {usuarios.map(u => (
+              <tr key={u.id_usuario} onClick={() => mostrarDetalleUsuario(u)} style={{ cursor: "pointer", transition: "background 0.3s" }}
+                onMouseOver={e => (e.currentTarget.style.backgroundColor = "#eef5f4")}
+                onMouseOut={e => (e.currentTarget.style.backgroundColor = "transparent")}>
                 <td style={tdStyle}>{u.id_usuario}</td>
-                <td style={tdStyle}>{u.Empleado?.nombre} {u.Empleado?.apellido} ({u.Empleado?.rol})</td>
+                <td style={tdStyle}>{u.Empleado.nombre} {u.Empleado.apellido} ({u.Empleado.rol})</td>
                 <td style={tdStyle}>{u.username}</td>
-                <td style={tdStyle}>
-                  <span style={{ padding: "0.2rem 0.6rem", borderRadius: "12px", color: "#fff", backgroundColor: u.activo === "S" ? "#198754" : "#dc3545", fontWeight: 600, fontSize: "0.9rem" }}>
-                    {u.activo === "S" ? "Activo" : "Inactivo"}
-                  </span>
+                <td style={{ ...tdStyle, fontWeight: "bold", color: u.activo === "S" ? "#198754" : "#dc3545" }}>
+                  {u.activo === "S" ? "Activo" : "Inactivo"}
                 </td>
                 <td style={{ padding: "10px 12px", display: "flex", gap: "0.5rem" }}>
-                  <button onClick={() => abrirModalEditar(u)} style={btnGray}>Modificar</button>
-                  <button onClick={() => setUsuarioAEliminar(u)} style={btnRed}>Eliminar</button>
+                  <button onClick={(e) => { e.stopPropagation(); abrirModalEditar(u); }} style={btnBlue}>Editar</button>
+                  <button onClick={(e) => { e.stopPropagation(); darBajaUsuario(u); }} style={btnRed}>Eliminar</button>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
-
-      {/* Modal Eliminación */}
-      {usuarioAEliminar && (
-        <div style={overlay}>
-          <div style={modal}>
-            <h3 style={{ marginBottom: "1rem", color: "#6c757d" }}>Confirmar Eliminación</h3>
-            <p>¿Seguro que deseas dar de baja al usuario <b>{usuarioAEliminar.username}</b>?</p>
-            <div style={{ marginTop: "1.5rem", display: "flex", justifyContent: "center", gap: "1rem" }}>
-              <button onClick={() => setUsuarioAEliminar(null)} style={btnGray}>Cancelar</button>
-              <button onClick={confirmarEliminar} style={btnRed}>Confirmar</button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Modal Edición */}
-      {usuarioEditar && (
-        <div style={overlay}>
-          <div style={modal}>
-            <h3 style={{ marginBottom: "1rem", color: "#0d6efd" }}>Editar Usuario</h3>
-            <input
-              value={datosEditados.username}
-              onChange={(e) => setDatosEditados({ ...datosEditados, username: e.target.value })}
-              placeholder="Nuevo Username"
-              style={{ padding: "0.5rem 1rem", marginBottom: "1rem", width: "100%", borderRadius: "8px", border: "1px solid #ccc" }}
-            />
-            <select
-              value={datosEditados.activo}
-              onChange={(e) => setDatosEditados({ ...datosEditados, activo: e.target.value })}
-              style={{ padding: "0.5rem 1rem", marginBottom: "1rem", width: "100%", borderRadius: "8px", border: "1px solid #ccc" }}
-            >
-              <option value="S">Activo</option>
-              <option value="N">Inactivo</option>
-            </select>
-            <div style={{ display: "flex", justifyContent: "center", gap: "1rem" }}>
-              <button onClick={() => setUsuarioEditar(null)} style={btnGray}>Cancelar</button>
-              <button onClick={handleEditar} style={btnBlue}>Guardar</button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
 
-/* --- estilos reutilizables --- */
-const overlay: React.CSSProperties = {
-  position: "fixed", top: 0, left: 0, right: 0, bottom: 0,
-  backgroundColor: "rgba(0,0,0,0.5)",
-  display: "flex", alignItems: "center", justifyContent: "center",
-  zIndex: 1000,
-};
-
-const modalContainer: React.CSSProperties = {
-  display: "flex",
-  backgroundColor: "#fff",
-  padding: "2rem",
-  borderRadius: "12px",
-  boxShadow: "0 5px 20px rgba(0,0,0,0.2)",
-  maxWidth: "800px",
-  width: "90%",
-  alignItems: "flex-start",
-};
-
-const modal: React.CSSProperties = {
-  backgroundColor: "#fff",
-  padding: "2rem",
-  borderRadius: "12px",
-  width: "400px",
-  maxWidth: "90%",
-  boxShadow: "0 5px 20px rgba(0,0,0,0.2)",
-  display: "flex",
-  flexDirection: "column",
-  alignItems: "center",
-};
-
-const inputGroup: React.CSSProperties = { display: "flex", flexDirection: "column", marginBottom: "1rem" };
-const inputStyle: React.CSSProperties = { padding: "0.5rem 0.8rem", borderRadius: "8px", border: "1px solid #c7ded3", width: "250px", transition: "all 0.2s", outline: "none" };
+/* --- Estilos reutilizables --- */
 const btnGray: React.CSSProperties = { backgroundColor: "#6c757d", color: "#fff", padding: "0.5rem 1.2rem", borderRadius: "8px", border: "none", cursor: "pointer" };
 const btnGreen: React.CSSProperties = { backgroundColor: "#198754", color: "#fff", padding: "0.5rem 1.2rem", borderRadius: "8px", border: "none", cursor: "pointer" };
 const btnBlue: React.CSSProperties = { backgroundColor: "#0d6efd", color: "#fff", padding: "0.5rem 1.2rem", borderRadius: "8px", border: "none", cursor: "pointer" };
 const btnRed: React.CSSProperties = { backgroundColor: "#dc3545", color: "#fff", padding: "0.5rem 1rem", borderRadius: "8px", border: "none", cursor: "pointer" };
-const tablaContainer: React.CSSProperties = { overflowX: "auto", backgroundColor: "#fff", padding: "1rem", borderRadius: "16px", boxShadow: "0 5px 20px rgba(0,0,0,0.1)" };
 const thStyle: React.CSSProperties = { padding: "12px", textAlign: "left" };
 const tdStyle: React.CSSProperties = { padding: "10px 12px" };
+const inputStyle: React.CSSProperties = {
+  padding: "0.6rem 1rem",
+  marginBottom: "0.5rem",
+  borderRadius: "8px",
+  border: "1px solid #c7ded3",
+  width: "100%",
+  outline: "none",
+  backgroundColor: "#808080",
+  color: "#fff",
+  fontSize: "1rem",
+};

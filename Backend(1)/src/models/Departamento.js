@@ -1,23 +1,24 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "../config/db.js";
 
-export const Departamento = sequelize.define('Departamento', {
+export const Departamento = sequelize.define("Departamento", {
   id_departamento: {
-    type: DataTypes.NUMBER,
+    type: DataTypes.DECIMAL,
     primaryKey: true,
     autoIncrement: true,
-    field: "ID_DEPARTAMENTO"
+    field: "ID_DEPARTAMENTO",
   },
   nombre: {
     type: DataTypes.STRING(100),
     allowNull: false,
-    field: "NOMBRE"
+    field: "NOMBRE",
   },
   descripcion: {
     type: DataTypes.STRING(255),
-    field: "DESCRIPCION"
-  }
+    allowNull: true,
+    field: "DESCRIPCION",
+  },
 }, {
-  tableName: 'DEPARTAMENTOS',
-  timestamps: false
+  tableName: "DEPARTAMENTOS",
+  timestamps: false,
 });

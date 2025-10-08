@@ -2,17 +2,14 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import ReactDatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
-// 🖼️ Íconos
-import alertIcon from "../assets/alert.jpeg";
-import clockIcon from "../assets/clock.png";
-import fileIcon from "../assets/file.png";
-import flagIcon from "../assets/flag.png";
-import messageIcon from "../assets/message.png";
+import logoFormImg from "../assets/logoform.png";
 
 interface Prioridad { ID_PRIORIDAD: number; NOMBRE: string; }
 interface TipoIncidencia { ID_TIPO: number; TIPO: string; }
-interface Incidencia { id_incidencia: number; nombre: string; id_tipo_incidencia: number; }
+interface Incidencia { id_incidencia: number; nombre: string; }
 
 export default function CrearCaso() {
   const navigate = useNavigate();
@@ -24,6 +21,7 @@ export default function CrearCaso() {
   const [idPrioridad, setIdPrioridad] = useState<number | null>(null);
   const [idTipo, setIdTipo] = useState<number | null>(null);
   const [idIncidencia, setIdIncidencia] = useState<number | null>(null);
+  const [fechaCreacion, setFechaCreacion] = useState<Date>(new Date());
   const [loading, setLoading] = useState(false);
 
   const usuarioLogeado = localStorage.getItem("usuarioLogeado");
@@ -66,7 +64,7 @@ export default function CrearCaso() {
       return;
     }
 
-    const payload = {
+    const data = {
       id_empleado_solicita: idEmpleadoLogueado,
       id_tipo_incidencia: idTipo,
       id_incidencia: idIncidencia,
@@ -89,7 +87,7 @@ export default function CrearCaso() {
 
     setLoading(true);
     try {
-      const res = await axios.post("http://localhost:4000/api/casos", payload);
+      const res = await axios.post("http://localhost:4000/api/casos", data);
       localStorage.setItem("casoDetalle", JSON.stringify({ id_caso: res.data.id_caso }));
       Swal.fire({
         icon: "success",
@@ -111,99 +109,93 @@ export default function CrearCaso() {
     }
   };
 
- const inputStyle = {
-  width: "70%",
-  maxWidth: "500px",
-  padding: ".7rem",
-  borderRadius: "8px",
-  border: "1px solid #cbd5e0",
-  background: "#f0f4f8", // gris claro
-  color: "#1a202c",      // texto gris oscuro
-  transition: "all 0.2s",
-};
+  const estilos = {
+    contenedor: { display: "flex", gap: "2rem", maxWidth: "1100px", margin: "0 auto", minHeight: "90vh", padding: "2rem", backgroundColor: "#e2e2e2" },
+    formularioWrapper: { flex: 6 },
+    formulario: { display: "flex", flexDirection: "column", gap: "1rem", backgroundColor: "#d9d9d9", padding: "2rem", borderRadius: "16px", boxShadow: "0 8px 25px rgba(0,0,0,0.2)" },
+    filaSelects: { display: "flex", gap: "1rem" },
+    campo: { display: "flex", flexDirection: "column", gap: "0.3rem", flex: 1 },
+    label: { fontWeight: 600, color: "#333" },
+    select: { padding: "0.5rem", borderRadius: "8px", border: "1px solid #198754", background: "#fff", color: "#000" },
+    input: { padding: "0.5rem", borderRadius: "8px", border: "1px solid #198754", background: "#fff", color: "#000" },
+    textarea: { padding: "0.5rem", borderRadius: "8px", border: "1px solid #0dcaf0", background: "#fff", color: "#000", resize: "vertical", minHeight: "100px" },
+    filaFecha: { display: "flex", gap: "1rem", alignItems: "center" },
+    inputFecha: { flex: 1, padding: "0.5rem", borderRadius: "8px", border: "1px solid #6c757d", background: "#fff", color: "#000", width: "100%" },
+    botonCrear: { marginTop: "1rem", background: "#38a169", color: "#fff", padding: "0.9rem 1.5rem", borderRadius: "8px", fontWeight: "bold", cursor: "pointer" },
+    imagenContainer: { flex: 4, display: "flex", flexDirection: "column", alignItems: "center", gap: "1rem" },
+    imagen: { width: "100%", maxHeight: "85vh", objectFit: "cover", borderRadius: "16px", boxShadow: "0 4px 15px rgba(0,0,0,0.2)" },
+  };
 
   return (
-    <div style={{ background: "#f4f6f8", padding: "2rem", fontFamily: "'Segoe UI', Tahoma, sans-serif", minHeight: "100vh" }}>
-      <h1 style={{ fontSize: "2rem", fontWeight: "bold", marginBottom: "2rem", color: "#2d3748" }}>
-        📝 Nuevo Caso
-      </h1>
+    <div style={{ background: "#e2e2e2", minHeight: "100vh", paddingTop: "2rem", paddingBottom: "2rem" }}>
+      <div style={estilos.contenedor}>
+        {/* Formulario */}
+        <div style={estilos.formularioWrapper}>
+          <form style={estilos.formulario} onSubmit={handleSubmit}>
+            {/* Selects */}
+            <div style={estilos.filaSelects}>
+              <div style={estilos.campo}>
+                <label style={estilos.label}>Tipo de Incidencia</label>
+                <select value={idTipo ?? ""} onChange={(e) => setIdTipo(Number(e.target.value) || null)} style={estilos.select}>
+                  <option value="">Seleccione tipo</option>
+                  {tiposIncidencia.map(t => <option key={t.ID_TIPO} value={t.ID_TIPO}>{t.TIPO}</option>)}
+                </select>
+              </div>
+              <div style={estilos.campo}>
+                <label style={estilos.label}>Incidencia</label>
+                <select value={idIncidencia ?? ""} onChange={(e) => setIdIncidencia(Number(e.target.value) || null)} style={estilos.select}>
+                  <option value="">Seleccione incidencia</option>
+                  {incidencias.map(i => <option key={i.id_incidencia} value={i.id_incidencia}>{i.nombre}</option>)}
+                </select>
+              </div>
+              <div style={estilos.campo}>
+                <label style={estilos.label}>Prioridad</label>
+                <select value={idPrioridad ?? ""} onChange={(e) => setIdPrioridad(Number(e.target.value) || null)} style={estilos.select}>
+                  <option value="">Seleccione prioridad</option>
+                  {prioridades.map(p => <option key={p.ID_PRIORIDAD} value={p.ID_PRIORIDAD}>{p.NOMBRE}</option>)}
+                </select>
+              </div>
+            </div>
 
-      <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
-        {/* Grid de selects */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "1.5rem" }}>
-          {/** Tipo */}
-          <div style={{ padding: "1rem", borderRadius: "12px", background: "#fff", boxShadow: "0 4px 12px rgba(0,0,0,0.05)" }}>
-            <label style={{ display: "flex", alignItems: "center", gap: ".5rem", marginBottom: ".5rem", fontWeight: 600 }}>
-              <img src={fileIcon} alt="" style={{ width: "20px", height: "20px" }} /> Tipo de Incidencia
-            </label>
-            <select value={idTipo ?? ""} onChange={(e) => setIdTipo(Number(e.target.value) || null)} style={inputStyle}>
-              <option value="">Seleccione tipo</option>
-              {tiposIncidencia.map(t => <option key={t.ID_TIPO} value={t.ID_TIPO}>{t.TIPO}</option>)}
-            </select>
-          </div>
+            {/* Título */}
+            <div style={estilos.campo}>
+              <label style={estilos.label}>Título</label>
+              <input value={titulo} onChange={(e) => setTitulo(e.target.value)} placeholder="Ej: Impresora fuera de servicio" style={estilos.input} />
+            </div>
 
-          {/** Incidencia */}
-          <div style={{ padding: "1rem", borderRadius: "12px", background: "#fff", boxShadow: "0 4px 12px rgba(0,0,0,0.05)" }}>
-            <label style={{ display: "flex", alignItems: "center", gap: ".5rem", marginBottom: ".5rem", fontWeight: 600 }}>
-              <img src={fileIcon} alt="" style={{ width: "20px", height: "20px" }} /> Incidencia
-            </label>
-            <select value={idIncidencia ?? ""} onChange={(e) => setIdIncidencia(Number(e.target.value) || null)} style={inputStyle}>
-              <option value="">Seleccione incidencia</option>
-              {incidencias.map(i => <option key={i.id_incidencia} value={i.id_incidencia}>{i.nombre}</option>)}
-            </select>
-          </div>
+            {/* Descripción */}
+            <div style={estilos.campo}>
+              <label style={estilos.label}>Descripción</label>
+              <textarea value={descripcion} onChange={(e) => setDescripcion(e.target.value)} placeholder="Describe el problema con detalle..." style={estilos.textarea} />
+            </div>
 
-          {/** Prioridad */}
-          <div style={{ padding: "1rem", borderRadius: "12px", background: "#fff", boxShadow: "0 4px 12px rgba(0,0,0,0.05)" }}>
-            <label style={{ display: "flex", alignItems: "center", gap: ".5rem", marginBottom: ".5rem", fontWeight: 600 }}>
-              <img src={flagIcon} alt="" style={{ width: "20px", height: "20px" }} /> Prioridad
-            </label>
-            <select value={idPrioridad ?? ""} onChange={(e) => setIdPrioridad(Number(e.target.value) || null)} style={inputStyle}>
-              <option value="">Seleccione prioridad</option>
-              {prioridades.map(p => <option key={p.ID_PRIORIDAD} value={p.ID_PRIORIDAD}>{p.NOMBRE}</option>)}
-            </select>
-          </div>
+            {/* Fecha */}
+            <div style={estilos.filaFecha}>
+              <div style={estilos.campo}>
+                <label style={estilos.label}>Fecha y hora</label>
+                <ReactDatePicker
+                  selected={fechaCreacion}
+                  onChange={(date: Date | null) => { if (date) setFechaCreacion(date); }}
+                  showTimeSelect
+                  dateFormat="Pp"
+                  placeholderText="Selecciona fecha y hora"
+                  style={estilos.inputFecha}
+                />
+              </div>
+            </div>
+
+            {/* Botón */}
+            <button type="submit" disabled={loading} style={estilos.botonCrear}>
+              {loading ? "Guardando..." : "Crear Caso"}
+            </button>
+          </form>
         </div>
 
-        {/* Título */}
-        <div style={{ padding: "1rem", borderRadius: "12px", background: "#fff", boxShadow: "0 4px 12px rgba(0,0,0,0.05)" }}>
-          <label style={{ display: "flex", alignItems: "center", gap: ".5rem", marginBottom: ".5rem", fontWeight: 600 }}>
-            <img src={messageIcon} alt="" style={{ width: "20px", height: "20px" }} /> Título
-          </label>
-          <input value={titulo} onChange={(e) => setTitulo(e.target.value)} placeholder="Ej: Impresora fuera de servicio" style={inputStyle} />
+        {/* Imagen */}
+        <div style={estilos.imagenContainer}>
+          <img src={logoFormImg} alt="Helpdesk" style={estilos.imagen} />
         </div>
-
-        {/* Descripción */}
-        <div style={{ padding: "1rem", borderRadius: "12px", background: "#fff", boxShadow: "0 4px 12px rgba(0,0,0,0.05)" }}>
-          <label style={{ display: "flex", alignItems: "center", gap: ".5rem", marginBottom: ".5rem", fontWeight: 600 }}>
-            <img src={alertIcon} alt="" style={{ width: "20px", height: "20px" }} /> Descripción
-          </label>
-          <textarea value={descripcion} onChange={(e) => setDescripcion(e.target.value)}
-            placeholder="Describe el problema con detalle..." rows={4} style={{ ...inputStyle, resize: "vertical" }} />
-        </div>
-
-        {/* Botón */}
-<div style={{ display: "flex", justifyContent: "flex-end" }}>
-  <button type="submit" disabled={loading} style={{
-    background: "#38a169",  // verde
-    color: "#fff",
-    padding: "0.9rem 1.5rem",
-    borderRadius: "8px",
-    fontWeight: "bold",
-    display: "flex",
-    alignItems: "center",
-    gap: ".5rem",
-    cursor: loading ? "not-allowed" : "pointer",
-    transition: "all 0.2s"
-  }}
-  onMouseOver={(e) => (e.currentTarget.style.background = "#2f855a")}
-  onMouseOut={(e) => (e.currentTarget.style.background = "#38a169")}
-  >
-    <img src={clockIcon} alt="" style={{ width: "20px", height: "20px" }} />
-    {loading ? "Guardando..." : "Crear Caso"}
-  </button>
-</div>
-      </form>
+      </div>
     </div>
   );
 }

@@ -11,6 +11,8 @@ import configRoutes from "./src/routes/ConfigRoutes.js";
 import RepuestosRoutes from "./src/routes/RepuestosRoutes.js";
 import incidenciasRoutes from "./src/routes/IncidenciasRoutes.js";
 import notiRoutes from "./src/routes/NotificacionesRoutes.js";
+import DepartamentoRoutes from "./src/routes/DepartamentoRoutes.js";
+import PuestoRoutes from "./src/routes/PuestoRoutes.js";
 
 
 
@@ -32,6 +34,9 @@ app.use("/api/config", configRoutes);
 app.use("/api/repuestos", RepuestosRoutes);
 app.use("/api/config/incidencias", incidenciasRoutes);
 app.use("/api/notificaciones", notiRoutes);
+app.use("/api/departamentos", DepartamentoRoutes);
+app.use("/api/puestos", PuestoRoutes);
+
 
 
 app.listen(PORT, async () => {
