@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import notiIcon from "../assets/noti.png";
 import { useNavigate } from "react-router-dom";
 
@@ -16,6 +16,7 @@ export default function Notificaciones({ idEmpleado }: NotificacionesProps) {
   const navigate = useNavigate();
   const [notificaciones, setNotificaciones] = useState<Notificacion[]>([]);
   const [showNoti, setShowNoti] = useState(false);
+  const panelRef = useRef<HTMLDivElement>(null);
 
   const leidasStorageKey = "notificacionesLeidas";
   const notificacionesLeidas: number[] = JSON.parse(localStorage.getItem(leidasStorageKey) || "[]");
@@ -26,7 +27,9 @@ export default function Notificaciones({ idEmpleado }: NotificacionesProps) {
       const res = await fetch(`http://localhost:4000/api/notificaciones/${idEmpleado}`);
       if (!res.ok) throw new Error("Error al obtener notificaciones");
       const data = await res.json();
-      const pendientes = data.filter((n: Notificacion) => !notificacionesLeidas.includes(n.ID_NOTIFICACION));
+      const pendientes = data.filter(
+        (n: Notificacion) => !notificacionesLeidas.includes(n.ID_NOTIFICACION)
+      );
       setNotificaciones(pendientes);
     } catch (err) {
       console.error(err);
@@ -47,12 +50,31 @@ export default function Notificaciones({ idEmpleado }: NotificacionesProps) {
 
   const notiNoLeidas = notificaciones.length;
 
-  const handleVerDetalle = (casoId: string) => {
-  localStorage.setItem("casoDetalle", JSON.stringify({ id_caso: casoId }));
-  navigate("/dashboard/detalle-caso", { replace: true });
-  window.dispatchEvent(new Event("cambioCaso"));
-};
+  const handleIrEncuesta = (casoId: string) => {
+    localStorage.setItem("casoEncuesta", JSON.stringify({ id_caso: casoId }));
+    navigate(`/dashboard/calificar-servicio/${casoId}`);
+  };
 
+  const handleVerDetalle = (casoId: string) => {
+    localStorage.setItem("casoDetalle", JSON.stringify({ id_caso: casoId }));
+    navigate("/dashboard/detalle-caso", { replace: true });
+    window.dispatchEvent(new Event("cambioCaso"));
+  };
+
+  // Cerrar panel al hacer clic fuera
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (panelRef.current && !panelRef.current.contains(event.target as Node)) {
+        setShowNoti(false);
+      }
+    };
+    if (showNoti) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [showNoti]);
 
   return (
     <div style={{ position: "relative" }}>
@@ -63,6 +85,7 @@ export default function Notificaciones({ idEmpleado }: NotificacionesProps) {
 
       {showNoti && (
         <div
+          ref={panelRef}
           className="noti-panel"
           style={{
             position: "absolute",
@@ -98,7 +121,10 @@ export default function Notificaciones({ idEmpleado }: NotificacionesProps) {
               <button
                 onClick={() => {
                   const todas = notificaciones.map((n) => n.ID_NOTIFICACION);
-                  localStorage.setItem(leidasStorageKey, JSON.stringify([...notificacionesLeidas, ...todas]));
+                  localStorage.setItem(
+                    leidasStorageKey,
+                    JSON.stringify([...notificacionesLeidas, ...todas])
+                  );
                   setNotificaciones([]);
                 }}
                 style={{
@@ -128,8 +154,15 @@ export default function Notificaciones({ idEmpleado }: NotificacionesProps) {
             }}
           >
             {notificaciones.length === 0 ? (
-              <p style={{ textAlign: "center", color: "#777", fontStyle: "italic", margin: "30px 0" }}>
-                No hay notificaciones nuevas 
+              <p
+                style={{
+                  textAlign: "center",
+                  color: "#777",
+                  fontStyle: "italic",
+                  margin: "30px 0",
+                }}
+              >
+                No hay notificaciones nuevas
               </p>
             ) : (
               notificaciones.map((n) => {
@@ -152,11 +185,23 @@ export default function Notificaciones({ idEmpleado }: NotificacionesProps) {
                     }}
                   >
                     <div style={{ display: "flex", justifyContent: "space-between" }}>
-                      <p style={{ margin: 0, fontSize: "14px", fontWeight: 500, color: "#212529", lineHeight: "1.4" }}>
+                      <p
+                        style={{
+                          margin: 0,
+                          fontSize: "14px",
+                          fontWeight: 500,
+                          color: "#212529",
+                          lineHeight: "1.4",
+                        }}
+                      >
                         {casoId ? (
                           <>
                             <span
-                              style={{ textDecoration: "underline", cursor: "pointer", color: "#198754" }}
+                              style={{
+                                textDecoration: "underline",
+                                cursor: "pointer",
+                                color: "#198754",
+                              }}
                               onClick={() => handleVerDetalle(casoId)}
                             >
                               {`Tu caso con ID ${casoId}`}
@@ -172,7 +217,14 @@ export default function Notificaciones({ idEmpleado }: NotificacionesProps) {
                       </small>
                     </div>
 
-                    <div style={{ display: "flex", justifyContent: "flex-end", gap: "10px", marginTop: "6px" }}>
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "flex-end",
+                        gap: "10px",
+                        marginTop: "6px",
+                      }}
+                    >
                       <button
                         onClick={() => marcarLeida(n.ID_NOTIFICACION)}
                         style={{
@@ -193,7 +245,9 @@ export default function Notificaciones({ idEmpleado }: NotificacionesProps) {
                       </button>
 
                       <button
-                        onClick={() => navigate(`/dashboard/calificar-servicio/${n.ID_NOTIFICACION}`)}
+                        onClick={() => {
+                          if (casoId) handleIrEncuesta(casoId);
+                        }}
                         style={{
                           border: "none",
                           background: "#198754",

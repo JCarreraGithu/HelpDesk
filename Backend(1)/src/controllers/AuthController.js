@@ -20,6 +20,7 @@ export const login = async (req, res) => {
     await usuario.update({ ultimo_login: new Date() });
 
  res.json({
+    id_usuario: usuario.id_usuario, 
   id_empleado: usuario.id_empleado,
   nombre: usuario.Empleado.nombre,
   apellido: usuario.Empleado.apellido,

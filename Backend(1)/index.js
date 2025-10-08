@@ -13,6 +13,8 @@ import incidenciasRoutes from "./src/routes/IncidenciasRoutes.js";
 import notiRoutes from "./src/routes/NotificacionesRoutes.js";
 import DepartamentoRoutes from "./src/routes/DepartamentoRoutes.js";
 import PuestoRoutes from "./src/routes/PuestoRoutes.js";
+import EncuestaRoutes from "./src/routes/EncuestaRoutes.js";
+
 
 
 
@@ -36,6 +38,7 @@ app.use("/api/config/incidencias", incidenciasRoutes);
 app.use("/api/notificaciones", notiRoutes);
 app.use("/api/departamentos", DepartamentoRoutes);
 app.use("/api/puestos", PuestoRoutes);
+app.use("/api/encuestas", EncuestaRoutes);
 
 
 

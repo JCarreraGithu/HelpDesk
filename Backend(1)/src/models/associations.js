@@ -6,12 +6,13 @@ import { Prioridad } from "./Prioridad.js";
 import { HistorialCaso } from "./HistorialCaso.js";
 import { Repuestos } from "./Repuestos.js";
 import { SolicitudRepuestos } from "./SolicitudRepuestos.js";
-import { EncuestaSatisfaccion } from "./EncuestaSatisfaccion.js";
+import { EncuestaSatisfaccion } from "./Encuesta.js";
 import { Notificaciones } from "./Notificaciones.js";
 import { EstadoCaso } from "./EstadoCaso.js";
 import { Incidencia } from "./Incidencia.js";
 import { Puesto } from "./Puesto.js";
 import { HistorialCasoRepuestos } from "./HistorialCasoRepuestos.js";
+import { Usuario } from "./Usuarios.js";
 
 
 // ------------------- Relaciones -------------------
@@ -87,3 +88,17 @@ HistorialCaso.hasMany(HistorialCasoRepuestos, { foreignKey: "id_historial" });
 // HistorialCasoRepuestos ↔ Repuestos
 HistorialCasoRepuestos.belongsTo(Repuestos, { foreignKey: "id_repuesto" });
 Repuestos.hasMany(HistorialCasoRepuestos, { foreignKey: "id_repuesto" });
+
+
+// EncuestaSatisfaccion ↔ Usuario (quien reporta)
+EncuestaSatisfaccion.belongsTo(Usuario, { 
+  foreignKey: "usuario_reporta", 
+  as: "UsuarioReporta" 
+});
+Usuario.hasMany(EncuestaSatisfaccion, { 
+  foreignKey: "usuario_reporta", 
+  as: "EncuestasReportadas" 
+});
+// EncuestaSatisfaccion ↔ Caso
+EncuestaSatisfaccion.belongsTo(Caso, { foreignKey: "id_caso" });
+Caso.hasOne(EncuestaSatisfaccion, { foreignKey: "id_caso" });

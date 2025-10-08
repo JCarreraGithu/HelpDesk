@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
-import { FaUser, FaIdBadge, FaExclamationCircle, FaClock, FaTasks, FaTimes } from "react-icons/fa";
+import { FaUser, FaIdBadge, FaExclamationCircle, FaClock, FaTasks } from "react-icons/fa";
 import cerrarIcon from "../assets/cerrar.png";
 import todosIcon from "../assets/todos.png";
 import cambiarIcon from "../assets/cambiar.png";
 import ModalCerrarCaso from "../components/ModalCerrarCaso";
 import ModalActualizarEstado from "../components/ModalActualizarEstado";
 import ModalAsignarTecnico from "../components/ModalAsignarTecnico";
-import ReactDOM from "react-dom";
+import { createPortal } from "react-dom";
 
 interface Historial {
   id_historial: number;
@@ -39,47 +39,37 @@ export default function DetalleCaso() {
   const [caso, setCaso] = useState<Caso | null>(null);
   const [loading, setLoading] = useState(true);
   const [usuario, setUsuario] = useState<any>(null);
-  const [comentario, setComentario] = useState<string>("");
 
   const [showCerrarModal, setShowCerrarModal] = useState(false);
   const [showModalEstado, setShowModalEstado] = useState(false);
   const [showAsignarModal, setShowAsignarModal] = useState(false);
 
   useEffect(() => {
-  const userData = localStorage.getItem("usuarioLogeado");
-  if (userData) setUsuario(JSON.parse(userData));
+    const userData = localStorage.getItem("usuarioLogeado");
+    if (userData) setUsuario(JSON.parse(userData));
 
-  const fetchCaso = () => {
-    const data = localStorage.getItem("casoDetalle");
-    if (data) {
-      const { id_caso } = JSON.parse(data);
-      setLoading(true);
-      axios
-        .get(`http://localhost:4000/api/casos/id/${id_caso}`)
-        .then((res) => setCaso(res.data))
-        .catch((err) => console.error(err))
-        .finally(() => setLoading(false));
-    }
-  };
+    const fetchCaso = () => {
+      const data = localStorage.getItem("casoDetalle");
+      if (data) {
+        const { id_caso } = JSON.parse(data);
+        setLoading(true);
+        axios
+          .get(`http://localhost:4000/api/casos/id/${id_caso}`)
+          .then((res) => setCaso(res.data))
+          .catch((err) => console.error(err))
+          .finally(() => setLoading(false));
+      }
+    };
 
-  // Ejecutar al montar
-  fetchCaso();
-
-  // 🔥 Escuchar cambios en localStorage (cuando cambias de notificación)
-  const handleStorageChange = () => {
     fetchCaso();
-  };
+    window.addEventListener("storage", fetchCaso);
+    window.addEventListener("focus", fetchCaso);
 
-  window.addEventListener("storage", handleStorageChange);
-
-  // 🔁 También actualiza al volver a abrir el componente (por seguridad)
-  window.addEventListener("focus", fetchCaso);
-
-  return () => {
-    window.removeEventListener("storage", handleStorageChange);
-    window.removeEventListener("focus", fetchCaso);
-  };
-}, []);
+    return () => {
+      window.removeEventListener("storage", fetchCaso);
+      window.removeEventListener("focus", fetchCaso);
+    };
+  }, []);
 
   if (loading)
     return <p style={{ textAlign: "center", marginTop: "2rem" }}>⏳ Cargando caso...</p>;
@@ -100,6 +90,31 @@ export default function DetalleCaso() {
     { label: "Fecha creación", value: new Date(caso.fecha_creacion).toLocaleString(), icon: <FaClock />, color: "#d1c4e9" },
   ];
 
+  // Función para renderizar los modales flotando encima de todo
+  const renderModal = (children: React.ReactNode) => {
+    return createPortal(
+      <div
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          width: "100vw",
+          height: "100vh",
+          backgroundColor: "rgba(0,0,0,0.5)",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          zIndex: 9999,
+        }}
+      >
+        <div style={{ background: "white", borderRadius: "16px", padding: "2rem", minWidth: "400px", maxWidth: "800px", width: "90%" }}>
+          {children}
+        </div>
+      </div>,
+      document.body
+    );
+  };
+
   return (
     <div style={{ maxWidth: "1700px", padding: "1rem", backgroundColor: "#C0C0C0", minHeight: "100vh", margin: "0 auto" }}>
       <div style={{ background: "linear-gradient(160deg, #f9fafc, #e6f0eb)", padding: "2rem", borderRadius: "16px", boxShadow: "0 8px 30px rgba(0,0,0,0.1)" }}>
@@ -113,13 +128,7 @@ export default function DetalleCaso() {
             {caso.estado_actual !== "Finalizado" && (
               <>
                 <button
-                  onClick={() => {
-                    if (caso.estado_actual === "Cerrado" || caso.estado_actual === "Finalizado") {
-                      Swal.fire("⚠️ Atención", "Este caso ya está cerrado", "info");
-                      return;
-                    }
-                    setShowCerrarModal(true);
-                  }}
+                  onClick={() => setShowCerrarModal(true)}
                   style={{
                     display: "flex",
                     alignItems: "center",
@@ -131,7 +140,6 @@ export default function DetalleCaso() {
                     borderRadius: "10px",
                     fontWeight: "bold",
                     cursor: "pointer",
-                    transition: "all 0.3s ease",
                   }}
                   onMouseEnter={(e) => (e.currentTarget.style.background = "#dc354520")}
                   onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
@@ -153,7 +161,6 @@ export default function DetalleCaso() {
                     borderRadius: "10px",
                     fontWeight: "bold",
                     cursor: "pointer",
-                    transition: "all 0.3s ease",
                   }}
                   onMouseEnter={(e) => (e.currentTarget.style.background = "#19875420")}
                   onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
@@ -175,7 +182,6 @@ export default function DetalleCaso() {
                     borderRadius: "10px",
                     fontWeight: "bold",
                     cursor: "pointer",
-                    transition: "all 0.3s ease",
                   }}
                   onMouseEnter={(e) => (e.currentTarget.style.background = "#ffc10720")}
                   onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
@@ -188,38 +194,17 @@ export default function DetalleCaso() {
           </div>
         </div>
 
-       {/* Campos del caso */}
-<div style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(200px, 1fr))", gap: "1rem", maxWidth: "800px", margin: "0 auto 2rem auto" }}>
-  {campos.map((campo, idx) => (
-    <div key={idx} style={{ backgroundColor: campo.color, padding: "1rem", borderRadius: "8px", display: "flex", alignItems: "center", gap: "0.5rem", boxShadow: "0 2px 5px rgba(0,0,0,0.1)", justifyContent: "center" }}>
-      {campo.icon}
-      <div style={{ textAlign: "center" }}>
-        <strong>{campo.label}:</strong> {campo.value}
-      </div>
-    </div>
-  ))}
-
-  {/* Fecha de cierre */}
-  {caso.fecha_cierre && (
-    <div style={{ backgroundColor: "#f8d7da", padding: "1rem", borderRadius: "8px", display: "flex", alignItems: "center", gap: "0.5rem", boxShadow: "0 2px 5px rgba(0,0,0,0.1)", justifyContent: "center" }}>
-      <FaClock style={{ color: "#dc3545" }} />
-      <div style={{ textAlign: "center" }}>
-        <strong>Fecha cierre:</strong> {new Date(caso.fecha_cierre).toLocaleString()}
-      </div>
-    </div>
-  )}
-
-  {/* Tiempo de resolución */}
-  {caso.tiempo_resolucion && (
-    <div style={{ backgroundColor: "#d1e7dd", padding: "1rem", borderRadius: "8px", display: "flex", alignItems: "center", gap: "0.5rem", boxShadow: "0 2px 5px rgba(0,0,0,0.1)", justifyContent: "center" }}>
-      <FaClock style={{ color: "#198754" }} />
-      <div style={{ textAlign: "center" }}>
-        <strong>Tiempo resolución:</strong> {caso.tiempo_resolucion}
-      </div>
-    </div>
-  )}
-</div>
-
+        {/* Campos del caso */}
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(200px, 1fr))", gap: "1rem", maxWidth: "800px", margin: "0 auto 2rem auto" }}>
+          {campos.map((campo, idx) => (
+            <div key={idx} style={{ backgroundColor: campo.color, padding: "1rem", borderRadius: "8px", display: "flex", alignItems: "center", gap: "0.5rem", boxShadow: "0 2px 5px rgba(0,0,0,0.1)", justifyContent: "center" }}>
+              {campo.icon}
+              <div style={{ textAlign: "center" }}>
+                <strong>{campo.label}:</strong> {campo.value}
+              </div>
+            </div>
+          ))}
+        </div>
 
         {/* Historial */}
         <div>
@@ -232,46 +217,48 @@ export default function DetalleCaso() {
                   <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontWeight: "bold" }}>
                     <FaUser style={{ color: "#198754" }} /> {h.empleado}
                   </div>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                    <span>{h.comentario}</span>
-                    <span style={{ fontSize: "0.85rem", color: "#666" }}>
-                      {new Date(h.fecha).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
-                    </span>
-                  </div>
-                  <div style={{ fontSize: "0.85rem", color: "#198754", marginTop: "0.3rem" }}>
-                    {h.estado}
-                  </div>
+                  <div style={{ fontSize: "0.9rem" }}>{h.comentario}</div>
+                  <div style={{ fontSize: "0.8rem", color: "#555" }}>{new Date(h.fecha).toLocaleString()}</div>
                 </li>
               ))}
           </ul>
         </div>
+      </div>
 
-        {/* MODALES (se mantienen como antes) */}
-        {showCerrarModal && caso && usuario && (
+      {/* MODALES */}
+      {showCerrarModal && caso && usuario &&
+        renderModal(
           <ModalCerrarCaso
             idCaso={caso.id_caso}
             idEmpleado={usuario.id_empleado}
+            estadoActual={caso.estado_actual}
             onClose={() => setShowCerrarModal(false)}
             onSuccess={() => window.location.reload()}
           />
-        )}
-        {showModalEstado && caso && usuario && (
+        )
+      }
+
+      {showModalEstado && caso && usuario &&
+        renderModal(
           <ModalActualizarEstado
             idCaso={caso.id_caso}
             usuario={usuario}
             onClose={() => setShowModalEstado(false)}
             onSuccess={() => window.location.reload()}
           />
-        )}
-        {showAsignarModal && caso && usuario && (
+        )
+      }
+
+      {showAsignarModal && caso && usuario &&
+        renderModal(
           <ModalAsignarTecnico
             idCaso={caso.id_caso}
             usuario={usuario}
             onClose={() => setShowAsignarModal(false)}
             onSuccess={() => window.location.reload()}
           />
-        )}
-      </div>
+        )
+      }
     </div>
   );
 }

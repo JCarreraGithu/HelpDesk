@@ -9,7 +9,7 @@ import { useState, useEffect } from "react";
 import "./Dashboard.css";
 import Empleados from "./Empleados";
 import Estadistics from "./Estadistics";
-
+import FormularioEncuestaPremium from "./FormularioEncuestaPremium";
 
 export default function Dashboard() {
   const [darkMode, setDarkMode] = useState(false);
@@ -62,6 +62,7 @@ export default function Dashboard() {
   <Route path="perfil" element={<PerfilUsuario />} />
   <Route path="empleados" element={<Empleados />} />  
    <Route path="estadisticas" element={<Estadistics />} />  
+<Route path="calificar-servicio/:casoId" element={<FormularioEncuestaPremium usuarioId={1} />} />
 </Routes>
       </div>
 
