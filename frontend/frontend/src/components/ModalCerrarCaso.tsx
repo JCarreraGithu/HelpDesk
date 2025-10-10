@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { FaChevronDown, FaChevronUp } from "react-icons/fa";
-import Swal from "sweetalert2";
+import { FaChevronDown, FaChevronUp, FaTimes } from "react-icons/fa";
+import cerrarImg from "../assets/cerrar.png";
 
 interface Repuesto {
   id_repuesto: number;
@@ -62,7 +62,6 @@ export default function ModalCerrarCaso({
       setErrorMsg("Este caso ya está cerrado");
       return;
     }
-
     if (!detalles.trim()) {
       setErrorMsg("Debes escribir los detalles de la solución");
       return;
@@ -77,9 +76,10 @@ export default function ModalCerrarCaso({
         complicacion,
         materiales: seleccionados,
       });
-
       setExito(true);
-      onSuccess();
+       setTimeout(() => {
+    onSuccess();
+  }, 2500);
     } catch (error) {
       console.error(error);
       setErrorMsg("No se pudo cerrar el caso");
@@ -115,174 +115,161 @@ export default function ModalCerrarCaso({
         style={{
           background: "#2d2d2d",
           width: "100%",
-          maxWidth: "600px",
+          maxWidth: "700px",
           maxHeight: "90vh",
           borderRadius: "16px",
           boxShadow: "0 8px 25px rgba(0,0,0,0.3)",
           padding: "1.5rem",
-          overflowY: "auto",
           display: "flex",
-          flexDirection: "column",
-          gap: "1rem",
+          flexDirection: "row",
+          gap: "1.5rem",
+          overflowY: "auto",
         }}
       >
-        {!exito ? (
-          <>
-            <h2 style={{ color: "#198754", textAlign: "center", fontSize: "1.5rem", fontWeight: "600" }}>
-              Cerrar Caso #{idCaso}
-            </h2>
+        {/* 🔹 Formulario a la izquierda */}
+        <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
+            <h2 style={{ color: "#198754", fontSize: "1.25rem", fontWeight: 600 }}>Cerrar Caso #{idCaso}</h2>
+            <button onClick={onClose} style={{ color: "#fff", background: "transparent", border: "none", cursor: "pointer" }}>
+              <FaTimes size={20} />
+            </button>
+          </div>
 
-            {errorMsg && (
-              <div
-                style={{
-                  background: "#721c24",
-                  color: "white",
-                  padding: "0.5rem",
-                  borderRadius: "8px",
-                  textAlign: "center",
-                }}
-              >
-                {errorMsg}
-              </div>
-            )}
+          {errorMsg && (
+            <div style={{ background: "#721c24", color: "white", padding: "0.5rem", borderRadius: "8px", textAlign: "center" }}>
+              {errorMsg}
+            </div>
+          )}
 
-            {/* Detalles */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-              <label style={{ color: "white", fontWeight: "bold" }}>Detalles de la solución</label>
+          {!exito ? (
+            <>
+              <label style={{ color: "white", fontWeight: "bold", marginTop: "0.5rem" }}>Detalles de la solución</label>
               <textarea
                 value={detalles}
                 onChange={(e) => setDetalles(e.target.value)}
                 style={{ ...inputStyle, resize: "vertical", minHeight: "70px" }}
-                placeholder="Describe la solución del caso..."
               />
-            </div>
 
-            {/* Complicaciones */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-              <label style={{ color: "white", fontWeight: "bold" }}>Complicaciones (opcional)</label>
+              <label style={{ color: "white", fontWeight: "bold", marginTop: "0.5rem" }}>Complicaciones (opcional)</label>
               <textarea
                 value={complicacion}
                 onChange={(e) => setComplicacion(e.target.value)}
                 style={{ ...inputStyle, resize: "vertical", minHeight: "50px" }}
-                placeholder="Describe complicaciones si hubo..."
               />
-            </div>
 
-            {/* Repuestos */}
-            <div>
-              <button
-                onClick={() => setRepuestosOpen(!repuestosOpen)}
-                style={{
-                  ...buttonStyle,
-                  width: "100%",
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  background: "#383838",
-                  color: "white",
-                }}
-              >
-                Repuestos utilizados {repuestosOpen ? <FaChevronUp /> : <FaChevronDown />}
-              </button>
-
-              {repuestosOpen && (
-                <div
+              {/* Repuestos */}
+              <div style={{ marginTop: "0.5rem" }}>
+                <button
+                  onClick={() => setRepuestosOpen(!repuestosOpen)}
                   style={{
-                    marginTop: "0.5rem",
-                    border: "1px solid #555",
-                    borderRadius: "8px",
-                    maxHeight: "200px",
-                    overflowY: "auto",
-                    background: "#3b3b3b",
-                    padding: "0.5rem",
+                    ...buttonStyle,
+                    width: "100%",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    background: "#383838",
+                    color: "white",
                   }}
                 >
-                  {repuestos.map((r) => {
-                    const seleccionado = seleccionados.find((s) => s.id_repuesto === r.id_repuesto);
-                    return (
-                      <div
-                        key={r.id_repuesto}
-                        style={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                          alignItems: "center",
-                          padding: "0.3rem 0.5rem",
-                          borderBottom: "1px solid #555",
-                        }}
-                      >
-                        <div style={{ display: "flex", flexDirection: "column" }}>
-                          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                            <input
-                              type="checkbox"
-                              checked={!!seleccionado}
-                              onChange={() => toggleRepuesto(r.id_repuesto)}
-                            />
-                            <span style={{ color: "white", fontWeight: "500" }}>{r.nombre}</span>
+                  Repuestos utilizados {repuestosOpen ? <FaChevronUp /> : <FaChevronDown />}
+                </button>
+
+                {repuestosOpen && (
+                  <div
+                    style={{
+                      marginTop: "0.5rem",
+                      border: "1px solid #555",
+                      borderRadius: "8px",
+                      maxHeight: "200px",
+                      overflowY: "auto",
+                      background: "#3b3b3b",
+                      padding: "0.5rem",
+                    }}
+                  >
+                    {repuestos.map((r) => {
+                      const seleccionado = seleccionados.find((s) => s.id_repuesto === r.id_repuesto);
+                      return (
+                        <div
+                          key={r.id_repuesto}
+                          style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0.3rem 0.5rem", borderBottom: "1px solid #555" }}
+                        >
+                          <div style={{ display: "flex", flexDirection: "column" }}>
+                            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                              <input type="checkbox" checked={!!seleccionado} onChange={() => toggleRepuesto(r.id_repuesto)} />
+                              <span style={{ color: "white", fontWeight: "500" }}>{r.nombre}</span>
+                            </div>
+                            <span style={{ fontSize: "0.8rem", color: "#aaa" }}>{r.descripcion} | Stock: {r.stock}</span>
                           </div>
-                          <span style={{ fontSize: "0.8rem", color: "#aaa" }}>
-                            {r.descripcion} | Stock: {r.stock}
-                          </span>
+                          {seleccionado && (
+                            <input
+                              type="number"
+                              min={1}
+                              value={seleccionado.cantidad}
+                              onChange={(e) => actualizarCantidad(r.id_repuesto, Number(e.target.value))}
+                              style={{
+                                width: "50px",
+                                borderRadius: "6px",
+                                border: "1px solid #198754",
+                                textAlign: "center",
+                                background: "#2d2d2d",
+                                color: "white",
+                              }}
+                            />
+                          )}
                         </div>
-                        {seleccionado && (
-                          <input
-                            type="number"
-                            min={1}
-                            value={seleccionado.cantidad}
-                            onChange={(e) =>
-                              actualizarCantidad(r.id_repuesto, Number(e.target.value))
-                            }
-                            style={{
-                              width: "50px",
-                              borderRadius: "6px",
-                              border: "1px solid #198754",
-                              textAlign: "center",
-                              background: "#2d2d2d",
-                              color: "white",
-                            }}
-                          />
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
 
-            {/* Botones */}
-            <div style={{ display: "flex", justifyContent: "flex-end", gap: "0.5rem", marginTop: "1rem" }}>
-              <button
-                onClick={onClose}
-                style={{ ...buttonStyle, background: "#6c757d", color: "white" }}
-              >
-                Cancelar
-              </button>
-             <button
-  onClick={estadoActual === "Cerrado" ? undefined : handleCerrarCaso}
-  style={{
-    ...buttonStyle,
-    background: "#198754",
-    color: "white",
-    cursor: estadoActual === "Cerrado" ? "not-allowed" : "pointer",
-    opacity: estadoActual === "Cerrado" ? 0.6 : 1,
-  }}
->
-  {estadoActual === "Cerrado" ? "El caso ya está cerrado" : loading ? "Cerrando..." : "Cerrar Caso"}
-</button>
-
+              <div style={{ display: "flex", justifyContent: "flex-end", gap: "0.5rem", marginTop: "1rem" }}>
+                <button onClick={onClose} style={{ ...buttonStyle, background: "#6c757d", color: "white" }}>Cancelar</button>
+                <button
+                  onClick={estadoActual === "Cerrado" ? undefined : handleCerrarCaso}
+                  style={{
+                    ...buttonStyle,
+                    background: "#198754",
+                    color: "white",
+                    cursor: estadoActual === "Cerrado" ? "not-allowed" : "pointer",
+                    opacity: estadoActual === "Cerrado" ? 0.6 : 1,
+                  }}
+                >
+                  {estadoActual === "Cerrado" ? "El caso ya está cerrado" : loading ? "Cerrando..." : "Cerrar Caso"}
+                </button>
+              </div>
+            </>
+          ) : (
+            <div style={{ marginTop: "1rem", color: "white" }}>
+              <h2 style={{ fontSize: "1.5rem", fontWeight: "600", color: "#28a745" }}>✅ Caso cerrado correctamente</h2>
+              <p style={{ marginTop: "1rem" }}>El caso #{idCaso} ha sido cerrado y registrado en el historial.</p>
+              <button onClick={onClose} style={{ ...buttonStyle, marginTop: "1rem", background: "#198754", color: "white" }}>Cerrar</button>
             </div>
-          </>
-        ) : (
-          <div style={{ textAlign: "center", padding: "2rem", color: "white" }}>
-            <h2 style={{ fontSize: "1.5rem", fontWeight: "600", color: "#28a745" }}>✅ Caso cerrado correctamente</h2>
-            <p style={{ marginTop: "1rem" }}>El caso #{idCaso} ha sido cerrado y registrado en el historial.</p>
-            <button
-              onClick={onClose}
-              style={{ ...buttonStyle, marginTop: "1rem", background: "#198754", color: "white" }}
-            >
-              Cerrar
-            </button>
-          </div>
-        )}
+          )}
+        </div>
+
+        {/* 🔹 Imagen a la derecha */}
+        <div style={{ flex: 0.7, display: "flex", justifyContent: "center", alignItems: "center" }}>
+          <img
+            src={cerrarImg}
+            alt="Cerrar caso"
+            style={{
+              width: "100%",
+              borderRadius: "12px",
+              objectFit: "cover",
+              boxShadow: "0 4px 20px rgba(0,0,0,0.4)",
+              transition: "transform 0.3s ease, box-shadow 0.3s ease",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = "scale(1.05)";
+              e.currentTarget.style.boxShadow = "0 6px 25px rgba(0,0,0,0.5)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = "scale(1)";
+              e.currentTarget.style.boxShadow = "0 4px 20px rgba(0,0,0,0.4)";
+            }}
+          />
+        </div>
       </div>
     </div>
   );

@@ -111,7 +111,7 @@ export default function CrearCaso() {
 
   const estilos = {
     contenedor: { display: "flex", gap: "2rem", maxWidth: "1100px", margin: "0 auto", minHeight: "90vh", padding: "2rem", backgroundColor: "#e2e2e2" },
-    formularioWrapper: { flex: 6 },
+    formularioWrapper: { flex: 5 },
     formulario: { display: "flex", flexDirection: "column", gap: "1rem", backgroundColor: "#d9d9d9", padding: "2rem", borderRadius: "16px", boxShadow: "0 8px 25px rgba(0,0,0,0.2)" },
     filaSelects: { display: "flex", gap: "1rem" },
     campo: { display: "flex", flexDirection: "column", gap: "0.3rem", flex: 1 },
@@ -122,8 +122,8 @@ export default function CrearCaso() {
     filaFecha: { display: "flex", gap: "1rem", alignItems: "center" },
     inputFecha: { flex: 1, padding: "0.5rem", borderRadius: "8px", border: "1px solid #6c757d", background: "#fff", color: "#000", width: "100%" },
     botonCrear: { marginTop: "1rem", background: "#38a169", color: "#fff", padding: "0.9rem 1.5rem", borderRadius: "8px", fontWeight: "bold", cursor: "pointer" },
-    imagenContainer: { flex: 4, display: "flex", flexDirection: "column", alignItems: "center", gap: "1rem" },
-    imagen: { width: "100%", maxHeight: "85vh", objectFit: "cover", borderRadius: "16px", boxShadow: "0 4px 15px rgba(0,0,0,0.2)" },
+    imagenContainer: { flex: 6, display: "flex", flexDirection: "column", alignItems: "center", gap: "1rem" },
+    imagen: { width: "100%", maxHeight: "100vh", objectFit: "cover", borderRadius: "16px", boxShadow: "0 4px 15px rgba(0,0,0,0.2)" },
   };
 
   return (
