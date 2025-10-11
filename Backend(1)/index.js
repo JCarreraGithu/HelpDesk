@@ -32,7 +32,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/usuarios", usuariosRoutes);
 app.use("/api/config", configRoutes);
 app.use("/api/repuestos", RepuestosRoutes);
-app.use("/api/config/incidencias", incidenciasRoutes);
+app.use("/api/incidencias", incidenciasRoutes);
 app.use("/api/notificaciones", notiRoutes);
 app.use("/api/departamentos", DepartamentoRoutes);
 app.use("/api/puestos", PuestoRoutes);

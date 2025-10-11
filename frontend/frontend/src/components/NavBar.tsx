@@ -10,6 +10,7 @@ import ticketIcon from "../assets/ticket.png";
 import reporteIcon from "../assets/reporte.png";
 import usuariosIcon from "../assets/Log0.png";
 import Notificaciones from "./Notificaciones";
+import Departamentos from '../pages/Departamentos';
 
 interface NavbarProps {
   darkMode: boolean;
@@ -219,7 +220,7 @@ export default function Navbar({ darkMode, setDarkMode }: NavbarProps) {
           onMouseLeave={() => setShowOpciones(false)}
         >
           <Link
-            to="/dashboard/empleados"
+            to="#"
             style={{
               backgroundColor: location.pathname.startsWith("/dashboard/empleados") ? "#198754" : "#f0f0f0",
               color: location.pathname.startsWith("/dashboard/empleados") ? "#fff" : "#333",
@@ -250,6 +251,11 @@ export default function Navbar({ darkMode, setDarkMode }: NavbarProps) {
               }}
             >
               <Link to="/dashboard/empleados" style={{ display: "block", padding: "8px 12px", textDecoration: "none", color: "#333" }}>Empleados</Link>
+              <Link to="/dashboard/incidencias" style={{ display: "block", padding: "8px 12px", textDecoration: "none", color: "#333" }}>Incidencias</Link>
+              <Link to="/dashboard/repuestos" style={{ display: "block", padding: "8px 12px", textDecoration: "none", color: "#333" }}>Repuestos</Link>             
+              <Link to="/dashboard/departamentos" style={{ display: "block", padding: "8px 12px", textDecoration: "none", color: "#333" }}>Departamentos</Link>             
+              <Link to="/dashboard/puestos" style={{ display: "block", padding: "8px 12px", textDecoration: "none", color: "#333" }}>Puestos</Link>             
+              
               <Link to="#" style={{ display: "block", padding: "8px 12px", textDecoration: "none", color: "#333" }}>Otra opción</Link>
             </div>
           )}
