@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import ticketIcon from "../assets/ticket.png";
 import clockIcon from "../assets/clock.png";
 import alertIcon from "../assets/alert.jpeg";
+import trashIcon from "../assets/basura.png"; // <- icono de basura
 
 interface Caso {
   id_caso: number;
@@ -15,10 +16,21 @@ interface Caso {
   tecnico: string | null;
 }
 
+const estados = [
+  { id: 1, nombre: "Asignado" },
+  { id: 2, nombre: "En Proceso" },
+  { id: 3, nombre: "Finalizado" },
+  { id: 4, nombre: "Cerrado" },
+];
+
 export default function VerCasos() {
   const [casos, setCasos] = useState<Caso[]>([]);
+  const [filteredCasos, setFilteredCasos] = useState<Caso[]>([]);
   const [loading, setLoading] = useState(true);
   const [mensaje, setMensaje] = useState<{ tipo: "success" | "error"; texto: string } | null>(null);
+  const [filtroVisible, setFiltroVisible] = useState(false);
+  const [filtroTipo, setFiltroTipo] = useState<string>("");
+  const [filtroValor, setFiltroValor] = useState<string>("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -26,6 +38,7 @@ export default function VerCasos() {
       try {
         const res = await axios.get("http://localhost:4000/api/casos");
         setCasos(res.data);
+        setFilteredCasos(res.data);
       } catch (error: any) {
         console.error("Error cargando casos:", error);
         setMensaje({
@@ -39,9 +52,42 @@ export default function VerCasos() {
     fetchCasos();
   }, []);
 
+  useEffect(() => {
+    let filtrados = [...casos];
+
+    if (filtroTipo === "fecha" && filtroValor) {
+      filtrados = filtrados.filter(
+        (caso) => caso.fecha_creacion.split("T")[0] === filtroValor
+      );
+    }
+
+    if (filtroTipo === "estado" && filtroValor) {
+      filtrados = filtrados.filter(
+        (caso) =>
+          caso.estado_actual &&
+          caso.estado_actual.toLowerCase() === filtroValor.toLowerCase()
+      );
+    }
+
+    if (filtroTipo === "tecnico" && filtroValor) {
+      const valor = filtroValor.toLowerCase();
+      filtrados = filtrados.filter((caso) =>
+        caso.tecnico ? caso.tecnico.toLowerCase().includes(valor) : false
+      );
+    }
+
+    setFilteredCasos(filtrados);
+  }, [filtroValor, filtroTipo, casos]);
+
   const handleVerDetalle = (id_caso: number) => {
     localStorage.setItem("casoDetalle", JSON.stringify({ id_caso }));
     navigate("/dashboard/detalle-caso");
+  };
+
+  const limpiarFiltros = () => {
+    setFiltroTipo("");
+    setFiltroValor("");
+    setFilteredCasos(casos);
   };
 
   useEffect(() => {
@@ -72,22 +118,156 @@ export default function VerCasos() {
         style={{
           display: "flex",
           alignItems: "center",
-          justifyContent: "center",
+          justifyContent: "space-between",
           marginBottom: "2rem",
-          gap: "0.8rem",
         }}
       >
-        <img src={ticketIcon} alt="Ticket Icon" style={{ width: "45px", height: "45px" }} />
-        <h1
-          style={{
-            textAlign: "center",
-            fontSize: "2rem",
-            fontWeight: "bold",
-            color: "#2b6cb0",
-          }}
-        >
-          Todos los casos
-        </h1>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.8rem" }}>
+          <img src={ticketIcon} alt="Ticket Icon" style={{ width: "45px", height: "45px" }} />
+          <h1
+            style={{
+              textAlign: "center",
+              fontSize: "2rem",
+              fontWeight: "bold",
+              color: "#2b6cb0",
+            }}
+          >
+            Todos los casos
+          </h1>
+        </div>
+
+        {/* 🔹 Botón de Filtro */}
+        <div style={{ position: "relative" }}>
+          <button
+            onClick={() => setFiltroVisible(!filtroVisible)}
+            style={{
+              background: "#2b6cb0",
+              color: "#fff",
+              border: "none",
+              borderRadius: "6px",
+              padding: "0.6rem 1.2rem",
+              fontWeight: "bold",
+              cursor: "pointer",
+            }}
+          >
+            🔍 Click para mostrar filtros
+          </button>
+
+          {/* 🔹 Panel desplegable de filtros */}
+          {filtroVisible && (
+            <div
+              style={{
+                position: "absolute",
+                right: 0,
+                top: "120%",
+                background: "white",
+                borderRadius: "8px",
+                boxShadow: "0 4px 10px rgba(0,0,0,0.2)",
+                padding: "1rem",
+                zIndex: 10,
+                minWidth: "250px",
+              }}
+            >
+              <label style={{ display: "block", marginBottom: "0.5rem", fontWeight: "bold" }}>
+                Seleccione un tipo de filtro:
+              </label>
+              <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "1rem" }}>
+                <select
+                  value={filtroTipo}
+                  onChange={(e) => {
+                    setFiltroTipo(e.target.value);
+                    setFiltroValor("");
+                  }}
+                  style={{
+                    flex: 1,
+                    padding: "0.5rem",
+                    borderRadius: "6px",
+                    border: "1px solid #ccc",
+                  }}
+                >
+                  <option value="">-- Seleccionar --</option>
+                  <option value="fecha">Por fecha</option>
+                  <option value="estado">Por estado</option>
+                  <option value="tecnico">Por técnico</option>
+                </select>
+
+                {/* Icono de basura */}
+                {(filtroTipo || filtroValor) && (
+                  <button
+                    onClick={limpiarFiltros}
+                    style={{
+                      background: "transparent",
+                      border: "none",
+                      cursor: "pointer",
+                      padding: "0.2rem",
+                      transition: "transform 0.2s, filter 0.2s",
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = "scale(1.2)";
+                      e.currentTarget.style.filter = "brightness(0.7)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = "scale(1)";
+                      e.currentTarget.style.filter = "brightness(1)";
+                    }}
+                  >
+                    <img src={trashIcon} alt="Eliminar filtro" style={{ width: "24px", height: "24px" }} />
+                  </button>
+                )}
+              </div>
+
+              {/* Campo dinámico según tipo */}
+              {filtroTipo === "fecha" && (
+                <input
+                  type="date"
+                  value={filtroValor}
+                  onChange={(e) => setFiltroValor(e.target.value)}
+                  style={{
+                    width: "100%",
+                    padding: "0.5rem",
+                    borderRadius: "6px",
+                    border: "1px solid #ccc",
+                  }}
+                />
+              )}
+
+              {filtroTipo === "estado" && (
+                <select
+                  value={filtroValor}
+                  onChange={(e) => setFiltroValor(e.target.value)}
+                  style={{
+                    width: "100%",
+                    padding: "0.5rem",
+                    borderRadius: "6px",
+                    border: "1px solid #ccc",
+                  }}
+                >
+                  <option value="">-- Seleccionar estado --</option>
+                  {estados.map((e) => (
+                    <option key={e.id} value={e.nombre}>
+                      {e.nombre}
+                    </option>
+                  ))}
+                </select>
+              )}
+
+              {filtroTipo === "tecnico" && (
+                <input
+                  type="text"
+                  placeholder="Nombre del técnico"
+                  value={filtroValor}
+                  onChange={(e) => setFiltroValor(e.target.value)}
+                  style={{
+                    width: "100%",
+                    padding: "0.5rem",
+                    borderRadius: "6px",
+                    border: "1px solid #ccc",
+                  }}
+                />
+              )}
+            </div>
+          )}
+        </div>
       </div>
 
       {/* 🔹 Tabla */}
@@ -114,8 +294,8 @@ export default function VerCasos() {
           </tr>
         </thead>
         <tbody>
-          {casos.length > 0 ? (
-            casos.map((caso) => (
+          {filteredCasos.length > 0 ? (
+            filteredCasos.map((caso) => (
               <tr
                 key={caso.id_caso}
                 style={{
@@ -146,7 +326,7 @@ export default function VerCasos() {
                   {caso.estado_actual}
                 </td>
                 <td style={{ padding: "1rem" }}>
-                  {new Date(caso.fecha_creacion).toLocaleString()}
+                  {new Date(caso.fecha_creacion).toLocaleDateString()}
                 </td>
                 <td style={{ padding: "1rem" }}>
                   {caso.tecnico ? caso.tecnico : "No asignado"}
@@ -182,7 +362,7 @@ export default function VerCasos() {
           ) : (
             <tr>
               <td colSpan={8} style={{ textAlign: "center", padding: "2rem" }}>
-                😕 No hay casos registrados
+                😕 No hay casos que coincidan con el filtro
               </td>
             </tr>
           )}

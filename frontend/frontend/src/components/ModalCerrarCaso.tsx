@@ -77,9 +77,9 @@ export default function ModalCerrarCaso({
         materiales: seleccionados,
       });
       setExito(true);
-       setTimeout(() => {
-    onSuccess();
-  }, 2500);
+      setTimeout(() => {
+        onSuccess();
+      }, 2500);
     } catch (error) {
       console.error(error);
       setErrorMsg("No se pudo cerrar el caso");
@@ -174,6 +174,7 @@ export default function ModalCerrarCaso({
                   Repuestos utilizados {repuestosOpen ? <FaChevronUp /> : <FaChevronDown />}
                 </button>
 
+                {/* 🔹 Si el select está abierto */}
                 {repuestosOpen && (
                   <div
                     style={{
@@ -216,6 +217,40 @@ export default function ModalCerrarCaso({
                               }}
                             />
                           )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+
+                {/* 🔹 Mostrar los repuestos seleccionados cuando el select esté cerrado */}
+                {!repuestosOpen && seleccionados.length > 0 && (
+                  <div
+                    style={{
+                      marginTop: "0.5rem",
+                      border: "1px solid #198754",
+                      borderRadius: "8px",
+                      background: "#303030",
+                      padding: "0.75rem",
+                    }}
+                  >
+                    <h4 style={{ color: "#198754", marginBottom: "0.5rem" }}>Repuestos seleccionados:</h4>
+                    {seleccionados.map((sel) => {
+                      const repuesto = repuestos.find((r) => r.id_repuesto === sel.id_repuesto);
+                      if (!repuesto) return null;
+                      return (
+                        <div
+                          key={repuesto.id_repuesto}
+                          style={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            color: "white",
+                            padding: "0.3rem 0",
+                            borderBottom: "1px solid #444",
+                          }}
+                        >
+                          <span>{repuesto.nombre}</span>
+                          <span>x{sel.cantidad}</span>
                         </div>
                       );
                     })}

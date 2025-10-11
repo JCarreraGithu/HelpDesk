@@ -127,7 +127,7 @@ export default function CrearCaso() {
   };
 
   return (
-    <div style={{ background: "#e2e2e2", minHeight: "100vh", paddingTop: "2rem", paddingBottom: "2rem" }}>
+    <div style={{ background: "#C0C0C0", minHeight: "100vh", paddingTop: "2rem", paddingBottom: "2rem" }}>
       <div style={estilos.contenedor}>
         {/* Formulario */}
         <div style={estilos.formularioWrapper}>

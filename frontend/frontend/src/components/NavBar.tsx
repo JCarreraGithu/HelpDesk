@@ -119,9 +119,41 @@ export default function Navbar({ darkMode, setDarkMode }: NavbarProps) {
             <img src={confiIcon} alt="Configuración" className="config-icon" />
           </button>
 
-          <button onClick={() => navigate("/dashboard/perfil")} className="user-button">
-            <img src={userIcon} alt="Perfil" className="user-icon" />
-          </button>
+         <button
+  onClick={() => navigate("/dashboard/perfil")}
+  className="user-button"
+  style={{
+    borderRadius: "50%",
+    padding: "6px",
+    backgroundColor:
+      location.pathname === "/dashboard/perfil" ? "#198754" : "transparent",
+    boxShadow:
+      location.pathname === "/dashboard/perfil"
+        ? "0 0 10px rgba(25, 135, 84, 0.6)"
+        : "none",
+    transition: "all 0.3s ease-in-out",
+  }}
+>
+  <img
+    src={userIcon}
+    alt="Perfil"
+    className="user-icon"
+    style={{
+      width: "42px",
+      height: "42px",
+      filter:
+        location.pathname === "/dashboard/perfil"
+          ? "drop-shadow(0 0 4px #00ff88)"
+          : "none",
+      transform:
+        location.pathname === "/dashboard/perfil" ? "scale(1.1)" : "scale(1)",
+      transition: "all 0.3s ease-in-out",
+    }}
+  />
+</button>
+
+
+
 
           {/* Componente de Notificaciones */}
           <Notificaciones idEmpleado={idEmpleado} />

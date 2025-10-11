@@ -3,6 +3,7 @@ import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import empleadoImg from "../assets/empleado.png";
 import { motion } from "framer-motion";
+import basuraIcon from "../assets/basura.png"; // 
 
 const MySwal = withReactContent(Swal);
 
@@ -432,7 +433,10 @@ const buscarPorId = async () => {
                 </td>
                 <td style={{ padding: "10px 12px", display: "flex", gap: "0.5rem" }}>
                   <button onClick={(e) => { e.stopPropagation(); abrirModalEditar(u); }} style={btnBlue}>Editar</button>
-                  <button onClick={(e) => { e.stopPropagation(); darBajaUsuario(u); }} style={btnRed}>Eliminar</button>
+                  <button onClick={(e) => { e.stopPropagation(); darBajaUsuario(u); }} style={btnGray}>
+                    <img src={basuraIcon} alt="Eliminar" style={{ width: "18px", height: "18px", marginRight: "5px" }} />
+                    Eliminar
+                  </button>
                 </td>
               </tr>
             ))}
