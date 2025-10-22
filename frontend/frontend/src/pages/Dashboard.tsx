@@ -76,9 +76,6 @@ export default function Dashboard() {
 <Route path="/reportes" element={<Reportes />} />
 <Route path="reportes/:categoria" element={<ReporteCategoria />} />
 
-
-
-
 </Routes>
       </div>
 
