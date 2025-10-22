@@ -14,6 +14,7 @@ import Repuestos from "./Repuestos";
 import Departamentos from "./Departamentos";
 import Puestos from "./Puestos";
 
+import FormularioEncuestaPremium from "./FormularioEncuestaPremium";
 
 export default function Dashboard() {
   const [darkMode, setDarkMode] = useState(false);
@@ -70,6 +71,7 @@ export default function Dashboard() {
    <Route path="repuestos" element={<Repuestos />} /> 
       <Route path="departamentos" element={<Departamentos />} />      
       <Route path="puestos" element={<Puestos />} /> 
+<Route path="calificar-servicio/:casoId" element={<FormularioEncuestaPremium usuarioId={1} />} />
 </Routes>
       </div>
 

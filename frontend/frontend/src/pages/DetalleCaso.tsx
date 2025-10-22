@@ -5,6 +5,10 @@ import { FaUser, FaIdBadge, FaExclamationCircle, FaClock, FaTasks } from "react-
 import cerrarIcon from "../assets/cerrar.png";
 import todosIcon from "../assets/todos.png";
 import cambiarIcon from "../assets/cambiar.png";
+import ModalCerrarCaso from "../components/ModalCerrarCaso";
+import ModalActualizarEstado from "../components/ModalActualizarEstado";
+import ModalAsignarTecnico from "../components/ModalAsignarTecnico";
+import { createPortal } from "react-dom";
 
 interface Historial {
   id_historial: number;
@@ -40,7 +44,6 @@ export default function DetalleCaso() {
   const [showModalEstado, setShowModalEstado] = useState(false);
   const [showAsignarModal, setShowAsignarModal] = useState(false);
 
-  // Estados para el modal de cambiar estado
   const [nuevoEstado, setNuevoEstado] = useState("");
   const [comentarioEstado, setComentarioEstado] = useState("");
 
@@ -62,12 +65,11 @@ export default function DetalleCaso() {
     };
 
     fetchCaso();
-    const handleStorageChange = () => fetchCaso();
-    window.addEventListener("storage", handleStorageChange);
+    window.addEventListener("storage", fetchCaso);
     window.addEventListener("focus", fetchCaso);
 
     return () => {
-      window.removeEventListener("storage", handleStorageChange);
+      window.removeEventListener("storage", fetchCaso);
       window.removeEventListener("focus", fetchCaso);
     };
   }, []);
@@ -91,39 +93,43 @@ export default function DetalleCaso() {
     { label: "Fecha creación", value: new Date(caso.fecha_creacion).toLocaleString(), icon: <FaClock />, color: "#d1c4e9" },
   ];
 
-  const botonEstilo = (color: string, textColor?: string): React.CSSProperties => ({
+  const renderModal = (children: React.ReactNode) => {
+    return createPortal(
+      <div
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          width: "100vw",
+          height: "100vh",
+          backgroundColor: "rgba(0,0,0,0.5)",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          zIndex: 9999,
+        }}
+      >
+        <div style={{ background: "white", borderRadius: "16px", padding: "2rem", minWidth: "400px", maxWidth: "800px", width: "90%" }}>
+          {children}
+        </div>
+      </div>,
+      document.body
+    );
+  };
+
+  // Función para los estilos de los botones
+  const botonEstilo = (bg: string, color: string): React.CSSProperties => ({
     display: "flex",
     alignItems: "center",
     gap: "0.6rem",
     background: "transparent",
-    border: `2px solid ${color}`,
-    color: textColor || color,
+    border: `2px solid ${bg}`,
+    color: color,
     padding: "0.6rem 1.2rem",
     borderRadius: "10px",
     fontWeight: "bold",
     cursor: "pointer",
-    transition: "all 0.3s ease",
   });
-
-  const handleGuardarEstado = async () => {
-    if (!nuevoEstado || !comentarioEstado) {
-      Swal.fire("⚠️ Atención", "Debe completar todos los campos", "warning");
-      return;
-    }
-    try {
-      await axios.patch(`http://localhost:4000/api/casos/${caso?.id_caso}/estado`, {
-        estado: nuevoEstado,
-        comentario: comentarioEstado,
-        id_empleado: usuario.id_empleado,
-      });
-      Swal.fire("✅ Éxito", "Estado actualizado correctamente", "success");
-      setShowModalEstado(false);
-      window.location.reload();
-    } catch (error) {
-      console.error(error);
-      Swal.fire("❌ Error", "No se pudo actualizar el estado", "error");
-    }
-  };
 
   return (
     <div style={{ maxWidth: "1700px", padding: "1rem", backgroundColor: "#C0C0C0", minHeight: "100vh", margin: "0 auto" }}>
@@ -139,7 +145,9 @@ export default function DetalleCaso() {
               <>
                 <button
                   onClick={() => setShowCerrarModal(true)}
-                  style={botonEstilo("#dc3545")}
+                  style={botonEstilo("#dc3545", "#dc3545")}
+                  onMouseEnter={(e) => (e.currentTarget.style.background = "#dc354520")}
+                  onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
                 >
                   <img src={cerrarIcon} alt="Cerrar" style={{ width: "40px", height: "40px", filter: "drop-shadow(0 0 3px #dc3545)" }} />
                   Cerrar Caso
@@ -147,19 +155,19 @@ export default function DetalleCaso() {
 
                 <button
                   onClick={() => setShowAsignarModal(true)}
-                  style={botonEstilo("#198754")}
+                  style={botonEstilo("#198754", "#198754")}
+                  onMouseEnter={(e) => (e.currentTarget.style.background = "#19875420")}
+                  onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
                 >
                   <img src={todosIcon} alt="Asignar" style={{ width: "35px", height: "35px", filter: "drop-shadow(0 0 3px #198754)" }} />
                   Asignar Técnico
                 </button>
 
                 <button
-                  onClick={() => {
-                    setNuevoEstado(caso.estado_actual);
-                    setComentarioEstado("");
-                    setShowModalEstado(true);
-                  }}
+                  onClick={() => setShowModalEstado(true)}
                   style={botonEstilo("#ffc107", "#b08900")}
+                  onMouseEnter={(e) => (e.currentTarget.style.background = "#ffc10720")}
+                  onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
                 >
                   <img src={cambiarIcon} alt="Estado" style={{ width: "35px", height: "35px", filter: "drop-shadow(0 0 3px #ffc107)" }} />
                   Cambiar Estado
@@ -192,76 +200,48 @@ export default function DetalleCaso() {
                   <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontWeight: "bold" }}>
                     <FaUser style={{ color: "#198754" }} /> {h.empleado}
                   </div>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                    <span>{h.comentario}</span>
-                    <span style={{ fontSize: "0.85rem", color: "#666" }}>
-                      {new Date(h.fecha).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
-                    </span>
-                  </div>
-                  <div style={{ fontSize: "0.85rem", color: "#198754", marginTop: "0.3rem" }}>
-                    {h.estado}
-                  </div>
+                  <div style={{ fontSize: "0.9rem" }}>{h.comentario}</div>
+                  <div style={{ fontSize: "0.8rem", color: "#555" }}>{new Date(h.fecha).toLocaleString()}</div>
                 </li>
               ))}
           </ul>
         </div>
-
-        {/* MODAL CAMBIAR ESTADO */}
-        {showModalEstado && (
-          <div style={modalOverlay}>
-            <div style={modalBox}>
-              <h3 style={{ color: "#b08900", textAlign: "center", marginBottom: "1rem" }}>Cambiar Estado</h3>
-              <div style={{ marginBottom: "1rem" }}>
-                <label style={labelStyle}>Estado:</label>
-                <select
-                  value={nuevoEstado}
-                  onChange={(e) => setNuevoEstado(e.target.value)}
-                  style={inputStyle}
-                >
-                  <option value="">Seleccione un estado</option>
-                  <option value="Abierto">Abierto</option>
-                  <option value="En Proceso">En Proceso</option>
-                  <option value="Cerrado">Cerrado</option>
-                  <option value="Finalizado">Finalizado</option>
-                </select>
-              </div>
-              <div style={{ marginBottom: "1rem" }}>
-                <label style={labelStyle}>Comentario:</label>
-                <textarea
-                  value={comentarioEstado}
-                  onChange={(e) => setComentarioEstado(e.target.value)}
-                  style={{ ...inputStyle, height: "80px" }}
-                  placeholder="Escriba un comentario"
-                />
-              </div>
-              <div style={{ display: "flex", justifyContent: "flex-end", gap: "0.5rem" }}>
-                <button onClick={() => setShowModalEstado(false)} style={btnGray}>Cancelar</button>
-                <button onClick={handleGuardarEstado} style={btnYellow}>Guardar</button>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
+
+      {/* MODALES */}
+      {showCerrarModal && caso && usuario &&
+        renderModal(
+          <ModalCerrarCaso
+            idCaso={caso.id_caso}
+            idEmpleado={usuario.id_empleado}
+            estadoActual={caso.estado_actual}
+            onClose={() => setShowCerrarModal(false)}
+            onSuccess={() => window.location.reload()}
+          />
+        )
+      }
+
+      {showModalEstado && caso && usuario &&
+        renderModal(
+          <ModalActualizarEstado
+            idCaso={caso.id_caso}
+            usuario={usuario}
+            onClose={() => setShowModalEstado(false)}
+            onSuccess={() => window.location.reload()}
+          />
+        )
+      }
+
+      {showAsignarModal && caso && usuario &&
+        renderModal(
+          <ModalAsignarTecnico
+            idCaso={caso.id_caso}
+            usuario={usuario}
+            onClose={() => setShowAsignarModal(false)}
+            onSuccess={() => window.location.reload()}
+          />
+        )
+      }
     </div>
   );
 }
-
-/* --- Estilos --- */
-const modalOverlay: React.CSSProperties = {
-  position: "fixed", top: 0, left: 0, width: "100vw", height: "100vh",
-  backgroundColor: "rgba(0,0,0,0.5)", display: "flex", justifyContent: "center", alignItems: "center", zIndex: 1000
-};
-
-const modalBox: React.CSSProperties = {
-  background: "#2d2d2d",
-  padding: "2rem",
-  borderRadius: "12px",
-  width: "400px",
-  boxShadow: "0 8px 30px rgba(0,0,0,0.3)",
-  color: "#fff"
-};
-
-const labelStyle: React.CSSProperties = { display: "block", marginBottom: "0.3rem", fontWeight: "bold" };
-const inputStyle: React.CSSProperties = { width: "100%", padding: "0.5rem", borderRadius: "6px", border: "1px solid #ccc" };
-const btnGray: React.CSSProperties = { padding: "0.5rem 1rem", borderRadius: "6px", background: "#6c757d", color: "#fff", border: "none", cursor: "pointer" };
-const btnYellow: React.CSSProperties = { padding: "0.5rem 1rem", borderRadius: "6px", background: "#ffc107", color: "#333", border: "none", cursor: "pointer" };

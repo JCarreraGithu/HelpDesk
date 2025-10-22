@@ -11,13 +11,32 @@ interface Incidencia {
   id_tipo: number | null;
 }
 
+interface Tipo {
+  id_tipo: number;
+  nombre: string;
+}
+
 export default function DashboardIncidencias() {
   const [incidencias, setIncidencias] = useState<Incidencia[]>([]);
+  const [tipos, setTipos] = useState<Tipo[]>([]); 
   const [showForm, setShowForm] = useState(false);
   const [incidenciaEditar, setIncidenciaEditar] = useState<Incidencia | null>(null);
   const [datosEditados, setDatosEditados] = useState({ nombre: "", id_tipo: "" });
   const [nuevaIncidencia, setNuevaIncidencia] = useState({ nombre: "", id_tipo: "" });
 
+  // Fetch tipos
+  const fetchTipos = async () => {
+    try {
+      const res = await fetch("http://localhost:4000/api/tipos");
+      const data = await res.json();
+      setTipos(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error(error);
+      setTipos([]);
+    }
+  };
+
+  // Fetch incidencias
   const fetchIncidencias = async () => {
     try {
       const res = await fetch("http://localhost:4000/api/incidencias");
@@ -30,9 +49,11 @@ export default function DashboardIncidencias() {
   };
 
   useEffect(() => {
+    fetchTipos();
     fetchIncidencias();
   }, []);
 
+  // Crear incidencia
   const handleCrearIncidencia = async () => {
     if (!nuevaIncidencia.nombre.trim()) {
       MySwal.fire({ icon: "warning", title: "Ingrese el nombre de la incidencia", confirmButtonColor: "#dc3545" });
@@ -52,6 +73,7 @@ export default function DashboardIncidencias() {
     MySwal.fire({ icon: "success", title: "Incidencia creada", confirmButtonColor: "#198754" });
   };
 
+  // Editar incidencia
   const abrirModalEditar = (incidencia: Incidencia) => {
     setIncidenciaEditar(incidencia);
     setDatosEditados({ nombre: incidencia.nombre, id_tipo: incidencia.id_tipo?.toString() || "" });
@@ -72,6 +94,7 @@ export default function DashboardIncidencias() {
     MySwal.fire({ icon: "success", title: "Incidencia actualizada", confirmButtonColor: "#198754" });
   };
 
+  // Eliminar incidencia
   const eliminarIncidencia = async (id: number) => {
     const result = await MySwal.fire({
       title: "¿Eliminar incidencia?",
@@ -130,13 +153,17 @@ export default function DashboardIncidencias() {
               />
             </div>
             <div style={{ marginBottom: "0.8rem" }}>
-              <label style={labelStyle}>ID Tipo (opcional):</label>
-              <input
-                placeholder="ID Tipo"
+              <label style={labelStyle}>Tipo (opcional):</label>
+              <select
                 value={nuevaIncidencia.id_tipo}
                 onChange={e => setNuevaIncidencia({ ...nuevaIncidencia, id_tipo: e.target.value })}
                 style={inputStyle}
-              />
+              >
+                <option value="">Seleccione un tipo</option>
+                {tipos.map(t => (
+                  <option key={t.id_tipo} value={t.id_tipo}>{t.nombre}</option>
+                ))}
+              </select>
             </div>
             <div style={{ display: "flex", justifyContent: "flex-end", gap: "0.5rem", marginTop: "1rem" }}>
               <button onClick={() => setShowForm(false)} style={btnGray}>Cancelar</button>
@@ -160,12 +187,17 @@ export default function DashboardIncidencias() {
               />
             </div>
             <div style={{ marginBottom: "0.8rem" }}>
-              <label style={labelStyle}>ID Tipo (opcional):</label>
-              <input
+              <label style={labelStyle}>Tipo (opcional):</label>
+              <select
                 value={datosEditados.id_tipo}
                 onChange={e => setDatosEditados({ ...datosEditados, id_tipo: e.target.value })}
                 style={inputStyle}
-              />
+              >
+                <option value="">Seleccione un tipo</option>
+                {tipos.map(t => (
+                  <option key={t.id_tipo} value={t.id_tipo}>{t.nombre}</option>
+                ))}
+              </select>
             </div>
             <div style={{ display: "flex", justifyContent: "flex-end", gap: "0.5rem", marginTop: "1rem" }}>
               <button onClick={() => setIncidenciaEditar(null)} style={btnGray}>Cancelar</button>
@@ -194,7 +226,9 @@ export default function DashboardIncidencias() {
               >
                 <td style={tdStyle}>{i.id_incidencia}</td>
                 <td style={tdStyle}>{i.nombre}</td>
-                <td style={tdStyle}>{i.id_tipo || "-"}</td>
+                <td style={tdStyle}>
+                  {i.id_tipo ? tipos.find(t => t.id_tipo === Number(i.id_tipo))?.nombre || "-" : "-"}
+                </td>
                 <td style={{ padding: "10px 12px", display: "flex", gap: "0.5rem" }}>
                   <button onClick={() => abrirModalEditar(i)} style={btnBlue}>Editar</button>
                   <button onClick={() => eliminarIncidencia(i.id_incidencia)} style={btnRed}>Eliminar</button>
@@ -208,7 +242,7 @@ export default function DashboardIncidencias() {
   );
 }
 
-/* --- Estilos reutilizables --- */
+/* --- Estilos --- */
 const modalOverlayStyle: React.CSSProperties = {
   position: "fixed",
   top: 0, left: 0,

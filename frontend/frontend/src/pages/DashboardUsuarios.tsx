@@ -3,6 +3,7 @@ import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import empleadoImg from "../assets/empleado.png";
 import { motion } from "framer-motion";
+import basuraIcon from "../assets/basura.png"; // 
 
 const MySwal = withReactContent(Swal);
 
@@ -38,6 +39,37 @@ export default function DashboardUsuarios() {
   useEffect(() => {
     fetchUsuarios();
   }, []);
+
+const [idBuscar, setIdBuscar] = useState("");
+const [usuarioEncontrado, setUsuarioEncontrado] = useState<Usuario | null>(null);
+
+const buscarPorId = async () => {
+  if (!idBuscar.trim()) {
+    MySwal.fire({ icon: "warning", title: "Ingrese un ID", confirmButtonColor: "#dc3545" });
+    return;
+  }
+
+  try {
+    const res = await fetch(`http://localhost:4000/api/usuarios/${idBuscar}`);
+    if (!res.ok) {
+      MySwal.fire({ icon: "error", title: "Usuario no encontrado", confirmButtonColor: "#dc3545" });
+      setUsuarioEncontrado(null);
+      return;
+    }
+    const data = await res.json();
+    setUsuarioEncontrado(data);
+    MySwal.fire({
+      icon: "success",
+      title: "Usuario encontrado",
+      text: `Username: ${data.username}`,
+      confirmButtonColor: "#198754"
+    });
+  } catch (error) {
+    console.error(error);
+    MySwal.fire({ icon: "error", title: "Error al buscar", confirmButtonColor: "#dc3545" });
+  }
+};
+
 
   const handleCrearUsuario = async () => {
     if (!nuevoUsuario.id_empleado || !nuevoUsuario.username || !nuevoUsuario.password) {
@@ -148,7 +180,7 @@ export default function DashboardUsuarios() {
         }}
       >
         <span style={{ fontSize: "1.5rem", fontWeight: "bold" }}>➕</span>
-        <span>Agregar Usuario</span>
+        <span>Dar click para agregar Usuario</span>
       </motion.button>
 
       {showForm && (
@@ -345,6 +377,35 @@ export default function DashboardUsuarios() {
     </motion.div>
   </div>
 )}
+{/* 🔍 Búsqueda por ID */}
+<div style={{ marginBottom: "1rem", display: "flex", gap: "0.5rem", alignItems: "center" }}>
+  <input
+    type="number"
+    placeholder="Buscar usuario por ID..."
+    value={idBuscar}
+    onChange={(e) => setIdBuscar(e.target.value)}
+    style={{
+      padding: "0.6rem 1rem",
+      borderRadius: "8px",
+      border: "1px solid #0d6efd",
+      width: "200px",
+      outline: "none",
+      fontSize: "1rem"
+    }}
+  />
+  <button onClick={buscarPorId} style={btnBlue}>
+    Buscar
+  </button>
+ <button
+  onClick={() => {
+    setUsuarioEncontrado(null); // 👈 limpia la búsqueda
+    fetchUsuarios(); // vuelve a cargar todos los usuarios
+  }}
+  style={btnGray}
+>
+  Ver todos
+</button>
+</div>
 
       {/* Tabla de usuarios */}
       <div style={{ overflowX: "auto", backgroundColor: "#fff", padding: "1rem", borderRadius: "16px", boxShadow: "0 5px 20px rgba(0,0,0,0.1)" }}>
@@ -359,7 +420,8 @@ export default function DashboardUsuarios() {
             </tr>
           </thead>
           <tbody>
-            {usuarios.map(u => (
+           {(usuarioEncontrado ? [usuarioEncontrado] : usuarios).map(u => (
+
               <tr key={u.id_usuario} onClick={() => mostrarDetalleUsuario(u)} style={{ cursor: "pointer", transition: "background 0.3s" }}
                 onMouseOver={e => (e.currentTarget.style.backgroundColor = "#eef5f4")}
                 onMouseOut={e => (e.currentTarget.style.backgroundColor = "transparent")}>
@@ -371,7 +433,10 @@ export default function DashboardUsuarios() {
                 </td>
                 <td style={{ padding: "10px 12px", display: "flex", gap: "0.5rem" }}>
                   <button onClick={(e) => { e.stopPropagation(); abrirModalEditar(u); }} style={btnBlue}>Editar</button>
-                  <button onClick={(e) => { e.stopPropagation(); darBajaUsuario(u); }} style={btnRed}>Eliminar</button>
+                  <button onClick={(e) => { e.stopPropagation(); darBajaUsuario(u); }} style={btnGray}>
+                    <img src={basuraIcon} alt="Eliminar" style={{ width: "18px", height: "18px", marginRight: "5px" }} />
+                    Eliminar
+                  </button>
                 </td>
               </tr>
             ))}
