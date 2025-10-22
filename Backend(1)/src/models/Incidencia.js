@@ -16,11 +16,6 @@ export const Incidencia = sequelize.define(
       unique: true,
       field: "NOMBRE",
     },
-    id_tipo: {
-      type: DataTypes.INTEGER,
-      allowNull: true,
-      field: "ID_TIPO",
-    },
   },
   {
     tableName: "INCIDENCIAS",

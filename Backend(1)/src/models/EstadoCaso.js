@@ -5,11 +5,13 @@ export const EstadoCaso = sequelize.define('EstadoCaso', {
   ID_ESTADO: {
     type: DataTypes.NUMBER,
     primaryKey: true,
-    autoIncrement: true
+    autoIncrement: true,
+    field: "ID_ESTADO"
   },
-  NOMBRE: {
+  nombre: {                  // 👈 nombre en minúscula para JS
     type: DataTypes.STRING(50),
-    allowNull: false
+    allowNull: false,
+    field: "NOMBRE"          // 👈 columna real en Oracle
   }
 }, {
   tableName: "ESTADO_CASO",

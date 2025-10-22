@@ -8,7 +8,6 @@ import PerfilUsuario from "./PerfilUsuario";
 import { useState, useEffect } from "react";
 import "./Dashboard.css";
 import Empleados from "./Empleados";
-import Estadistics from "./Estadistics";
 import Incidencias from "./Incidencias";
 import Repuestos from "./Repuestos";
 import Departamentos from "./Departamentos";
@@ -69,7 +68,6 @@ export default function Dashboard() {
   <Route path="usuarios" element={<DashboardUsuarios />} />
   <Route path="perfil" element={<PerfilUsuario />} />
   <Route path="empleados" element={<Empleados />} />  
-   <Route path="estadisticas" element={<Estadistics />} />  
    <Route path="incidencias" element={<Incidencias />} /> 
    <Route path="repuestos" element={<Repuestos />} /> 
       <Route path="departamentos" element={<Departamentos />} />      
