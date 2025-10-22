@@ -17,6 +17,7 @@
     "@mui/material": "^7.3.2",
     "axios": "^1.12.2",
     "date-fns": "^4.1.0",
+    "file-saver": "^2.0.5",
     "framer-motion": "^12.23.22",
     "icons": "^1.0.0",
     "jspdf": "^3.0.3",
@@ -31,10 +32,12 @@
     "react-use": "^17.6.0",
     "recharts": "^3.3.0",
     "sweetalert2": "^11.23.0",
-    "sweetalert2-react-content": "^5.1.0"
+    "sweetalert2-react-content": "^5.1.0",
+    "xlsx-populate": "^1.21.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.33.0",
+    "@types/file-saver": "^2.0.7",
     "@types/react": "^19.1.10",
     "@types/react-datepicker": "^6.2.0",
     "@types/react-dom": "^19.1.7",

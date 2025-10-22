@@ -14,6 +14,8 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
 
 interface DepartamentoResumen {
   departamento: string;
@@ -93,7 +95,7 @@ export default function ReporteDepartamentos() {
     obtenerDatos();
   }, [intervalo, fechaSeleccionada]);
 
-  // 🔹 Exportar PDF (sin límite)
+  // 🔹 Exportar PDF
   const exportarPDF = async () => {
     const doc = new jsPDF("p", "mm", "a4");
     const img = new Image();
@@ -123,7 +125,6 @@ export default function ReporteDepartamentos() {
       let y = 40;
 
       for (const [departamento, casos] of Object.entries(agrupado)) {
-        // Banner verde
         doc.setFillColor(25, 135, 84);
         doc.rect(10, y - 4, 190, 8, "F");
         doc.setFont("helvetica", "bold");
@@ -175,6 +176,61 @@ export default function ReporteDepartamentos() {
     doc.save(`Reporte_Departamentos.pdf`);
   };
 
+  // 🔹 Exportar Excel
+  const exportarExcel = () => {
+    if (detalles.length === 0) return;
+
+    const agrupado: Record<string, DepartamentoDetalle[]> = {};
+    detalles.forEach((fila) => {
+      const dep = fila.departamento || "Sin departamento";
+      if (!agrupado[dep]) agrupado[dep] = [];
+      agrupado[dep].push(fila);
+    });
+
+    const libro = XLSX.utils.book_new();
+
+    Object.entries(agrupado).forEach(([departamento, casos]) => {
+      const datos = [
+        [`Reporte de Departamento: ${departamento}`],
+        [`Generado: ${new Date().toLocaleString()}`],
+        [],
+        ["ID", "Título", "Empleado", "Estado", "Prioridad", "Fecha Creación", "Fecha Cierre"],
+      ];
+
+      casos.forEach((c) => {
+        datos.push([
+          c.id_caso,
+          c.titulo,
+          c.empleado,
+          c.estado,
+          c.prioridad,
+          c.fecha_creacion,
+          c.fecha_cierre || "-",
+        ]);
+      });
+
+      const hoja = XLSX.utils.aoa_to_sheet(datos);
+      hoja["!cols"] = [
+        { wch: 6 },
+        { wch: 25 },
+        { wch: 18 },
+        { wch: 12 },
+        { wch: 12 },
+        { wch: 20 },
+        { wch: 20 },
+      ];
+
+      XLSX.utils.book_append_sheet(libro, hoja, departamento.substring(0, 30));
+    });
+
+    const excelBuffer = XLSX.write(libro, { bookType: "xlsx", type: "array" });
+    const blob = new Blob([excelBuffer], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    });
+
+    saveAs(blob, `Reporte_Departamentos.xlsx`);
+  };
+
   const toggleExpandir = (departamento: string) => {
     setExpandido((prev) => ({
       ...prev,
@@ -216,7 +272,6 @@ export default function ReporteDepartamentos() {
                 <option value="1y">Último año</option>
               </select>
 
-              {/* 📅 Ícono de calendario */}
               <div className="position-relative">
                 <DatePicker
                   selected={fechaSeleccionada}
@@ -235,9 +290,12 @@ export default function ReporteDepartamentos() {
             </div>
           </div>
 
-          <div className="col-md-3 d-flex align-items-end">
-            <button className="btn btn-success w-100" onClick={exportarPDF}>
-              📄 Exportar PDF
+          <div className="col-md-4 d-flex align-items-end gap-2">
+            <button className="btn btn-success w-50" onClick={exportarPDF}>
+              📄 PDF
+            </button>
+            <button className="btn btn-outline-success w-50" onClick={exportarExcel}>
+              🧾 Excel
             </button>
           </div>
         </div>
@@ -246,7 +304,6 @@ export default function ReporteDepartamentos() {
       {/* 🔹 Gráfica */}
       <div className="card p-4 shadow-sm mb-4">
         <h5 className="text-center fw-bold mb-3">Casos por departamento</h5>
-
         <ResponsiveContainer width="100%" height={320}>
           <BarChart data={resumen}>
             <CartesianGrid strokeDasharray="3 3" />

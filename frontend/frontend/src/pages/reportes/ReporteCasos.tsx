@@ -15,6 +15,8 @@ import {
 } from "recharts";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
 
 interface Caso {
   id_caso: number;
@@ -71,7 +73,7 @@ export default function ReporteCasos() {
     if (json.ok) setCasos(json.data || []);
   };
 
-  // 🔹 Obtener opciones de filtro
+  // 🔹 Obtener opciones de filtro desde las APIs
   const obtenerOpcionesFiltro = async () => {
     let url = "";
     if (tipoReporte === "por_prioridad")
@@ -139,74 +141,139 @@ export default function ReporteCasos() {
     doc.text(`Generado: ${new Date().toLocaleString()}`, 14, 38);
 
     doc.setDrawColor(25, 135, 84);
-    doc.setLineWidth(0.5);
     doc.line(10, 42, 200, 42);
 
     let y = 48;
 
     if (casos.length > 0) {
-      const columnas = [
-        { header: "ID", dataKey: "id_caso" },
-        { header: "Título", dataKey: "titulo" },
-        { header: "Técnico", dataKey: "tecnico" },
-        { header: "Empleado", dataKey: "empleado" },
-        { header: "Estado", dataKey: "estado" },
-        { header: "Prioridad", dataKey: "prioridad" },
-        { header: "Creación", dataKey: "fecha_creacion" },
-        { header: "Cierre", dataKey: "fecha_cierre" },
-      ];
-
-      const filas = casos.map((c) => ({
-        id_caso: c.id_caso,
-        titulo: c.titulo,
-        tecnico: c.tecnico,
-        empleado: c.empleado,
-        estado: c.estado,
-        prioridad: c.prioridad,
-        fecha_creacion: c.fecha_creacion,
-        fecha_cierre: c.fecha_cierre || "-",
-      }));
-
       autoTable(doc, {
         startY: y,
-        head: [columnas.map((c) => c.header)],
-        body: filas.map((fila) => columnas.map((c) => fila[c.dataKey])),
-        styles: {
-          fontSize: 8,
-          halign: "center",
-          valign: "middle",
-          textColor: [33, 37, 41],
-        },
-        headStyles: {
-          fillColor: [25, 135, 84],
-          textColor: [255, 255, 255],
-          fontStyle: "bold",
-        },
-        alternateRowStyles: { fillColor: [243, 243, 243] },
-        margin: { left: 10, right: 10 },
+        head: [["ID", "Título", "Técnico", "Empleado", "Estado", "Prioridad", "Creación", "Cierre"]],
+        body: casos.map((c) => [
+          c.id_caso,
+          c.titulo,
+          c.tecnico,
+          c.empleado,
+          c.estado,
+          c.prioridad,
+          c.fecha_creacion,
+          c.fecha_cierre || "-",
+        ]),
+        styles: { fontSize: 8, halign: "center", valign: "middle" },
+        headStyles: { fillColor: [25, 135, 84], textColor: [255, 255, 255] },
         theme: "grid",
-        tableLineColor: [200, 200, 200],
-        tableLineWidth: 0.1,
-        didDrawPage: () => {
-          doc.setFontSize(9);
-          doc.setTextColor(100);
-          doc.text(
-            "Sistema HelpDesk - Reporte generado automáticamente",
-            14,
-            doc.internal.pageSize.height - 10
-          );
-        },
       });
     } else {
       doc.setFontSize(12);
-      doc.setTextColor(100, 100, 100);
       doc.text("No hay datos disponibles para este rango de fechas.", 14, y);
     }
 
     doc.save(`Reporte_Casos_${tipoReporte}.pdf`);
   };
 
-  // 🔹 Datos para gráficas
+  // 🔹 Exportar Excel
+ // 🔹 Exportar Excel con formato profesional
+const exportarExcel = () => {
+  if (casos.length === 0) return;
+
+  // 🔸 Crear libro y hoja
+  const libro = XLSX.utils.book_new();
+  const hojaDatos = [
+    ["📋 Reporte de Casos - HelpDesk"],
+    [`Tipo de reporte: ${tipoReporte}`],
+    [`Filtro aplicado: ${filtro || "Ninguno"}`],
+    [`Generado: ${new Date().toLocaleString()}`],
+    [], // espacio
+    [
+      "ID",
+      "Título",
+      "Técnico",
+      "Empleado",
+      "Estado",
+      "Prioridad",
+      "Fecha Creación",
+      "Fecha Cierre",
+    ],
+  ];
+
+  // 🔸 Agregar los registros
+  casos.forEach((c) => {
+    hojaDatos.push([
+      c.id_caso,
+      c.titulo,
+      c.tecnico,
+      c.empleado,
+      c.estado,
+      c.prioridad,
+      c.fecha_creacion,
+      c.fecha_cierre || "-",
+    ]);
+  });
+
+  const hoja = XLSX.utils.aoa_to_sheet(hojaDatos);
+
+  // 🔸 Aplicar estilos (requiere xlsx moderno con cell styles)
+  const rangoEncabezado = XLSX.utils.decode_range(hoja["!ref"] || "A1:H1");
+
+  for (let C = rangoEncabezado.s.c; C <= rangoEncabezado.e.c; ++C) {
+    const celda = hoja[XLSX.utils.encode_cell({ r: 5, c: C })];
+    if (celda) {
+      celda.s = {
+        fill: { fgColor: { rgb: "198754" } }, // Verde tipo Bootstrap Success
+        font: { bold: true, color: { rgb: "FFFFFF" }, name: "Arial", sz: 11 },
+        alignment: { horizontal: "center", vertical: "center" },
+        border: {
+          top: { style: "thin", color: { rgb: "AAAAAA" } },
+          bottom: { style: "thin", color: { rgb: "AAAAAA" } },
+          left: { style: "thin", color: { rgb: "AAAAAA" } },
+          right: { style: "thin", color: { rgb: "AAAAAA" } },
+        },
+      };
+    }
+  }
+
+  // 🔸 Ajustar el ancho de las columnas automáticamente
+  const anchuras = [
+    { wch: 6 }, // ID
+    { wch: 25 }, // Título
+    { wch: 18 }, // Técnico
+    { wch: 18 }, // Empleado
+    { wch: 12 }, // Estado
+    { wch: 12 }, // Prioridad
+    { wch: 22 }, // Fecha Creación
+    { wch: 22 }, // Fecha Cierre
+  ];
+  hoja["!cols"] = anchuras;
+
+  // 🔸 Fusionar celdas para el título
+  hoja["!merges"] = [
+    { s: { r: 0, c: 0 }, e: { r: 0, c: 7 } }, // "Reporte de Casos"
+  ];
+
+  // 🔸 Añadir estilos al título
+  hoja["A1"].s = {
+    font: { bold: true, sz: 16, color: { rgb: "198754" }, name: "Arial" },
+    alignment: { horizontal: "center" },
+  };
+
+  // 🔸 Añadir hoja al libro
+  XLSX.utils.book_append_sheet(libro, hoja, "Casos");
+
+  // 🔸 Exportar el archivo
+  const excelBuffer = XLSX.write(libro, {
+    bookType: "xlsx",
+    type: "array",
+    cellStyles: true,
+  });
+  const blob = new Blob([excelBuffer], {
+    type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  });
+
+  saveAs(blob, `Reporte_Casos_${tipoReporte}.xlsx`);
+};
+
+
+  // 🔹 Gráficas
   const tituloGrafica =
     tipoReporte === "por_estado"
       ? "Casos por Estado"
@@ -313,9 +380,12 @@ export default function ReporteCasos() {
             </select>
           </div>
 
-          <div className="col-md-3 d-flex align-items-end">
-            <button className="btn btn-success w-100" onClick={exportarPDF}>
-              📄 Exportar PDF
+          <div className="col-md-3 d-flex gap-2 align-items-end">
+            <button className="btn btn-success w-50" onClick={exportarPDF}>
+              📄 PDF
+            </button>
+            <button className="btn btn-outline-success w-50" onClick={exportarExcel}>
+              🧾 Excel
             </button>
           </div>
         </div>

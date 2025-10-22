@@ -12,6 +12,8 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
 
 interface TecnicoResumen {
   tecnico: string;
@@ -101,7 +103,7 @@ export default function ReporteTecnicos() {
     obtenerDatos();
   }, [tipoReporte, intervalo]);
 
-  // 🔹 PDF (no tocado)
+  // 🔹 Exportar PDF
   const exportarPDF = async () => {
     const doc = new jsPDF("p", "mm", "a4");
     const img = new Image();
@@ -171,6 +173,64 @@ export default function ReporteTecnicos() {
     doc.save(`Reporte_Tecnicos_${tipoReporte}.pdf`);
   };
 
+  // 🔹 Exportar Excel
+  const exportarExcel = () => {
+    if (detalles.length === 0) return;
+
+    const agrupado: Record<string, TecnicoDetalle[]> = {};
+    detalles.forEach((fila) => {
+      const tecnico = fila.tecnico || "Sin técnico";
+      if (!agrupado[tecnico]) agrupado[tecnico] = [];
+      agrupado[tecnico].push(fila);
+    });
+
+    const libro = XLSX.utils.book_new();
+
+    Object.entries(agrupado).forEach(([tecnico, casos]) => {
+      const datos = [
+        [`Reporte de Técnico: ${tecnico}`],
+        [`Generado: ${new Date().toLocaleString()}`],
+        [],
+        ["ID", "Título", "Empleado", "Estado", "Prioridad", "Fecha Creación", "Fecha Cierre", "Tiempo Resolución"],
+      ];
+
+      casos.forEach((c) => {
+        const segundos = calcularDiferenciaSegundos(c.fecha_creacion, c.fecha_cierre);
+        datos.push([
+          c.id_caso,
+          c.titulo,
+          c.empleado,
+          c.estado,
+          c.prioridad,
+          c.fecha_creacion,
+          c.fecha_cierre || "-",
+          c.fecha_cierre ? formatoTiempo(segundos) : "-",
+        ]);
+      });
+
+      const hoja = XLSX.utils.aoa_to_sheet(datos);
+      hoja["!cols"] = [
+        { wch: 6 },
+        { wch: 25 },
+        { wch: 18 },
+        { wch: 12 },
+        { wch: 12 },
+        { wch: 20 },
+        { wch: 20 },
+        { wch: 15 },
+      ];
+
+      XLSX.utils.book_append_sheet(libro, hoja, tecnico.substring(0, 30));
+    });
+
+    const excelBuffer = XLSX.write(libro, { bookType: "xlsx", type: "array" });
+    const blob = new Blob([excelBuffer], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    });
+
+    saveAs(blob, `Reporte_Tecnicos_${tipoReporte}.xlsx`);
+  };
+
   const toggleExpandir = (tecnico: string) => {
     setExpandido((prev) => ({
       ...prev,
@@ -178,7 +238,7 @@ export default function ReporteTecnicos() {
     }));
   };
 
-  // 🔹 Render principal (la gráfica se mantiene igual)
+  // 🔹 Render principal
   return (
     <div className="container py-4">
       <div className="d-flex justify-content-between align-items-center mb-4">
@@ -221,9 +281,12 @@ export default function ReporteTecnicos() {
             </select>
           </div>
 
-          <div className="col-md-3 d-flex align-items-end">
-            <button className="btn btn-success w-100" onClick={exportarPDF}>
-              📄 Exportar PDF
+          <div className="col-md-5 d-flex align-items-end gap-2">
+            <button className="btn btn-success w-50" onClick={exportarPDF}>
+              📄 PDF
+            </button>
+            <button className="btn btn-outline-success w-50" onClick={exportarExcel}>
+              🧾 Excel
             </button>
           </div>
         </div>
