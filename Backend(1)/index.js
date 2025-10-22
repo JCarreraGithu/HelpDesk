@@ -14,6 +14,8 @@ import notiRoutes from "./src/routes/NotificacionesRoutes.js";
 import DepartamentoRoutes from "./src/routes/DepartamentoRoutes.js";
 import PuestoRoutes from "./src/routes/PuestoRoutes.js";
 import EncuestaRoutes from "./src/routes/EncuestaRoutes.js";
+import reportesRoutes from "./src/routes/ReportesRoutes.js";
+import { initOraclePool, closeOraclePool } from "./src/config/dboracle.js";
 
 
 
@@ -39,6 +41,8 @@ app.use("/api/notificaciones", notiRoutes);
 app.use("/api/departamentos", DepartamentoRoutes);
 app.use("/api/puestos", PuestoRoutes);
 app.use("/api/encuestas", EncuestaRoutes);
+app.use("/api/reportes", reportesRoutes);
+
 
 
 
@@ -46,9 +50,16 @@ app.listen(PORT, async () => {
   console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`);
   try {
     await testConnection();
+    await initOraclePool();
+    console.log("✅ Pool Oracle inicializado correctamente");
   } catch (err) {
     console.error("❌ Error al conectar a la DB:", err);
   }
 });
 
+process.on("SIGINT", async () => {
+  await closeOraclePool();
+  console.log("🛑 Pool Oracle cerrado correctamente");
+  process.exit(0);
+});
 
