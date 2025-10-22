@@ -5,7 +5,6 @@ import lupaIcon from "../assets/lupa.png";
 import userIcon from "../assets/Log0.png";
 import confiIcon from "../assets/confi.png";
 import { useState, useEffect, useRef } from "react";
-import estadisticasIcon from "../assets/estadisticas.png";
 import ticketIcon from "../assets/ticket.png";
 import reporteIcon from "../assets/reporte.png";
 import usuariosIcon from "../assets/Log0.png";
@@ -210,23 +209,28 @@ export default function Navbar({ darkMode, setDarkMode }: NavbarProps) {
           />
         </Link>
 
-        <Link
-          to="/dashboard/estadisticas"
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            width: "60px",
-            height: "60px",
-            backgroundColor: location.pathname === "/dashboard/estadisticas" ? "#198754" : "#f0f0f0",
-            borderRadius: "8px",
-            border: "1px solid #ccc",
-            cursor: "pointer",
-            padding: "6px",
-          }}
-        >
-          <img src={estadisticasIcon} alt="Estadísticas" style={{ width: "24px", height: "24px" }} />
-        </Link>
+      <Link
+  to="/dashboard/reportes"
+  style={{
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    width: "60px",
+    height: "60px",
+    backgroundColor: location.pathname === "/dashboard/reportes" ? "#198754" : "#f0f0f0",
+    borderRadius: "8px",
+    border: "1px solid #ccc",
+    cursor: "pointer",
+    padding: "6px",
+  }}
+>
+  <img
+    src={reporteIcon}
+    alt="Reportes"
+    style={{ width: "26px", height: "26px" }}
+  />
+</Link>
+
 
         <Link
           to="/dashboard/usuarios"
