@@ -43,6 +43,9 @@ export default function DetalleCaso() {
   const [showModalEstado, setShowModalEstado] = useState(false);
   const [showAsignarModal, setShowAsignarModal] = useState(false);
 
+  const [nuevoEstado, setNuevoEstado] = useState("");
+  const [comentarioEstado, setComentarioEstado] = useState("");
+
   useEffect(() => {
     const userData = localStorage.getItem("usuarioLogeado");
     if (userData) setUsuario(JSON.parse(userData));
@@ -147,6 +150,20 @@ export default function DetalleCaso() {
       document.body
     );
   };
+
+  // Función para los estilos de los botones
+  const botonEstilo = (bg: string, color: string): React.CSSProperties => ({
+    display: "flex",
+    alignItems: "center",
+    gap: "0.6rem",
+    background: "transparent",
+    border: `2px solid ${bg}`,
+    color: color,
+    padding: "0.6rem 1.2rem",
+    borderRadius: "10px",
+    fontWeight: "bold",
+    cursor: "pointer",
+  });
 
   return (
     <>
@@ -308,6 +325,48 @@ export default function DetalleCaso() {
                   </li>
                 ))}
             </ul>
+    <div style={{ maxWidth: "1700px", padding: "1rem", backgroundColor: "#C0C0C0", minHeight: "100vh", margin: "0 auto" }}>
+      <div style={{ background: "linear-gradient(160deg, #f9fafc, #e6f0eb)", padding: "2rem", borderRadius: "16px", boxShadow: "0 8px 30px rgba(0,0,0,0.1)" }}>
+        
+        {/* Título + Botones */}
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem" }}>
+          <h2 style={{ fontSize: "1.8rem", fontWeight: "bold", color: "#333" }}>
+            Caso #{caso.id_caso} - {caso.titulo}
+          </h2>
+          <div style={{ display: "flex", gap: "1rem" }}>
+            {caso.estado_actual !== "Finalizado" && (
+              <>
+                <button
+                  onClick={() => setShowCerrarModal(true)}
+                  style={botonEstilo("#dc3545", "#dc3545")}
+                  onMouseEnter={(e) => (e.currentTarget.style.background = "#dc354520")}
+                  onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
+                >
+                  <img src={cerrarIcon} alt="Cerrar" style={{ width: "40px", height: "40px", filter: "drop-shadow(0 0 3px #dc3545)" }} />
+                  Cerrar Caso
+                </button>
+
+                <button
+                  onClick={() => setShowAsignarModal(true)}
+                  style={botonEstilo("#198754", "#198754")}
+                  onMouseEnter={(e) => (e.currentTarget.style.background = "#19875420")}
+                  onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
+                >
+                  <img src={todosIcon} alt="Asignar" style={{ width: "35px", height: "35px", filter: "drop-shadow(0 0 3px #198754)" }} />
+                  Asignar Técnico
+                </button>
+
+                <button
+                  onClick={() => setShowModalEstado(true)}
+                  style={botonEstilo("#ffc107", "#b08900")}
+                  onMouseEnter={(e) => (e.currentTarget.style.background = "#ffc10720")}
+                  onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
+                >
+                  <img src={cambiarIcon} alt="Estado" style={{ width: "35px", height: "35px", filter: "drop-shadow(0 0 3px #ffc107)" }} />
+                  Cambiar Estado
+                </button>
+              </>
+            )}
           </div>
         </div>
 

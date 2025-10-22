@@ -8,6 +8,12 @@ import PerfilUsuario from "./PerfilUsuario";
 import { useState, useEffect } from "react";
 import "./Dashboard.css";
 import Empleados from "./Empleados";
+import Estadistics from "./Estadistics";
+import Incidencias from "./Incidencias";
+import Repuestos from "./Repuestos";
+import Departamentos from "./Departamentos";
+import Puestos from "./Puestos";
+
 import FormularioEncuestaPremium from "./FormularioEncuestaPremium";
 import Reportes from "./Reportes";
 import ReporteCategoria from "./ReporteCategoria.tsx";
@@ -63,6 +69,11 @@ export default function Dashboard() {
   <Route path="usuarios" element={<DashboardUsuarios />} />
   <Route path="perfil" element={<PerfilUsuario />} />
   <Route path="empleados" element={<Empleados />} />  
+   <Route path="estadisticas" element={<Estadistics />} />  
+   <Route path="incidencias" element={<Incidencias />} /> 
+   <Route path="repuestos" element={<Repuestos />} /> 
+      <Route path="departamentos" element={<Departamentos />} />      
+      <Route path="puestos" element={<Puestos />} /> 
 <Route path="calificar-servicio/:casoId" element={<FormularioEncuestaPremium usuarioId={1} />} />
 <Route path="/reportes" element={<Reportes />} />
 <Route path="reportes/:categoria" element={<ReporteCategoria />} />
