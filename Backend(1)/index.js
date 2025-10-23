@@ -14,7 +14,7 @@ import notiRoutes from "./src/routes/NotificacionesRoutes.js";
 import DepartamentoRoutes from "./src/routes/DepartamentoRoutes.js";
 import PuestoRoutes from "./src/routes/PuestoRoutes.js";
 import EncuestaRoutes from "./src/routes/EncuestaRoutes.js";
-
+import SolicitudRepuestosRoutes from "./src/routes/SolicitudRepuestosRoutes.js";
 
 
 
@@ -39,6 +39,7 @@ app.use("/api/notificaciones", notiRoutes);
 app.use("/api/departamentos", DepartamentoRoutes);
 app.use("/api/puestos", PuestoRoutes);
 app.use("/api/encuestas", EncuestaRoutes);
+app.use("/api/solicitud-repuestos", SolicitudRepuestosRoutes);
 
 
 

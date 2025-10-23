@@ -1,35 +1,39 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "../config/db.js";
 
-export const SolicitudRepuestos = sequelize.define("SolicitudRepuestos", {
+export const RepuestosUsados = sequelize.define("RepuestosUsados", {
+  id_uso: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
+    field: "ID_USO"
+  },
   id_caso: {
     type: DataTypes.INTEGER,
     allowNull: false,
-    field: "ID_CASO",
-    primaryKey: true
+    field: "ID_CASO"
   },
   id_repuesto: {
     type: DataTypes.INTEGER,
     allowNull: false,
-    field: "ID_REPUESTO",
-    primaryKey: true
+    field: "ID_REPUESTO"
   },
   cantidad: {
     type: DataTypes.INTEGER,
-    allowNull: true,
+    allowNull: false,
     field: "CANTIDAD"
   },
   comentario: {
-    type: DataTypes.STRING(255),
+    type: DataTypes.STRING,
     allowNull: true,
     field: "COMENTARIO"
   },
-  fecha_solicitud: {
+  fecha_uso: {
     type: DataTypes.DATE,
-    allowNull: true,
-    field: "FECHA_SOLICITUD"
+    allowNull: false,
+    field: "FECHA_USO"
   }
 }, {
-  tableName: "SOLICITUD_REPUESTOS",
+  tableName: "REPUESTOS_USADOS",
   timestamps: false
 });

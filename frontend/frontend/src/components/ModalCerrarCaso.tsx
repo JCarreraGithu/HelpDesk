@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { FaChevronDown, FaChevronUp, FaTimes } from "react-icons/fa";
+import Swal from "sweetalert2";
 import cerrarImg from "../assets/cerrar.png";
 
 interface Repuesto {
@@ -28,6 +29,7 @@ export default function ModalCerrarCaso({
 }: ModalCerrarCasoProps) {
   const [repuestos, setRepuestos] = useState<Repuesto[]>([]);
   const [seleccionados, setSeleccionados] = useState<{ id_repuesto: number; cantidad: number }[]>([]);
+  const [excedidos, setExcedidos] = useState<{ id_repuesto: number; cantidad: number }[]>([]);
   const [detalles, setDetalles] = useState("");
   const [complicacion, setComplicacion] = useState("");
   const [loading, setLoading] = useState(false);
@@ -52,9 +54,19 @@ export default function ModalCerrarCaso({
   };
 
   const actualizarCantidad = (id: number, cantidad: number) => {
-    setSeleccionados((prev) =>
-      prev.map((r) => (r.id_repuesto === id ? { ...r, cantidad } : r))
+    const repuesto = repuestos.find(r => r.id_repuesto === id);
+    if (!repuesto) return;
+
+    const nuevoSeleccionados = seleccionados.map((r) =>
+      r.id_repuesto === id ? { ...r, cantidad } : r
     );
+    setSeleccionados(nuevoSeleccionados);
+
+    const excedidosActualizados = nuevoSeleccionados.filter((r) => {
+      const rep = repuestos.find(x => x.id_repuesto === r.id_repuesto);
+      return r.cantidad > (rep?.stock ?? 0);
+    });
+    setExcedidos(excedidosActualizados);
   };
 
   const handleCerrarCaso = async () => {
@@ -69,13 +81,52 @@ export default function ModalCerrarCaso({
 
     setLoading(true);
     setErrorMsg("");
+
     try {
-      await axios.put(`http://localhost:4000/api/casos/cerrar/${idCaso}`, {
-        id_empleado: idEmpleado,
-        detalles,
-        complicacion,
-        materiales: seleccionados,
-      });
+      let huboExceso = false;
+
+      for (const item of seleccionados) {
+        const repuesto = repuestos.find(r => r.id_repuesto === item.id_repuesto);
+        const excedido = item.cantidad > (repuesto?.stock ?? 0);
+
+        if (excedido) {
+          huboExceso = true;
+
+          await axios.post("http://localhost:4000/api/solicitud-repuestos", {
+            id_caso: idCaso,
+            id_repuesto: item.id_repuesto,
+            cantidad: item.cantidad,
+            comentario: "Solicitud generada desde cierre de caso"
+          });
+        } else {
+          await axios.post("http://localhost:4000/api/repuestos/usados", {
+            id_caso: idCaso,
+            id_repuesto: item.id_repuesto,
+            cantidad: item.cantidad,
+            comentario: "Uso directo desde cierre de caso"
+          });
+
+          await axios.put(`http://localhost:4000/api/repuestos/${item.id_repuesto}/descontar`, {
+            cantidad_restada: item.cantidad
+          });
+        }
+      }
+
+      if (huboExceso) {
+        await axios.put(`http://localhost:4000/api/casos/${idCaso}`, {
+          id_estado_actual: 7,
+          detalles,
+          id_empleado: idEmpleado
+        });
+      } else {
+        await axios.put(`http://localhost:4000/api/casos/cerrar/${idCaso}`, {
+          id_empleado: idEmpleado,
+          detalles,
+          complicacion,
+          materiales: seleccionados
+        });
+      }
+
       setExito(true);
       setTimeout(() => {
         onSuccess();
@@ -126,7 +177,6 @@ export default function ModalCerrarCaso({
           overflowY: "auto",
         }}
       >
-        {/* 🔹 Formulario a la izquierda */}
         <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
             <h2 style={{ color: "#198754", fontSize: "1.25rem", fontWeight: 600 }}>Cerrar Caso #{idCaso}</h2>
@@ -174,7 +224,6 @@ export default function ModalCerrarCaso({
                   Repuestos utilizados {repuestosOpen ? <FaChevronUp /> : <FaChevronDown />}
                 </button>
 
-                {/* 🔹 Si el select está abierto */}
                 {repuestosOpen && (
                   <div
                     style={{
@@ -183,7 +232,7 @@ export default function ModalCerrarCaso({
                       borderRadius: "8px",
                       maxHeight: "200px",
                       overflowY: "auto",
-                      background: "#3b3b3b",
+                                            background: "#3b3b3b",
                       padding: "0.5rem",
                     }}
                   >
@@ -192,14 +241,26 @@ export default function ModalCerrarCaso({
                       return (
                         <div
                           key={r.id_repuesto}
-                          style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0.3rem 0.5rem", borderBottom: "1px solid #555" }}
+                          style={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                            padding: "0.3rem 0.5rem",
+                            borderBottom: "1px solid #555"
+                          }}
                         >
                           <div style={{ display: "flex", flexDirection: "column" }}>
                             <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                              <input type="checkbox" checked={!!seleccionado} onChange={() => toggleRepuesto(r.id_repuesto)} />
+                              <input
+                                type="checkbox"
+                                checked={!!seleccionado}
+                                onChange={() => toggleRepuesto(r.id_repuesto)}
+                              />
                               <span style={{ color: "white", fontWeight: "500" }}>{r.nombre}</span>
                             </div>
-                            <span style={{ fontSize: "0.8rem", color: "#aaa" }}>{r.descripcion} | Stock: {r.stock}</span>
+                            <span style={{ fontSize: "0.8rem", color: "#aaa" }}>
+                              {r.descripcion} | Stock: {r.stock}
+                            </span>
                           </div>
                           {seleccionado && (
                             <input
@@ -213,7 +274,7 @@ export default function ModalCerrarCaso({
                                 border: "1px solid #198754",
                                 textAlign: "center",
                                 background: "#2d2d2d",
-                                color: "white",
+                                color: "white"
                               }}
                             />
                           )}
@@ -223,7 +284,6 @@ export default function ModalCerrarCaso({
                   </div>
                 )}
 
-                {/* 🔹 Mostrar los repuestos seleccionados cuando el select esté cerrado */}
                 {!repuestosOpen && seleccionados.length > 0 && (
                   <div
                     style={{
@@ -231,7 +291,7 @@ export default function ModalCerrarCaso({
                       border: "1px solid #198754",
                       borderRadius: "8px",
                       background: "#303030",
-                      padding: "0.75rem",
+                      padding: "0.75rem"
                     }}
                   >
                     <h4 style={{ color: "#198754", marginBottom: "0.5rem" }}>Repuestos seleccionados:</h4>
@@ -246,7 +306,7 @@ export default function ModalCerrarCaso({
                             justifyContent: "space-between",
                             color: "white",
                             padding: "0.3rem 0",
-                            borderBottom: "1px solid #444",
+                            borderBottom: "1px solid #444"
                           }}
                         >
                           <span>{repuesto.nombre}</span>
@@ -256,10 +316,48 @@ export default function ModalCerrarCaso({
                     })}
                   </div>
                 )}
+
+                {excedidos.length > 0 && (
+                  <div
+                    style={{
+                      marginTop: "1rem",
+                      border: "1px solid #ffc107",
+                      borderRadius: "8px",
+                      background: "#3b3b3b",
+                      padding: "0.75rem"
+                    }}
+                  >
+                    <h4 style={{ color: "#ffc107", marginBottom: "0.5rem" }}>🔧 Solicitud de repuestos requerida</h4>
+                    <p style={{ color: "#ddd", fontSize: "0.9rem", marginBottom: "0.5rem" }}>
+                      Las siguientes cantidades exceden el stock actual. Se generará una solicitud automáticamente:
+                    </p>
+                    {excedidos.map((ex) => {
+                      const rep = repuestos.find(r => r.id_repuesto === ex.id_repuesto);
+                      if (!rep) return null;
+                      return (
+                        <div
+                          key={rep.id_repuesto}
+                          style={{
+                            color: "white",
+                            display: "flex",
+                            justifyContent: "space-between",
+                            padding: "0.3rem 0",
+                            borderBottom: "1px solid #444"
+                          }}
+                        >
+                          <span>{rep.nombre}</span>
+                          <span>Solicitado: {ex.cantidad} | Stock: {rep.stock}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
 
               <div style={{ display: "flex", justifyContent: "flex-end", gap: "0.5rem", marginTop: "1rem" }}>
-                <button onClick={onClose} style={{ ...buttonStyle, background: "#6c757d", color: "white" }}>Cancelar</button>
+                <button onClick={onClose} style={{ ...buttonStyle, background: "#6c757d", color: "white" }}>
+                  Cancelar
+                </button>
                 <button
                   onClick={estadoActual === "Cerrado" ? undefined : handleCerrarCaso}
                   style={{
@@ -267,7 +365,7 @@ export default function ModalCerrarCaso({
                     background: "#198754",
                     color: "white",
                     cursor: estadoActual === "Cerrado" ? "not-allowed" : "pointer",
-                    opacity: estadoActual === "Cerrado" ? 0.6 : 1,
+                    opacity: estadoActual === "Cerrado" ? 0.6 : 1
                   }}
                 >
                   {estadoActual === "Cerrado" ? "El caso ya está cerrado" : loading ? "Cerrando..." : "Cerrar Caso"}
@@ -276,14 +374,17 @@ export default function ModalCerrarCaso({
             </>
           ) : (
             <div style={{ marginTop: "1rem", color: "white" }}>
-              <h2 style={{ fontSize: "1.5rem", fontWeight: "600", color: "#28a745" }}>✅ Caso cerrado correctamente</h2>
-              <p style={{ marginTop: "1rem" }}>El caso #{idCaso} ha sido cerrado y registrado en el historial.</p>
-              <button onClick={onClose} style={{ ...buttonStyle, marginTop: "1rem", background: "#198754", color: "white" }}>Cerrar</button>
+              <h2 style={{ fontSize: "1.5rem", fontWeight: "600", color: "#28a745" }}>✅ Caso actualizado correctamente</h2>
+              <p style={{ marginTop: "1rem" }}>
+                El caso #{idCaso} ha sido procesado. {excedidos.length > 0 ? "Está en espera de repuestos." : "Ha sido cerrado exitosamente."}
+              </p>
+              <button onClick={onClose} style={{ ...buttonStyle, marginTop: "1rem", background: "#198754", color: "white" }}>
+                Cerrar
+              </button>
             </div>
           )}
         </div>
 
-        {/* 🔹 Imagen a la derecha */}
         <div style={{ flex: 0.7, display: "flex", justifyContent: "center", alignItems: "center" }}>
           <img
             src={cerrarImg}
@@ -293,7 +394,7 @@ export default function ModalCerrarCaso({
               borderRadius: "12px",
               objectFit: "cover",
               boxShadow: "0 4px 20px rgba(0,0,0,0.4)",
-              transition: "transform 0.3s ease, box-shadow 0.3s ease",
+              transition: "transform 0.3s ease, box-shadow 0.3s ease"
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.transform = "scale(1.05)";

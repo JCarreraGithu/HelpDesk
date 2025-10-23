@@ -1,4 +1,5 @@
 import { Repuestos } from "../models/Repuestos.js";
+import { Op } from "sequelize";
 
 // Crear repuesto
 export const crearRepuesto = async (req, res) => {
@@ -85,5 +86,35 @@ export const buscarRepuestoPorNombre = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ mensaje: "Error al buscar repuestos por nombre" });
+  }
+};
+
+// ✅ Descontar stock de repuesto
+export const descontarStock = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { cantidad_restada } = req.body;
+
+    if (!cantidad_restada || isNaN(cantidad_restada)) {
+      return res.status(400).json({ mensaje: "Cantidad inválida para descontar" });
+    }
+
+    const repuesto = await Repuestos.findByPk(id);
+    if (!repuesto) {
+      return res.status(404).json({ mensaje: "Repuesto no encontrado" });
+    }
+
+    const nuevoStock = repuesto.stock - cantidad_restada;
+    if (nuevoStock < 0) {
+      return res.status(400).json({ mensaje: "Stock insuficiente para descontar" });
+    }
+
+    repuesto.stock = nuevoStock;
+    await repuesto.save();
+
+    res.json({ mensaje: "Stock actualizado correctamente", stock_actual: nuevoStock });
+  } catch (error) {
+    console.error("❌ Error al descontar stock:", error);
+    res.status(500).json({ mensaje: "Error al actualizar stock" });
   }
 };

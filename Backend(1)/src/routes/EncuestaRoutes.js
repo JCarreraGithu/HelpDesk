@@ -1,9 +1,9 @@
-import { Router } from "express";
-import { getEncuestas, createEncuesta } from "../controllers/EncuestaController.js";
+import express from "express";
+import { createEncuesta, getEncuestas } from "../controllers/encuestaController.js";
 
-const router = Router();
+const router = express.Router();
 
-router.get("/", getEncuestas);       // Obtener todas
-router.post("/", createEncuesta);    // Insertar nueva
+router.get("/", getEncuestas);
+router.post("/", createEncuesta);
 
 export default router;

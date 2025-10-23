@@ -309,6 +309,7 @@ export const getCasoByTitulo = async (req, res) => {
         { model: EstadoCaso, as: "EstadoActual", attributes: ["nombre"] },
         {
           model: HistorialCaso,
+          as: "HistorialCasos", // ✅ alias obligatorio según associations.js
           include: [
             { model: EstadoCaso, attributes: ["nombre"] },
             { model: Empleado, attributes: ["nombre", "apellido"] },
@@ -318,11 +319,13 @@ export const getCasoByTitulo = async (req, res) => {
       ]
     });
 
-    if (!casos || casos.length === 0) return res.status(404).json({ msg: "No se encontraron casos con ese título" });
+    if (!casos || casos.length === 0) {
+      return res.status(404).json({ msg: "No se encontraron casos con ese título" });
+    }
 
-    // Devolver siempre con tiempo_resolucion calculado
     res.json(casos.map(formatearCasoNode));
   } catch (error) {
+    console.error("Error en getCasoByTitulo:", error);
     res.status(500).json({ msg: error.message });
   }
 };
