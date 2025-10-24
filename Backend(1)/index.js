@@ -15,6 +15,7 @@ import DepartamentoRoutes from "./src/routes/DepartamentoRoutes.js";
 import PuestoRoutes from "./src/routes/PuestoRoutes.js";
 import EncuestaRoutes from "./src/routes/EncuestaRoutes.js";
 import reportesRoutes from "./src/routes/ReportesRoutes.js";
+import reportesRepuestoRoutes from "./src/routes/reportesRepuestoRoutes.js";
 import { initOraclePool, closeOraclePool } from "./src/config/dboracle.js";
 
 
@@ -42,6 +43,7 @@ app.use("/api/departamentos", DepartamentoRoutes);
 app.use("/api/puestos", PuestoRoutes);
 app.use("/api/encuestas", EncuestaRoutes);
 app.use("/api/reportes", reportesRoutes);
+app.use("/api/reportes/repuestos", reportesRepuestoRoutes);
 
 
 
