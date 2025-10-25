@@ -16,6 +16,8 @@ import PuestoRoutes from "./src/routes/PuestoRoutes.js";
 import EncuestaRoutes from "./src/routes/EncuestaRoutes.js";
 import reportesRoutes from "./src/routes/ReportesRoutes.js";
 import { initOraclePool, closeOraclePool } from "./src/config/dboracle.js";
+import SolicitudRepuestosRoutes from "./src/routes/SolicitudRepuestosRoutes.js";
+import reportesRepuestoRoutes from "./src/routes/reportesRepuestoRoutes.js";
 
 
 
@@ -42,7 +44,8 @@ app.use("/api/departamentos", DepartamentoRoutes);
 app.use("/api/puestos", PuestoRoutes);
 app.use("/api/encuestas", EncuestaRoutes);
 app.use("/api/reportes", reportesRoutes);
-
+app.use("/api/solicitud-repuestos", SolicitudRepuestosRoutes);
+app.use("/api/reportes/repuestos", reportesRepuestoRoutes);
 
 
 

@@ -91,14 +91,15 @@ Repuestos.hasMany(HistorialCasoRepuestos, { foreignKey: "id_repuesto" });
 
 
 // EncuestaSatisfaccion ↔ Usuario (quien reporta)
-EncuestaSatisfaccion.belongsTo(Usuario, { 
+EncuestaSatisfaccion.belongsTo(Empleado, { 
   foreignKey: "usuario_reporta", 
   as: "UsuarioReporta" 
 });
-Usuario.hasMany(EncuestaSatisfaccion, { 
+Empleado.hasMany(EncuestaSatisfaccion, { 
   foreignKey: "usuario_reporta", 
   as: "EncuestasReportadas" 
 });
+
 // EncuestaSatisfaccion ↔ Caso
 EncuestaSatisfaccion.belongsTo(Caso, { foreignKey: "id_caso" });
 Caso.hasOne(EncuestaSatisfaccion, { foreignKey: "id_caso" });
