@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import ReactDatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import calendarImg from "../assets/calendar.png";
 
 import logoFormImg from "../assets/logoform.png";
 
@@ -169,20 +170,113 @@ export default function CrearCaso() {
               <textarea value={descripcion} onChange={(e) => setDescripcion(e.target.value)} placeholder="Describe el problema con detalle..." style={estilos.textarea} />
             </div>
 
-            {/* Fecha */}
-            <div style={estilos.filaFecha}>
-              <div style={estilos.campo}>
-                <label style={estilos.label}>Fecha y hora</label>
-                <ReactDatePicker
-                  selected={fechaCreacion}
-                  onChange={(date: Date | null) => { if (date) setFechaCreacion(date); }}
-                  showTimeSelect
-                  dateFormat="Pp"
-                  placeholderText="Selecciona fecha y hora"
-                  style={estilos.inputFecha}
-                />
-              </div>
-            </div>
+            
+{/* Fecha y hora con diseño en una sola tarjeta */}
+<div
+  style={{
+    display: "flex",
+    alignItems: "center",
+    gap: "1.5rem",
+    backgroundColor: "#C0C0C0",
+    borderRadius: "12px",
+    padding: "1.5rem",
+    boxShadow: "0 4px 15px rgba(0,0,0,0.3)",
+    color: "#fff",
+  }}
+>
+  {/* Ícono calendario */}
+  <div
+    onClick={() => document.getElementById("picker")?.click()}
+    style={{
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: "#222",
+      borderRadius: "12px",
+      padding: "1rem",
+      cursor: "pointer",
+      transition: "transform 0.2s ease",
+    }}
+    onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
+    onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
+  >
+    <img
+      src={calendarImg}
+      alt="Seleccionar fecha y hora"
+      style={{ width: "70px", height: "70px" }}
+    />
+  </div>
+
+  {/* Contenedor derecho con texto, hora y botón */}
+  <div style={{ display: "flex", flexDirection: "column", flex: 1 }}>
+    {/* Mensaje */}
+    <p
+      style={{
+        margin: 0,
+        fontWeight: "600",
+        fontSize: "1rem",
+        marginBottom: "0.6rem",
+      }}
+    >
+       Click en el calendario para seleccionar fecha y hora
+    </p>
+
+    {/* Fecha seleccionada */}
+    <div
+      style={{
+        background: "#222",
+        borderRadius: "8px",
+        padding: "0.6rem 1rem",
+        fontFamily: "monospace",
+        textAlign: "center",
+        fontSize: "0.95rem",
+        marginBottom: "0.7rem",
+      }}
+    >
+      {fechaCreacion
+        ? fechaCreacion.toLocaleString()
+        : "Sin fecha seleccionada"}
+    </div>
+
+    {/* Botón seleccionar hora actual */}
+    <button
+      type="button"
+      onClick={() => setFechaCreacion(new Date())}
+      style={{
+        backgroundColor: "#198754",
+        color: "#fff",
+        padding: "0.6rem 1rem",
+        borderRadius: "8px",
+        border: "none",
+        fontWeight: "bold",
+        cursor: "pointer",
+        alignSelf: "center",
+        transition: "background 0.2s",
+      }}
+      onMouseEnter={(e) =>
+        (e.currentTarget.style.backgroundColor = "#157347")
+      }
+      onMouseLeave={(e) =>
+        (e.currentTarget.style.backgroundColor = "#198754")
+      }
+    >
+       Para seleccionar hora actual dar click aqui
+    </button>
+  </div>
+
+  {/* DatePicker oculto pero funcional */}
+  <ReactDatePicker
+    id="picker"
+    selected={fechaCreacion}
+    onChange={(date: Date | null) => date && setFechaCreacion(date)}
+    showTimeSelect
+    timeIntervals={1}
+    dateFormat="Pp"
+    customInput={<div />} // Oculta el input
+    popperPlacement="bottom"
+  />
+</div>
+
 
             {/* Botón */}
             <button type="submit" disabled={loading} style={estilos.botonCrear}>
