@@ -32,3 +32,20 @@ export const crearSolicitudRepuesto = async (req, res) => {
 export const listarSolicitudesPorCaso = async (req, res) => {
   res.json({ mensaje: "Listado de solicitudes por caso" });
 };
+
+export const getSolicitudesPendientesPorCaso = async (req, res) => {
+  const { idCaso } = req.params;
+  try {
+    const pendientes = await SolicitudRepuestos.findAll({
+      where: {
+        id_caso: idCaso,
+        estado: "Pendiente" // o el estado que uses para solicitudes activas
+      }
+    });
+
+    res.json({ pendientes: pendientes.length > 0 });
+  } catch (error) {
+    console.error("Error al verificar solicitudes pendientes:", error);
+    res.status(500).json({ mensaje: "Error al consultar solicitudes" });
+  }
+};

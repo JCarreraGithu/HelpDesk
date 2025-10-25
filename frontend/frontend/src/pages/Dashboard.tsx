@@ -12,7 +12,6 @@ import Incidencias from "./Incidencias";
 import Repuestos from "./Repuestos";
 import Departamentos from "./Departamentos";
 import Puestos from "./Puestos";
-
 import FormularioEncuestaPremium from "./FormularioEncuestaPremium";
 import Reportes from "./Reportes";
 import ReporteCategoria from "./ReporteCategoria.tsx";

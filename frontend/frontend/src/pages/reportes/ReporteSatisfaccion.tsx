@@ -24,7 +24,7 @@ export default function ReporteSatisfaccion() {
     setLoading(true);
     const { fecha_inicio, fecha_fin } = calcularFechas();
     try {
-      const res = await fetch("http://localhost:4000/api/reportes/reportes", {
+      const res = await fetch("http://localhost:4000/api/reportes", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
