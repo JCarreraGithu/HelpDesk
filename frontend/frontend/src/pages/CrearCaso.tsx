@@ -33,7 +33,7 @@ export default function CrearCaso() {
         const [resPrioridades, resTipos, resIncidencias] = await Promise.all([
           axios.get("http://localhost:4000/api/config/prioridades"),
           axios.get("http://localhost:4000/api/config/tipos-incidencia"),
-          axios.get("http://localhost:4000/api/config/incidencias"),
+          axios.get("http://localhost:4000/api/incidencias"),
         ]);
         setPrioridades(resPrioridades.data);
         setTiposIncidencia(resTipos.data);
