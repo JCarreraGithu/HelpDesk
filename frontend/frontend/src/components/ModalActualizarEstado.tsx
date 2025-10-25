@@ -103,16 +103,44 @@ const ModalActualizarEstado: React.FC<ModalActualizarEstadoProps> = ({
           flexDirection: "column",
         }}
       >
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
-          <h2 style={{ color: "#198754", fontSize: "1.25rem", fontWeight: 600, display: "flex", alignItems: "center", gap: "0.5rem" }}>
+        {/* Encabezado */}
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginBottom: "1rem",
+          }}
+        >
+          <h2
+            style={{
+              color: "#198754",
+              fontSize: "1.25rem",
+              fontWeight: 600,
+              display: "flex",
+              alignItems: "center",
+              gap: "0.5rem",
+            }}
+          >
             <FaSyncAlt /> Cambiar Estado
           </h2>
-          <button onClick={onClose} style={{ color: "#fff", background: "transparent", border: "none", cursor: "pointer" }}>
+          <button
+            onClick={onClose}
+            style={{
+              color: "#fff",
+              background: "transparent",
+              border: "none",
+              cursor: "pointer",
+            }}
+          >
             <FaTimes size={20} />
           </button>
         </div>
 
-        <label style={{ color: "#fff", fontWeight: 600, marginBottom: "0.3rem" }}>Nuevo Estado:</label>
+        {/* Select de estado */}
+        <label style={{ color: "#fff", fontWeight: 600, marginBottom: "0.3rem" }}>
+          Nuevo Estado:
+        </label>
         <select
           value={nuevoEstado}
           onChange={(e) => setNuevoEstado(Number(e.target.value))}
@@ -125,7 +153,10 @@ const ModalActualizarEstado: React.FC<ModalActualizarEstadoProps> = ({
           ))}
         </select>
 
-        <label style={{ color: "#fff", fontWeight: 600, marginBottom: "0.3rem" }}>Comentario:</label>
+        {/* Comentario */}
+        <label style={{ color: "#fff", fontWeight: 600, marginBottom: "0.3rem" }}>
+          Comentario:
+        </label>
         <textarea
           value={comentario}
           onChange={(e) => setComentario(e.target.value)}
@@ -133,20 +164,36 @@ const ModalActualizarEstado: React.FC<ModalActualizarEstadoProps> = ({
           placeholder="Describe brevemente el motivo del cambio..."
         />
 
-        <div style={{ display: "flex", justifyContent: "flex-end", gap: "0.5rem", marginTop: "1rem" }}>
+        {/* Botones */}
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "flex-end",
+            gap: "0.5rem",
+            marginTop: "1rem",
+          }}
+        >
           <button
             onClick={onClose}
             style={{ ...buttonStyle, backgroundColor: "#6c757d", color: "white" }}
-            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#5a6268")}
-            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#6c757d")}
+            onMouseEnter={(e) =>
+              (e.currentTarget.style.backgroundColor = "#5a6268")
+            }
+            onMouseLeave={(e) =>
+              (e.currentTarget.style.backgroundColor = "#6c757d")
+            }
           >
             Cancelar
           </button>
           <button
             onClick={handleActualizar}
             style={{ ...buttonStyle, backgroundColor: "#198754", color: "white" }}
-            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#157347")}
-            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#198754")}
+            onMouseEnter={(e) =>
+              (e.currentTarget.style.backgroundColor = "#157347")
+            }
+            onMouseLeave={(e) =>
+              (e.currentTarget.style.backgroundColor = "#198754")
+            }
           >
             Actualizar
           </button>

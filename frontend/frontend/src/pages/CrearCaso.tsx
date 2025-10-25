@@ -57,7 +57,7 @@ export default function CrearCaso() {
     if (!idPrioridad || !idTipo || !idIncidencia || !titulo.trim() || !descripcion.trim()) {
       Swal.fire({
         icon: "warning",
-        title: "⚠️ Completa todos los campos",
+        title: "⚠ Completa todos los campos",
         timer: 2000,
         showConfirmButton: false,
       });

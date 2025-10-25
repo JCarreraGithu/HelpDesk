@@ -2,7 +2,7 @@ import { useParams } from "react-router-dom";
 import ReporteTecnicos from "./reportes/ReporteTecnicos.tsx";
 import ReporteCasos from "./reportes/ReporteCasos.tsx";
 import ReporteSatisfaccion from "./reportes/ReporteSatisfaccion.tsx";
-import ReporteRepuestos from "./reportes/reporteRepuestos.tsx";
+import ReporteRepuestos from "./reportes/ReporteRepuestos.tsx";
 import ReporteDepartamentos from "./reportes/ReporteDepartamentos.tsx";
 import ReporteEmpleados from "./reportes/ReporteEmpleados.tsx";
 

@@ -9,7 +9,6 @@ import ticketIcon from "../assets/ticket.png";
 import reporteIcon from "../assets/reporte.png";
 import usuariosIcon from "../assets/Log0.png";
 import Notificaciones from "./Notificaciones";
-import Departamentos from '../pages/Departamentos';
 
 interface NavbarProps {
   darkMode: boolean;

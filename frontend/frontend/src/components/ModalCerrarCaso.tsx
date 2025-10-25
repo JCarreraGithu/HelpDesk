@@ -68,6 +68,7 @@ export default function ModalCerrarCaso({
     });
     setExcedidos(excedidosActualizados);
   };
+  
 
   const handleCerrarCaso = async () => {
     if (estadoActual === "Cerrado") {
@@ -113,19 +114,22 @@ export default function ModalCerrarCaso({
       }
 
       if (huboExceso) {
-        await axios.put(`http://localhost:4000/api/casos/${idCaso}`, {
-          id_estado_actual: 7,
-          detalles,
-          id_empleado: idEmpleado
-        });
-      } else {
-        await axios.put(`http://localhost:4000/api/casos/cerrar/${idCaso}`, {
-          id_empleado: idEmpleado,
-          detalles,
-          complicacion,
-          materiales: seleccionados
-        });
-      }
+  // Si hubo excedente, el caso queda en espera de repuestos
+  await axios.put(`http://localhost:4000/api/casos/${idCaso}`, {
+    id_estado_actual: 7, // En espera de repuestos
+    detalles,
+    id_empleado: idEmpleado
+  });
+} else {
+  // Si no hubo excedente, el caso se marca como Finalizado
+  await axios.put(`http://localhost:4000/api/casos/${idCaso}`, {
+    id_estado_actual: 4, // Finalizado
+    detalles,
+    id_empleado: idEmpleado,
+    complicacion,
+    materiales: seleccionados
+  });
+}
 
       setExito(true);
       setTimeout(() => {
@@ -355,11 +359,9 @@ export default function ModalCerrarCaso({
               </div>
 
               <div style={{ display: "flex", justifyContent: "flex-end", gap: "0.5rem", marginTop: "1rem" }}>
-                <button onClick={onClose} style={{ ...buttonStyle, background: "#6c757d", color: "white" }}>
-                  Cancelar
-                </button>
                 <button
                   onClick={estadoActual === "Cerrado" ? undefined : handleCerrarCaso}
+                  disabled={estadoActual === "Cerrado"}
                   style={{
                     ...buttonStyle,
                     background: "#198754",

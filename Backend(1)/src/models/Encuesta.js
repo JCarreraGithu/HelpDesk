@@ -35,27 +35,27 @@ export const EncuestaSatisfaccion = sequelize.define("EncuestaSatisfaccion", {
     field: "USUARIO_REPORTA"
   },
   calif_tiempo_respuesta: {
-    type: DataTypes.DECIMAL(1,0),
+    type: DataTypes.INTEGER,
     allowNull: true,
     field: "CALIF_TIEMPO_RESPUESTA"
   },
   calif_trato_tecnico: {
-    type: DataTypes.DECIMAL(1,0),
+    type: DataTypes.INTEGER,
     allowNull: true,
     field: "CALIF_TRATO_TECNICO"
   },
   calif_solucion: {
-    type: DataTypes.DECIMAL(1,0),
+    type: DataTypes.INTEGER,
     allowNull: true,
     field: "CALIF_SOLUCION"
   },
   calif_comunicacion: {
-    type: DataTypes.DECIMAL(1,0),
+    type: DataTypes.INTEGER,
     allowNull: true,
     field: "CALIF_COMUNICACION"
   },
   recomendaria: {
-    type: DataTypes.CHAR(1),
+    type: DataTypes.STRING(1), // ✅ CHAR(1) en Oracle
     allowNull: true,
     field: "RECOMENDARIA"
   },
