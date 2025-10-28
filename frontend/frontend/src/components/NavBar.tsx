@@ -9,6 +9,7 @@ import ticketIcon from "../assets/ticket.png";
 import reporteIcon from "../assets/reporte.png";
 import usuariosIcon from "../assets/Log0.png";
 import Notificaciones from "./Notificaciones";
+import estaIcon from "../assets/estadisticas.png";
 
 interface NavbarProps {
   darkMode: boolean;
@@ -225,7 +226,7 @@ export default function Navbar({ darkMode, setDarkMode }: NavbarProps) {
   }}
 >
   <img
-    src={reporteIcon}
+    src={estaIcon}
     alt="Reportes"
     style={{ width: "26px", height: "26px" }}
   />
